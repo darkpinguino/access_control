@@ -122,4 +122,34 @@ class DoorsController extends AppController
         }
         return $this->redirect(['action' => 'index']);
     }
+
+    public function deleteEnclosure($id=null)
+    {
+    	$door = $this->Doors->get($id, [
+            'contain' => []
+        ]);
+
+    	$door->enclosure_id = 0;
+    	$this->Doors->save($door);
+    	return $this->redirect([
+    		'action' => 'addDoors',
+    		'controller' => 'enclosures',
+    		$this->request->query('enclosure')
+    	]);
+    }
+
+    public function addEnclosure($id=null)
+    {
+    	$door = $this->Doors->get($id, [
+            'contain' => []
+        ]);
+
+    	$door->enclosure_id =  $this->request->query['enclosure'];
+    	$this->Doors->save($door);
+    	return $this->redirect([
+    		'action' => 'addDoors',
+    		'controller' => 'enclosures',
+    		$this->request->query('enclosure')
+    	]);
+    }
 }

@@ -13,7 +13,8 @@ class AccessRequestController extends AppController
     public $paginate = [
       'limit' => 10,
       'contain' => ['People', 'Doors', 'AccessStatus'],
-      'sortWhitelist' => ['People.rut']
+      'order' => [
+        'created' => 'desc']
     ];
 
     /**
@@ -118,5 +119,20 @@ class AccessRequestController extends AppController
             $this->Flash->error(__('The access request could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function pendingAccess()
+    {
+        $this->paginate = [
+          'contain' => ['People.AccessRolePeople']
+        ];
+        $query =  $this->AccessRequest->find()->where(['access_status_id' => 2, ]);
+        $query->matching('People.AccessRoles', function ($q)
+        {
+        	return $q->where(['AccessRoles.id' => -1]);
+        });
+
+        // debug($query);
+        $this->set('accessRequest', $this->paginate($query));
     }
 }

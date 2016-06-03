@@ -51,6 +51,19 @@
         </li>
       </ul>
     </li>
+    <?= '<li class="treeview'. (strcmp($controller, 'Enclosures') ? '' : ' active').'">' ?>
+      <a href="#">
+        <i class="fa fa-building-o"></i> <span>Recintos</span> <i class="fa fa-angle-left pull-right"></i>
+      </a>
+      <ul class="treeview-menu">
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Recintos', '/enclosures/index', ['escape' => false]) ?>
+        </li>
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Receinto', '/enclosures/add', ['escape' => false]) ?>
+        </li>
+      </ul>
+    </li>  
     <?= '<li class="treeview'. (strcmp($controller, 'Sensors') ? '' : ' active').'">' ?>
       <a href="#">
         <i class="fa fa-dashboard"></i> <span>Sensores</span> <i class="fa fa-angle-left pull-right"></i>
@@ -126,6 +139,9 @@
         </li>
         <li>
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Peticiones de acceso', '/access-request/add', ['escape' => false]) ?>
+        </li>
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Peticiones de acceso pendientes', '/access-request/pending-access', ['escape' => false]) ?>
         </li>
       </ul>
     </li>

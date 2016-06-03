@@ -142,7 +142,7 @@ class PeopleController extends AppController
         if ($people->isEmpty()) {
           $person = $this->People->newEntity();
           $person->rut = $rut;
-          $person->company_id = 3;
+          $person->company_id = 1;
 
           $accessRole =  $this->People->AccessRoles->get(-1);
           $accessRole->_joinData = $this->People->AccessRoles->newEntity();
@@ -150,6 +150,18 @@ class PeopleController extends AppController
 
           $this->People->save($person);
           $this->People->AccessRoles->link($person, [$accessRole]);
+
+          $accessRequest = $this->AccessRequest->newEntity();
+          $accessRequest->people_id = $person->id;
+          $accessRequest->door_id = $door_id;
+          $accessRequest->access_status_id = 2;
+          $this->AccessRequest->save($accessRequest);
+
+          return $this->redirect([
+            'action' => 'edit',
+            $person->id,
+            '?' => ['status' => 'pending']
+          ]);
         }
 
         $accessRequest = $this->AccessRequest->newEntity();

@@ -23,7 +23,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
   <title>
-      <?= $cakeDescription ?>:
+      Control de acceso:
       <?= $this->fetch('title') ?>
   </title>
 

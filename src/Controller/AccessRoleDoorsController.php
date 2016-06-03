@@ -11,7 +11,7 @@ use App\Controller\AppController;
 class AccessRoleDoorsController extends AppController
 {
 
-    puplic $paginate = [
+    public $paginate = [
         'contain' => ['Doors', 'AccessRoles']
     ];
 

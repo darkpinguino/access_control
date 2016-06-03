@@ -14,10 +14,30 @@
             <th><?= __('Ubicación') ?></th>
             <td><?= h($door->location) ?></td>
 	        </tr>
-	        </tr><tr>
-            <th><?= __('Descripción') ?></th>
-            <td><?= h($door->id) ?></td>
 	        </tr>
+          <tr>
+            <th><?= __('Descripción') ?></th>
+            <td><?= h($door->description) ?></td>
+	        </tr>
+          <tr>
+            <th><?= __('Tipo') ?></th>
+            <td><?php 
+              $type = h($door->type); 
+              switch ($type) {
+                  case 1:
+                      echo "Entrada";
+                      break;
+                  case 2:
+                      echo "Salida";
+                      break;
+                  case 3:
+                      echo "Entrada/Salida";
+                      break;
+                  default:
+                      echo "";
+              }
+              ?></td>
+          </tr>
 	        <tr>
             <th><?= __('Empresa') ?></th>
             <td><?= $door->has('company') ? $this->Html->link($door->company->name, ['controller' => 'Companies', 'action' => 'view', $door->company->id]) : '' ?></td>

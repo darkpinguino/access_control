@@ -74,18 +74,22 @@ class AccessRolePeopleController extends AppController
     public function edit($id = null)
     {
         $accessRolePerson = $this->AccessRolePeople->get($id, [
-            'contain' => []
+            'contain' => ['People']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $accessRolePerson = $this->AccessRolePeople->patchEntity($accessRolePerson, $this->request->data);
             if ($this->AccessRolePeople->save($accessRolePerson)) {
                 $this->Flash->success(__('The access role person has been saved.'));
-                return $this->redirect(['action' => 'index']);
+                // return $this->redirect(['action' => 'index']);
+                return $this->redirect([
+                    'action' => 'pending_access',
+                    'controller' => 'accessRequest']);
             } else {
                 $this->Flash->error(__('The access role person could not be saved. Please, try again.'));
             }
         }
-        $this->set(compact('accessRolePerson'));
+        $accessRoles = $this->AccessRolePeople->AccessRoles->find('list', ['limit' => 200]);
+        $this->set(compact('accessRolePerson', 'accessRoles'));
         $this->set('_serialize', ['accessRolePerson']);
     }
 

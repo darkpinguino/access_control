@@ -1,24 +1,18 @@
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $accessRolePerson->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $accessRolePerson->id)]
-            )
-        ?></li>
-        <li><?= $this->Html->link(__('List Access Role People'), ['action' => 'index']) ?></li>
-    </ul>
-</nav>
-<div class="accessRolePeople form large-9 medium-8 columns content">
-    <?= $this->Form->create($accessRolePerson) ?>
-    <fieldset>
-        <legend><?= __('Edit Access Role Person') ?></legend>
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Editar Rol de acceso para 
+        	<?= $accessRolePerson->person->name?></h3>
+    </div>
+  <?= $this->Form->create($accessRolePerson) ?>
+  <div class="box-body">
+      <fieldset>
         <?php
-            echo $this->Form->input('people_id');
-            echo $this->Form->input('access_role');
+          echo $this->Form->input('access_role_id', ['option' => 'accessRoles']);
         ?>
-    </fieldset>
-    <?= $this->Form->button(__('Submit')) ?>
-    <?= $this->Form->end() ?>
+      </fieldset>
+  </div>
+  <div class="box-footer">
+      <?= $this->Form->button(__('Guardar')) ?>
+  </div>
+  <?= $this->Form->end() ?>
 </div>
