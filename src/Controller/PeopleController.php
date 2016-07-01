@@ -12,7 +12,7 @@ class PeopleController extends AppController
 {
     public $paginate = [
       'limit' => 10,
-      'contain' => ['Companies']
+      // 'contain' => ['Companies']
     ];
 
     /**
@@ -40,6 +40,9 @@ class PeopleController extends AppController
     public function view($id = null)
     {	
     		$this->loadModel('AccessRoles');
+        $this->loadModel('AccessRequest');
+        $this->loadModel('Doors');
+
         $person = $this->People->get($id, [
             // 'contain' => ['Companies', 'SensorData']
             'contain' => ['Companies']
@@ -52,9 +55,32 @@ class PeopleController extends AppController
 	        }
         );
 
+        // $doors = $this->Doors
+        //   ->findById(1)
+        //   // ->where(['id' => 1])
+        //   ->contain(['Enclosures'])
+        //   ->first();
+
+        //   debug($doors->enclosure->id);
+
+        // foreach ($doors as $door) {
+        //   debug($door);
+        // }
+
+        // $accessRequests = $this->AccessRequest
+        //   ->find('all', ['contain' => 'Doors.Enclosures'])
+        //   ->where(['people_id' => $person->id, 'door_id' => '1']);
+
+        // foreach ($accessRequests as $accessRequest) {
+        //   if ($accessRequest->door->type == 2) {
+            
+        //   }
+        //   debug($accessRequest->door->type);
+        // }
         // $this->set('person', $person);
         $this->set('person', $person);
         $this->set('accessRoles', $this->paginate($accessRoles));
+        // $this->set('accessRequests', $this->paginate($accessRequests));
         $this->set('_serialize', ['person']);
     }
 
@@ -132,6 +158,7 @@ class PeopleController extends AppController
       if ($this->request->is(['patch', 'post', 'put'])) {
 
         $this->loadModel('AccessRequest');
+        $this->loadModel('PeopleLocations');
 
         $rut = $this->request->data()['rut'];
         $door_id = $this->request->data()['door_id'];
@@ -180,6 +207,30 @@ class PeopleController extends AppController
 
 
       	if ($query) {
+
+          $door = $this->Doors
+            ->findById($door_id)
+            ->contain(['Enclosures'])
+            ->first();
+
+          $enclosure_id = $door->enclosure->id;
+
+          // debug($door->type);
+
+          if ($door->type == 1) {
+            $personLocation =  $this->PeopleLocations->newEntity();
+            $personLocation->people_id = $person->id;
+            $personLocation->enclosure_id = $enclosure_id;
+            // debug($this->PeopleLocations->save($personLocation)); die();
+            $this->PeopleLocations->save($personLocation);
+          }else if ($door->type == 2) {
+            $personLocation = $this->PeopleLocations
+              ->find()
+              ->where(['people_id' => $person->id, 'enclosure_id' => $enclosure_id])
+              ->first();
+            $this->PeopleLocations->delete($personLocation);
+          }
+
           $accessRequest->access_status_id = 1;
           $this->AccessRequest->save($accessRequest);
           $this->Flash->success("se autoriza");

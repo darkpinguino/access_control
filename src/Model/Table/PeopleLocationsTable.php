@@ -1,21 +1,19 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\Door;
+use App\Model\Entity\PeopleLocation;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Doors Model
+ * PeopleLocations Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Companies
- * @property \Cake\ORM\Association\HasMany $AccessRequests
- * @property \Cake\ORM\Association\HasMany $AccessRoleDoors
- * @property \Cake\ORM\Association\HasMany $Sensors
+ * @property \Cake\ORM\Association\BelongsTo $People
+ * @property \Cake\ORM\Association\BelongsTo $Enclosures
  */
-class DoorsTable extends Table
+class PeopleLocationsTable extends Table
 {
 
     /**
@@ -28,32 +26,19 @@ class DoorsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('doors');
-        $this->displayField('name');
+        $this->table('people_locations');
+        $this->displayField('id');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Companies', [
-            'foreignKey' => 'company_id',
+        $this->belongsTo('People', [
+            'foreignKey' => 'people_id',
             'joinType' => 'INNER'
         ]);
         $this->belongsTo('Enclosures', [
             'foreignKey' => 'enclosure_id',
             'joinType' => 'INNER'
-        ]);
-        $this->hasMany('AccessRequests', [
-            'foreignKey' => 'door_id'
-        ]);
-        // $this->hasMany('AccessRoleDoors', [
-        //     'foreignKey' => 'door_id'
-        // ]);
-        $this->belongsToMany('AccessRoles', [
-            'foreignKey' => 'door_id',
-            'joinTable' => 'AccessRoleDoors'
-        ]);
-        $this->hasMany('Sensors', [
-            'foreignKey' => 'door_id'
         ]);
     }
 
@@ -69,18 +54,6 @@ class DoorsTable extends Table
             ->integer('id')
             ->allowEmpty('id', 'create');
 
-        $validator
-            ->requirePresence('name', 'create')
-            ->notEmpty('name');
-
-        $validator
-            ->requirePresence('location', 'create')
-            ->notEmpty('location');
-
-        $validator
-            ->requirePresence('description', 'create')
-            ->notEmpty('description');
-
         return $validator;
     }
 
@@ -93,7 +66,8 @@ class DoorsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['company_id'], 'Companies'));
+        $rules->add($rules->existsIn(['people_id'], 'People'));
+        $rules->add($rules->existsIn(['enclosure_id'], 'Enclosures'));
         return $rules;
     }
 }

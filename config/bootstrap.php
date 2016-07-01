@@ -211,5 +211,3 @@ Type::build('datetime')
     ->useImmutable()
     ->useLocaleParser();
 Plugin::load('DebugKit');
-
-Plugin::load('DebugKit');

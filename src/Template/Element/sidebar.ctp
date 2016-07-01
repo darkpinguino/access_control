@@ -159,7 +159,7 @@
       </ul>
     </li>
     <li>
-    <?= $this->Html->link('<i class="fa fa-circle-o text-red"></i> <span>Autorización</span>', '/people/authorization', ['escape' => false]) ?>
+    <?= $this->Html->link('<i class="fa fa-circle-o text-red"></i> <span>Autorización</span>', '/authorization/authorization', ['escape' => false]) ?>
     </li>
   </ul>
 </section>

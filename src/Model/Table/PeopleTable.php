@@ -36,6 +36,10 @@ class PeopleTable extends Table
             'joinType' => 'INNER'
         ]);
 
+        $this->hasMany('PeopleLocations', [
+            'foreignKey' => 'people_id'
+        ]);
+
         $this->hasMany('AccessRolePeople', [
             'foreignKey' => 'people_id'
         ]);
