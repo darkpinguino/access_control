@@ -22,8 +22,6 @@ class PeopleController extends AppController
      */
     public function index()
     {
-        
-
         $people = $this->paginate($this->People);
 
         $this->set(compact('people'));
@@ -102,7 +100,8 @@ class PeopleController extends AppController
             }
         }
         $companies = $this->People->Companies->find('list', ['limit' => 200]);
-        $this->set(compact('person', 'companies'));
+        $profiles = $this->People->Profiles->find('list');
+        $this->set(compact('person', 'companies', 'profiles'));
         $this->set('_serialize', ['person']);
     }
 
@@ -119,6 +118,17 @@ class PeopleController extends AppController
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
+            // debug($this->request->data()); die;
+            $this->loadModel("VisitProfiles");
+
+            $visitProfile = $this->VisitProfiles->newEntity($this->request->data);
+            // $visitProfile->reason_visit_id = $this->request->data('reason_visit_id');
+            // $visitProfile->person_id = $person->id;
+
+            $person->visit_profiles = [$visitProfile];
+
+            // debug($person); die;
+
             $person = $this->People->patchEntity($person, $this->request->data);
             if ($this->People->save($person)) {
                 $this->Flash->success(__('The person has been saved.'));
@@ -127,8 +137,14 @@ class PeopleController extends AppController
                 $this->Flash->error(__('The person could not be saved. Please, try again.'));
             }
         }
+        if ($this->request->query('status')) {
+          $profiles = $this->People->Profiles->find('list')->where(['id !=' => 2]);
+        } else {
+          $profiles = $this->People->Profiles->find('list');
+        }
+
         $companies = $this->People->Companies->find('list', ['limit' => 200]);
-        $this->set(compact('person', 'companies'));
+        $this->set(compact('person', 'companies', 'profiles'));
         $this->set('_serialize', ['person']);
     }
 

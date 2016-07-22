@@ -2,22 +2,23 @@
  namespace App\controller;
 
  use App\Controller\AppController;
+ use Cake\I18n\Date;
 
  /**
  * 
  */
  class AuthorizationController extends AppController
  {
- 	public function initialize()
+  public function initialize()
  {
      parent::initialize();
      $this->loadComponent('RequestHandler');
  }
- 	
- 	public function authorization($rut = null, $door = null)
- 	{
- 		$this->loadModel('Doors');
- 		$this->loadModel('People');
+  
+  public function authorization($rut = null, $door = null)
+  {
+    $this->loadModel('Doors');
+    $this->loadModel('People');
     $this->loadModel('PeopleLocations');
 
  		$authorized = false;
@@ -35,10 +36,11 @@
     $people_out = $this->People->find()->
     	notMatching('PeopleLocations', function ($q) use ($door)
       {
-        return $q->where(['PeopleLocations.enclosure_id' => $door->enclosure_id]);
-      });
+        return $q->where([
+          'PeopleLocations.enclosure_id' => $door->enclosure_id]);
+      })->Where(['profile_id' => 2]);
 
-    $peopleLocations = $this->PeopleLocations->find('all', ['contain' => ['People', 'Enclosures']]);
+    $peopleLocations = $this->PeopleLocations->find('all', ['contain' => ['People.Profiles', 'Enclosures']]);
 
     // debug($peopleLocations->toArray()[0]->person->name); die();
 
@@ -62,19 +64,15 @@
  		$this->loadModel('AccessRequest');
     $this->loadModel('PeopleLocations');
 
-
-
     $rut = $this->request->data('rut');
     $door_id = $this->request->data('door_id');
     $acction = $this->request->data('acction');
-
-    // debug([$rut, $door_id]); die();
 
     $door = $this->Doors
       ->get($door_id, [
         "contain" => ["Enclosures"]
       ]);
-    // ->contain(['Enclosures']);
+
     $person = $this->People->findByRut($rut)->first();
 
     // Ingreso de una nueva persona
@@ -101,21 +99,40 @@
 
     $accessRequest = $this->saveAccessRequest($person->id, $door->id, 2);
 
-    $people = $this->People->findByRut($rut);
-    $role = $people->matching(
-      'AccessRoles.Doors', function ($q) use ($door_id)
+    $valid_person =  $this->People->findById($person->id)
+      ->matching('AccessRolePeople', function ($q)
       {
-        return $q->where(['Doors.id' => $door_id]);
+        return $q->where(['AccessRolePeople.expiration >' => new Date()])
+          ->orWhere(['AccessRolePeople.expiration' => '0000-00-00']);
       })->first();
 
-    $query = $this->PeopleLocations->findByPeople_idAndEnclosure_id($person->id, $door->enclosure->id);
+    if ($valid_person) {
+      $valid_door = $this->Doors->findById($door_id)->matching(
+        'AccessRoles.People', function ($q) use ($valid_person)
+        {
+          return $q->where(['People.id' => $valid_person->id]);
+        })->first();
+    } else {
+      $valid_door =  null;
+    }
 
-    // debug($door);
-    // debug($query->first()); die();
-
-  	if ($role) {
+  	if ($valid_door) {
 
       if($this->registerPeopleLocation($person, $door, $acction)){
+
+        if ($person->profile_id == 1 and $this->PeopleLocations->findByPeopleId($person->id)->isEmpty()) {
+
+          $accessRoles = $this->People->AccessRolePeople->findByPeopleId($person->id);
+
+          foreach ($accessRoles as $role) {
+            $role->expiration = new Date();
+            $this->People->AccessRolePeople->save($role);
+            // debug($role);
+            // $role->save();
+          }
+          // die;
+          // debug($person->AccessRolePeople); die;
+        }
         $accessRequest->access_status_id = 1;
         $this->AccessRequest->save($accessRequest);
         if (!$this->request->is('ajax')) 
@@ -128,7 +145,6 @@
 
         return false;
       }
-
 
       return true;
     } else {
@@ -156,7 +172,7 @@
  	{
     $enclosure_id = $door->enclosure->id;
 
-    if ($door->type == 1) {
+    if ($door->type == 1 and strcmp($acction, "in") == 0) {
       $personLocation = $this->PeopleLocations
         ->findByPeopleIdAndEnclosureId($person->id, $enclosure_id)
         ->first();
@@ -169,8 +185,7 @@
       }else{
         return false;
       }
-
-    }else if ($door->type == 2) {
+    }elseif ($door->type == 2) {
       $personLocation = $this->PeopleLocations
         ->find()
         ->where(['people_id' => $person->id, 'enclosure_id' => $enclosure_id])
@@ -201,4 +216,4 @@
       return true;
     }
  	}
- }
+}

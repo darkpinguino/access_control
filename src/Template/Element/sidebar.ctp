@@ -36,6 +36,19 @@
         </li>
       </ul>
     </li>
+    <?= '<li class="treeview'. (strcmp($controller, 'Profile') ? '' : ' active').'">' ?>
+      <a href="#">
+        <i class="fa fa-users"></i> <span>Perfiles</span> <i class="fa fa-angle-left pull-right"></i>
+      </a>
+      <ul class="treeview-menu">
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Perfiles', '/profiles/index', ['escape' => false]) ?>
+        </li>
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Perfil', '/profiles/add', ['escape' => false]) ?>
+        </li>
+      </ul>
+    </li>
     <?= '<li class="treeview'. ((strcmp($controller, 'Doors') and strcmp($controller, 'AccessRoleDoors')) ? '' : ' active').'">' ?>
       <a href="#">
         <i class="fa fa-sign-in"></i> <span>Puertas</span> <i class="fa fa-angle-left pull-right"></i>
@@ -113,6 +126,19 @@
         </li>
         <li>
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Vehiculos', '/vehicles/add', ['escape' => false]) ?>
+        </li>
+      </ul>
+    </li>
+    <?= '<li class="treeview'. (strcmp($controller, 'ReasonVisits') ? '' : ' active').'">' ?>
+      <a href="#">
+        <i class="fa fa-book"></i> <span>Motivos de visita</span> <i class="fa fa-angle-left pull-right"></i>
+      </a>
+      <ul class="treeview-menu">
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Motivos de visita', '/ReasonVisits/index', ['escape' => false]) ?>
+        </li>
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Motivos de visita', '/ReasonVisits/add', ['escape' => false]) ?>
         </li>
       </ul>
     </li>

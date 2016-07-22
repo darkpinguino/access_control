@@ -36,8 +36,17 @@ class PeopleTable extends Table
             'joinType' => 'INNER'
         ]);
 
+        $this->belongsTo('Profiles', [
+            'foreignKey' => 'profile_id',
+            'joinType' => 'INNER'
+        ]);
+
         $this->hasMany('PeopleLocations', [
             'foreignKey' => 'people_id'
+        ]);
+
+        $this->hasMany('VisitProfiles', [
+            'foreignKey' => 'person_id'
         ]);
 
         $this->hasMany('AccessRolePeople', [

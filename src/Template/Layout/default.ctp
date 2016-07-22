@@ -36,6 +36,8 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   <?= $this->Html->css('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', ['block' => true]) ?>
   <!-- Ionicons -->
   <?= $this->Html->css('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css', ['block' => true])?>
+  <!-- bootstrap datepicker -->
+  <?= $this->Html->css('plugins/datepicker/datepicker3', ['block' => true])?>
   <!-- Theme style -->
   <?= $this->Html->css('adminLTE/AdminLTE.min', ['block' => true]) ?>
   <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -48,6 +50,9 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   <?= $this->Html->script('plugins/jQueryUI/jquery-ui.min', ['block' => true]) ?>
   <!-- Booststrap 3.3.5 -->
   <?= $this->Html->script('bootstrap/bootstrap.min', ['block' => true]) ?>
+  <!-- bootstrap datepicker -->
+  <?= $this->Html->script('plugins/datepicker/bootstrap-datepicker', ['block' => true])?>
+  <?= $this->Html->script('plugins/locales/bootstrap-datepicker.es', ['block' => true])?>
   <!-- AdminLTE App -->
   <?= $this->Html->script('app.min', ['block' => true]) ?>  
 

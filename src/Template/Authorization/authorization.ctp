@@ -9,14 +9,14 @@
 			<?= $this->Form->create($person) ?>
 			<div class="box-body">
 				<fieldset>
-	      <?php
-	        echo $this->Form->input('rut', ['label' => 'Rut']);
-	        echo $this->Form->input('door_id', 
-          	[
-          		'options' => $doors, 
-          		'label' => 'Puerta'
-          ]);
-	       ?>
+		  <?php
+			echo $this->Form->input('rut', ['label' => 'Rut']);
+			echo $this->Form->input('door_id', 
+			[
+				'options' => $doors, 
+				'label' => 'Puerta'
+		  ]);
+		   ?>
 			</div>
 			  <div class="box-footer">
 				  <?= $this->Form->button(__('Verificar')) ?>

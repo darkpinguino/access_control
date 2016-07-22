@@ -10,6 +10,11 @@
           echo $this->Form->input('name', ['label' => 'Nombre']);
           echo $this->Form->input('lastname', ['label' => 'Apellido']);
           echo $this->Form->input('phone', ['label' => 'Telefono']);
+          echo $this->Form->input('profile_id', 
+            [
+              'options' => $profiles, 
+              'label' => 'Perfil'
+          ]);
           echo $this->Form->input('company_id', 
           	[
           		'options' => $companies, 
