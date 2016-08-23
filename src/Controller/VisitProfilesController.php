@@ -63,23 +63,28 @@ class VisitProfilesController extends AppController
 		}
 		$this->viewBuilder()->layout('ajax');
 		// $people = $this->VisitProfiles->People->find('list', ['limit' => 200]);
+		$company_id = $this->Auth->user()['company_id'];
+
 		$reasonVisits = $this->VisitProfiles->ReasonVisits->find('list', [
-			'limit' => 200,
 			'keyField' => 'id',
 			'valueField' => 'reason'
 		])->toArray();
 
-		$personToVisit = $this->VisitProfiles->People->find('list', [
-			'keyField' => 'id',
-			'valueField' => function ($e)
+		$personToVisit = $this->VisitProfiles->People
+			->find('list', [
+				'keyField' => 'id',
+				'valueField' => function ($e)
+				{
+					return $e->name . ' ' . $e->lastname;
+				}
+			])
+			->matching('CompanyPeople', function ($q) use ($company_id)
 			{
-				return $e->name . ' ' . $e->lastname;
-			}
-		])->where(['is_visited' => 1]);
+				return $q->where(['CompanyPeople.is_visited' => 1, 'CompanyPeople.company_id' => $company_id]);
+			});
 
 		// debug($personToVisit); die;
 
-		// $this->set(compact('visitProfile', 'people', 'reasonVisits'));
 		$this->set(compact('visitProfile', 'reasonVisits', 'personToVisit'));
 		$this->set('_serialize', ['visitProfile']);
 	}

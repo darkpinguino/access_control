@@ -57,10 +57,10 @@ class AccessRoleDoorsController extends AppController
         if ($this->request->is('post')) {
             $accessRoleDoor = $this->AccessRoleDoors->patchEntity($accessRoleDoor, $this->request->data);
             if ($this->AccessRoleDoors->save($accessRoleDoor)) {
-                $this->Flash->success(__('The access role door has been saved.'));
-                return $this->redirect(['action' => 'index']);
+                $this->Flash->success(__('El rol de acceso ha sido asignado.'));
+                return $this->redirect(['action' => 'index', 'controller' => 'doors']);
             } else {
-                $this->Flash->error(__('The access role door could not be saved. Please, try again.'));
+                $this->Flash->error(__('El rol de acceso no ha podido ser asignado. Por favor, intente nuevamente.'));
             }
         }
         $doors = $this->AccessRoleDoors->Doors->find('list', ['limit' => 200]);

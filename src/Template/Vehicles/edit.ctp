@@ -6,8 +6,11 @@
   <div class="box-body">
     <fieldset>
         <?php
-            echo $this->Form->input('number_plate');
-            echo $this->Form->input('company_id', ['options' => $companies]);
+          echo $this->Form->input('number_plate', ['label' => 'Patente']);
+          echo $this->Form->input('vehicle_type', [
+            'label' => 'tipo',
+            'options' => $vehicle_types 
+          ]);
         ?>
     </fieldset>
   </div>

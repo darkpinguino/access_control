@@ -28,35 +28,78 @@ use Cake\Event\Event;
 class AppController extends Controller
 {
 
-    /**
-     * Initialization hook method.
-     *
-     * Use this method to add common initialization code like loading components.
-     *
-     * e.g. `$this->loadComponent('Security');`
-     *
-     * @return void
-     */
-    public function initialize()
-    {
-        parent::initialize();
+	/**
+	 * Initialization hook method.
+	 *
+	 * Use this method to add common initialization code like loading components.
+	 *
+	 * e.g. `$this->loadComponent('Security');`
+	 *
+	 * @return void
+	 */
+	public function initialize()
+	{
+		parent::initialize();
 
-        $this->loadComponent('RequestHandler');
-        $this->loadComponent('Flash');
-    }
+		$this->loadComponent('RequestHandler', [
+			'viewClassMap' => [
+				'xlsx' => 'CakeExcel.Excel'
+			]
+		]);
+		$this->loadComponent('RequestHandler');
+		$this->loadComponent('Flash');
+		$this->loadComponent('Auth', [
+			'authorize' => ['Controller'],
+			'loginRedirect' => [
+				'controller' => 'Authorization',
+				'action' => 'authorization'
+			],
+			'logoutRedirect' => [
+				'controller' => 'Users',
+				'action' => 'login'
+			]
+		]);
+	}
 
-    /**
-     * Before render callback.
-     *
-     * @param \Cake\Event\Event $event The beforeRender event.
-     * @return void
-     */
-    public function beforeRender(Event $event)
-    {
-        if (!array_key_exists('_serialize', $this->viewVars) &&
-            in_array($this->response->type(), ['application/json', 'application/xml'])
-        ) {
-            $this->set('_serialize', true);
-        }
-    }
+	/**
+	 * Before render callback.
+	 *
+	 * @param \Cake\Event\Event $event The beforeRender event.
+	 * @return void
+	 */
+	public function beforeRender(Event $event)
+	{
+		if (!array_key_exists('_serialize', $this->viewVars) &&
+			in_array($this->response->type(), ['application/json', 'application/xml'])
+		) {
+			$this->set('_serialize', true);
+		}
+
+		// debug($this->Auth->user()['id']); die;
+		if (!is_null($this->Auth->user())) {
+			$this->loadmodel('Users');
+			$userAuth = $this->Users->get($this->Auth->user()['id'], [
+				'contain' => ['People']
+			]);
+			$this->set('userAuth', $userAuth);
+		}
+	}
+
+	public function beforeFilter(Event $event)
+  {
+	// $this->Auth->allow(['index', 'view', 'display']);
+	$this->Auth->allow(['display']);
+  }
+
+  public function isAuthorized($user)
+	{
+	  // Admin can access every action
+	  if (isset($user['userRole_id']) && $user['userRole_id'] == 1) {
+		return true;
+	  }
+
+	  // Default deny
+	  return false;
+	}
+
 }

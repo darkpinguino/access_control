@@ -57,15 +57,45 @@ class AccessRolePeopleController extends AppController
 
 			$accessRolePerson = $this->AccessRolePeople->patchEntity($accessRolePerson, $this->request->data);
 			if ($this->AccessRolePeople->save($accessRolePerson)) {
-				$this->Flash->success(__('The access role person has been saved.'));
-				return $this->redirect(['action' => 'index']);
+				$this->Flash->success(__('El rol de acceso ha sido asignado.'));
+				return $this->redirect(['action' => 'index', 'controller' => 'people']);
 			} else {
-				$this->Flash->error(__('The access role person could not be saved. Please, try again.'));
+				$this->Flash->error(__('El rol de acceso no ha podido ser asignado. Por favor, intente nuevamente.'));
 			}
 		}
-		$people = $this->AccessRolePeople->People->find('list', ['limit' => 200]);
-		$accessRoles = $this->AccessRolePeople->AccessRoles->find('list', ['limit' => 200]);
+		$people = $this->AccessRolePeople->People->find('list');
+		$accessRoles = $this->AccessRolePeople->AccessRoles->find('list');
 		$this->set(compact('accessRolePerson', 'people', 'accessRoles'));
+		$this->set('_serialize', ['accessRolePerson']);
+	}
+
+	public function addNoStaff()
+	{
+		$accessRolePerson = $this->AccessRolePeople->newEntity();
+		if ($this->request->is('post')) {
+			$accessRolePerson = $this->AccessRolePeople->patchEntity($accessRolePerson, $this->request->data);
+
+			$accessRolePerson->people_id =  $this->request->query('person');
+
+			$expirationDate = new Date();
+			$expirationDate->modify('+1 day');
+
+			$accessRolePerson->expiration = $expirationDate;
+			
+			if ($this->AccessRolePeople->save($accessRolePerson)) {
+				$this->Flash->success(__('El rol de acceseso ha sido guradado.'));
+				return $this->redirect([
+					'action' => 'pending-access',  
+					'controller' => 'access-request'
+				]);
+			} else {
+				$this->Flash->error(__('El rol de acceseso no ha podido ser guradado. Porfavor, intente nuevamente.'));
+			}
+		}
+
+		$person = $this->AccessRolePeople->People->get($this->request->query('person'));
+		$accessRoles = $this->AccessRolePeople->AccessRoles->find('list');
+		$this->set(compact('accessRolePerson', 'person', 'accessRoles'));
 		$this->set('_serialize', ['accessRolePerson']);
 	}
 
@@ -88,12 +118,10 @@ class AccessRolePeopleController extends AppController
 				$expirationDate = new Date();
 				$expirationDate->modify('+1 day');
 
-				// debug($expirationDate); die;
 				$accessRolePerson->expiration = $expirationDate; 
 			}
 			if ($this->AccessRolePeople->save($accessRolePerson)) {
 				$this->Flash->success(__('The access role person has been saved.'));
-				// return $this->redirect(['action' => 'index']);
 				return $this->redirect([
 					'action' => 'pending_access',
 					'controller' => 'accessRequest']);

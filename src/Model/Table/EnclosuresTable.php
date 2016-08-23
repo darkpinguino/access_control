@@ -35,6 +35,10 @@ class EnclosuresTable extends Table
             'foreignKey' => 'company_id',
             'joinType' => 'INNER'
         ]);
+
+        $this->hasMany('PeopleLocations', [
+            'foreignKey' => 'enclosure_id'
+        ]);
         
         $this->hasMany('Doors', [
             'foreignKey' => 'enclosure_id'

@@ -7,9 +7,9 @@
     <fieldset>
       <?php
         echo $this->Form->input('number_plate', ['label' => 'Patente']);
-        echo $this->Form->input('company_id', [
-          'options' => $companies, 
-          'label' => 'Empresa'
+        echo $this->Form->input('vehicle_type', [
+          'label' => 'Tipo',
+          'options' => $vehicle_types
         ]);
       ?>
     </fieldset>

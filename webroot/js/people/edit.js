@@ -20,6 +20,9 @@ function getForm(controller) {
 				$("#form-container").html(result);
 			},
 			error: function (xhr,status,error){
+				console.log(status);
+				$("#form-container").empty();
+				$("#form-container").html(error);
 			}
 		});
 }

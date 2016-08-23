@@ -31,9 +31,6 @@
 							]
 						]);
 					}
-
-
-					echo $this->Form->input('company_id', ['label' => 'Empresa', 'options' => $companies]);
 				?>
 			</fieldset>
 	</div>

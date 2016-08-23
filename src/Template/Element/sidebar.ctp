@@ -49,6 +49,25 @@
         </li>
       </ul>
     </li>
+    <?= '<li class="treeview'. ((strcmp($controller, 'UserRoles') and strcmp($controller, 'Users')) ? '' : ' active').'">' ?>
+      <a href="#">
+        <i class="fa fa-users"></i> <span>Usuarios</span> <i class="fa fa-angle-left pull-right"></i>
+      </a>
+      <ul class="treeview-menu">
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Usuarios', '/users/index', ['escape' => false]) ?>
+        </li>
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Usuario', '/users/add', ['escape' => false]) ?>
+        </li>
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Roles', '/userRoles/index', ['escape' => false]) ?>
+        </li>
+         <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Rol', '/userRoles/add', ['escape' => false]) ?>
+        </li>
+      </ul>
+    </li>
     <?= '<li class="treeview'. ((strcmp($controller, 'Doors') and strcmp($controller, 'AccessRoleDoors')) ? '' : ' active').'">' ?>
       <a href="#">
         <i class="fa fa-sign-in"></i> <span>Puertas</span> <i class="fa fa-angle-left pull-right"></i>
@@ -116,7 +135,7 @@
         </li>
       </ul>
     </li>
-    <?= '<li class="treeview'. (strcmp($controller, 'Vehicles') ? '' : ' active').'">' ?>
+    <?= '<li class="treeview'. ((strcmp($controller, 'Vehicles') and strcmp($controller, 'VehicleTypes')) ? '' : ' active').'">' ?>
       <a href="#">
         <i class="fa fa-car"></i> <span>Vehiculos</span> <i class="fa fa-angle-left pull-right"></i>
       </a>
@@ -126,6 +145,12 @@
         </li>
         <li>
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Vehiculos', '/vehicles/add', ['escape' => false]) ?>
+        </li>
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar tipos de Vehiculos', '/vehicleTypes/index', ['escape' => false])?>
+        </li>
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar tipos de Vehiculos', '/vehicleTypes/add', ['escape' => false]) ?>
         </li>
       </ul>
     </li>
@@ -155,13 +180,16 @@
         </li>
       </ul>
     </li>
-    <?= '<li class="treeview'. (strcmp($controller, 'AccessRequest') ? '' : ' active').'">' ?>
+    <?= '<li class="treeview'. ((strcmp($controller, 'AccessRequest')) and (strcmp($controller, 'VehicleAccessRequest')) ? '' : ' active').'">' ?>
       <a href="#">
         <i class="fa fa-share"></i> <span>Peticiones de acceso</span> <i class="fa fa-angle-left pull-right"></i>
       </a>
       <ul class="treeview-menu">
         <li>
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Peticiones de acceso', '/access-request/index', ['escape' => false]) ?>
+        </li>
+         <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Peticiones de acceso vehiculos', '/vehicle-access-request/index', ['escape' => false]) ?>
         </li>
         <li>
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Peticiones de acceso', '/access-request/add', ['escape' => false]) ?>

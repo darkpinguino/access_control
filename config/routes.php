@@ -40,6 +40,8 @@ use Cake\Routing\Router;
  * `:action` markers.
  *
  */
+Router::extensions('xlsx');
+
 Router::defaultRouteClass('DashedRoute');
 
 Router::scope('/', function (RouteBuilder $routes) {
@@ -79,3 +81,4 @@ Router::scope('/', function (RouteBuilder $routes) {
  * how to customize the loading of plugin routes.
  */
 Plugin::routes();
+

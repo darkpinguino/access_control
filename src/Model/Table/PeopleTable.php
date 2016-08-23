@@ -15,91 +15,102 @@ use Cake\Validation\Validator;
 class PeopleTable extends Table
 {
 
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
-    public function initialize(array $config)
-    {
-        parent::initialize($config);
+	/**
+	 * Initialize method
+	 *
+	 * @param array $config The configuration for the Table.
+	 * @return void
+	 */
+	public function initialize(array $config)
+	{
+		parent::initialize($config);
 
-        $this->table('people');
-        $this->displayField('name');
-        $this->primaryKey('id');
+		$this->table('people');
+		$this->displayField('name');
+		$this->primaryKey('id');
 
-        $this->addBehavior('Timestamp');
+		$this->addBehavior('Timestamp');
 
-        $this->belongsTo('Companies', [
-            'foreignKey' => 'company_id',
-            'joinType' => 'INNER'
-        ]);
+		// $this->belongsToMany('Companies', [
+		// 	'through' => 'CompanyPeople'
+		// 	// 'foreignKey' => 'people_id',
+		// 	// 'targetForeignKey' => 'company_id'
+		// ]);
+		
+		$this->belongsToMany('Companies', [
+			'foreignKey' => 'company_id',
+			'joinTable' => 'CompanyPeople',
+			'joinType' => 'INNER'
+		]);
 
-        $this->belongsTo('Profiles', [
-            'foreignKey' => 'profile_id',
-            'joinType' => 'INNER'
-        ]);
+		$this->hasMany('CompanyPeople', [
+			'foreignKey' => 'person_id'
+		]);
 
-        $this->hasMany('PeopleLocations', [
-            'foreignKey' => 'people_id'
-        ]);
+		$this->belongsTo('Profiles', [
+			'foreignKey' => 'profile_id',
+			'joinType' => 'INNER'
+		]);
 
-        $this->hasMany('VisitProfiles', [
-            'foreignKey' => 'person_id'
-        ]);
+		$this->hasMany('PeopleLocations', [
+			'foreignKey' => 'people_id'
+		]);
 
-        $this->hasMany('AccessRolePeople', [
-            'foreignKey' => 'people_id'
-        ]);
-        
-        $this->belongsToMany('AccessRoles', [
-            'foreignKey' => 'people_id',
-            'joinTable' => 'AccessRolePeople'
-        ]);
-    }
+		$this->hasMany('VisitProfiles', [
+			'foreignKey' => 'person_id'
+		]);
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator)
-    {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
+		$this->hasMany('AccessRolePeople', [
+			'foreignKey' => 'people_id'
+		]);
+		
+		$this->belongsToMany('AccessRoles', [
+			'foreignKey' => 'people_id',
+			'joinTable' => 'AccessRolePeople'
+		]);
+	}
 
-        $validator
-            ->requirePresence('rut', 'create')
-            ->notEmpty('rut');
+	/**
+	 * Default validation rules.
+	 *
+	 * @param \Cake\Validation\Validator $validator Validator instance.
+	 * @return \Cake\Validation\Validator
+	 */
+	public function validationDefault(Validator $validator)
+	{
+		$validator
+			->integer('id')
+			->allowEmpty('id', 'create');
 
-        $validator
-            ->requirePresence('name', 'create')
-            ->notEmpty('name');
+		$validator
+			->requirePresence('rut', 'create')
+			->notEmpty('rut');
 
-        $validator
-            ->requirePresence('lastname', 'create')
-            ->notEmpty('lastname');
+		$validator
+			->requirePresence('name', 'create')
+			->notEmpty('name');
 
-        $validator
-            ->integer('phone')
-            ->allowEmpty('phone');
+		$validator
+			->requirePresence('lastname', 'create')
+			->notEmpty('lastname');
 
-        return $validator;
-    }
+		$validator
+			->integer('phone')
+			->allowEmpty('phone');
 
-    /**
-     * Returns a rules checker object that will be used for validating
-     * application integrity.
-     *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function buildRules(RulesChecker $rules)
-    {
-        $rules->add($rules->existsIn(['company_id'], 'Companies'));
-        return $rules;
-    }
+		return $validator;
+	}
+
+	/**
+	 * Returns a rules checker object that will be used for validating
+	 * application integrity.
+	 *
+	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Cake\ORM\RulesChecker
+	 */
+	public function buildRules(RulesChecker $rules)
+	{
+		$rules->add($rules->existsIn(['company_id'], 'Companies'));
+		return $rules;
+	}
 }

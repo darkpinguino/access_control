@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\I18n\Date;
 
 /**
  * AccessRequest Controller
@@ -10,129 +11,173 @@ use App\Controller\AppController;
  */
 class AccessRequestController extends AppController
 {
-    public $paginate = [
-      'limit' => 10,
-      'contain' => ['People', 'Doors', 'AccessStatus'],
-      'order' => [
-        'created' => 'desc']
-    ];
+	public $paginate = [
+	  'limit' => 10,
+	  'contain' => ['People', 'Doors', 'AccessStatus'],
+	  'order' => [
+		'created' => 'desc']
+	];
 
-    /**
-     * Index method
-     *
-     * @return \Cake\Network\Response|null
-     */
-    public function index()
-    {
-        
+	/**
+	 * Index method
+	 *
+	 * @return \Cake\Network\Response|null
+	 */
+	public function index()
+	{
+		
 
-        $accessRequest = $this->paginate($this->AccessRequest);
+		$accessRequest = $this->paginate($this->AccessRequest);
 
-        $this->set(compact('accessRequest'));
-        $this->set('_serialize', ['accessRequest']);
-    }
+		$this->set(compact('accessRequest'));
+		$this->set('_serialize', ['accessRequest']);
+	}
 
-    /**
-     * View method
-     *
-     * @param string|null $id Access Request id.
-     * @return \Cake\Network\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $accessRequest = $this->AccessRequest->get($id, [
-            // 'contain' => ['People', 'Doors', 'AccessStatus', 'VehicleAccessRequests']
-            'contain' => ['People', 'Doors', 'AccessStatus']
-        ]);
+	/**
+	 * View method
+	 *
+	 * @param string|null $id Access Request id.
+	 * @return \Cake\Network\Response|null
+	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 */
+	public function view($id = null)
+	{
+		$accessRequest = $this->AccessRequest->get($id, [
+			// 'contain' => ['People', 'Doors', 'AccessStatus', 'VehicleAccessRequests']
+			'contain' => ['People', 'Doors', 'AccessStatus']
+		]);
 
-        $this->set('accessRequest', $accessRequest);
-        $this->set('_serialize', ['accessRequest']);
-    }
+		$this->set('accessRequest', $accessRequest);
+		$this->set('_serialize', ['accessRequest']);
+	}
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
-        $accessRequest = $this->AccessRequest->newEntity();
-        if ($this->request->is('post')) {
-            $accessRequest = $this->AccessRequest->patchEntity($accessRequest, $this->request->data);
-            if ($this->AccessRequest->save($accessRequest)) {
-                $this->Flash->success(__('The access request has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The access request could not be saved. Please, try again.'));
-            }
-        }
-        $people = $this->AccessRequest->People->find('list', ['limit' => 200]);
-        $doors = $this->AccessRequest->Doors->find('list', ['limit' => 200]);
-        $accessStatus = $this->AccessRequest->AccessStatus->find('list', ['limit' => 200]);
-        $this->set(compact('accessRequest', 'people', 'doors', 'accessStatus'));
-        $this->set('_serialize', ['accessRequest']);
-    }
+	/**
+	 * Add method
+	 *
+	 * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+	 */
+	public function add()
+	{
+		$accessRequest = $this->AccessRequest->newEntity();
+		if ($this->request->is('post')) {
+			$accessRequest = $this->AccessRequest->patchEntity($accessRequest, $this->request->data);
+			if ($this->AccessRequest->save($accessRequest)) {
+				$this->Flash->success(__('The access request has been saved.'));
+				return $this->redirect(['action' => 'index']);
+			} else {
+				$this->Flash->error(__('The access request could not be saved. Please, try again.'));
+			}
+		}
+		$people = $this->AccessRequest->People->find('list', ['limit' => 200]);
+		$doors = $this->AccessRequest->Doors->find('list', ['limit' => 200]);
+		$accessStatus = $this->AccessRequest->AccessStatus->find('list', ['limit' => 200]);
+		$this->set(compact('accessRequest', 'people', 'doors', 'accessStatus'));
+		$this->set('_serialize', ['accessRequest']);
+	}
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Access Request id.
-     * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $accessRequest = $this->AccessRequest->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $accessRequest = $this->AccessRequest->patchEntity($accessRequest, $this->request->data);
-            if ($this->AccessRequest->save($accessRequest)) {
-                $this->Flash->success(__('The access request has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The access request could not be saved. Please, try again.'));
-            }
-        }
-        $people = $this->AccessRequest->People->find('list', ['limit' => 200]);
-        $doors = $this->AccessRequest->Doors->find('list', ['limit' => 200]);
-        $accessStatus = $this->AccessRequest->AccessStatus->find('list', ['limit' => 200]);
-        $this->set(compact('accessRequest', 'people', 'doors', 'accessStatus'));
-        $this->set('_serialize', ['accessRequest']);
-    }
+	/**
+	 * Edit method
+	 *
+	 * @param string|null $id Access Request id.
+	 * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
+	 * @throws \Cake\Network\Exception\NotFoundException When record not found.
+	 */
+	public function edit($id = null)
+	{
+		$accessRequest = $this->AccessRequest->get($id, [
+			'contain' => []
+		]);
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			$accessRequest = $this->AccessRequest->patchEntity($accessRequest, $this->request->data);
+			if ($this->AccessRequest->save($accessRequest)) {
+				$this->Flash->success(__('The access request has been saved.'));
+				return $this->redirect(['action' => 'index']);
+			} else {
+				$this->Flash->error(__('The access request could not be saved. Please, try again.'));
+			}
+		}
+		$people = $this->AccessRequest->People->find('list', ['limit' => 200]);
+		$doors = $this->AccessRequest->Doors->find('list', ['limit' => 200]);
+		$accessStatus = $this->AccessRequest->AccessStatus->find('list', ['limit' => 200]);
+		$this->set(compact('accessRequest', 'people', 'doors', 'accessStatus'));
+		$this->set('_serialize', ['accessRequest']);
+	}
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Access Request id.
-     * @return \Cake\Network\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $accessRequest = $this->AccessRequest->get($id);
-        if ($this->AccessRequest->delete($accessRequest)) {
-            $this->Flash->success(__('The access request has been deleted.'));
-        } else {
-            $this->Flash->error(__('The access request could not be deleted. Please, try again.'));
-        }
-        return $this->redirect(['action' => 'index']);
-    }
+	/**
+	 * Delete method
+	 *
+	 * @param string|null $id Access Request id.
+	 * @return \Cake\Network\Response|null Redirects to index.
+	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 */
+	public function delete($id = null)
+	{
+		$this->request->allowMethod(['post', 'delete']);
+		$accessRequest = $this->AccessRequest->get($id);
+		if ($this->AccessRequest->delete($accessRequest)) {
+			$this->Flash->success(__('The access request has been deleted.'));
+		} else {
+			$this->Flash->error(__('The access request could not be deleted. Please, try again.'));
+		}
+		return $this->redirect(['action' => 'index']);
+	}
 
-    public function pendingAccess()
-    {
-        $this->paginate = [
-          'contain' => ['People.AccessRolePeople']
-        ];
-        $query =  $this->AccessRequest->find()->where(['access_status_id' => 2, ]);
-        $query->matching('People.AccessRoles', function ($q)
-        {
-        	return $q->where(['AccessRoles.id' => -1]);
-        });
+	public function pendingAccess()
+	{
+		$this->paginate = [
+		  'contain' => ['People.AccessRolePeople']
+		];
+	
+		$query = $this->AccessRequest->find()
+			->distinct('AccessRequest.people_id')
+			->notMatching('People.AccessRolePeople', function ($q)
+			{
+				return $q->where(['AccessRolePeople.expiration >' => new Date()]);
+			})
+			->matching('Doors', function ($q)
+			{
+				return $q->where(['Doors.company_id' => $this->Auth->user()['company_id']]);
+			})
+			->where([
+				'access_status_id' => 2
+		]);
 
-        // debug($query);
-        $this->set('accessRequest', $this->paginate($query));
-    }
+		// foreach ($this->paginate($query) as $asd) {
+		// 	debug($asd->_matchingData['Doors']->name);
+		// }
+		// die;
+		$this->set('accessRequest', $this->paginate($query));
+	}
+
+	public function report()
+	{
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			debug($this->request->data); die;
+		}
+		$company_id = $this->Auth->user()['company_id'];
+		$this->loadModel('People');
+		$this->loadModel('Enclosures');
+
+		$people = $this->People->find('list')
+			->matching('Companies', function ($q) use ($company_id)
+			{
+				return $q->where(['Companies.id' => $company_id]);
+			})->toArray();
+		// $people[0] = 'Todos';
+		ksort($people);
+
+		$profiles = $this->People->Profiles->find('list')->toArray();
+		// $profiles[0] = 'Todos';
+		ksort($profiles);
+
+		$enclosures = $this->Enclosures->find('list')
+			->matching('Companies', function ($q) use ($company_id)
+			{
+				return $q->where(['Companies.id' => $company_id]);
+			})->toArray();
+		// $enclosures[0] = 'Todos';
+		ksort($enclosures);
+
+		$this->set(compact('profiles', 'people', 'enclosures'));
+	}
 }

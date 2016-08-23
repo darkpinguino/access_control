@@ -46,6 +46,16 @@ class CompaniesTable extends Table
         $this->hasMany('People', [
             'foreignKey' => 'company_id'
         ]);
+
+        $this->belongsToMany('People', [
+            'through' => 'CompanyPeople'
+            // 'foreignKey' => 'company_id',
+            // 'targetForeignKey' => 'people_id',
+        ]);
+        
+        $this->hasMany('Users', [
+            'foreignKey' => 'company_id'
+        ]);
         $this->hasMany('SensorData', [
             'foreignKey' => 'company_id'
         ]);

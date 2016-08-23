@@ -7,10 +7,8 @@ $(document).ready(function () {
 	$("#notexpire").change(function () {
 		if ($(this).is(":checked")) {
 			$("#expiration").prop('disabled', true);
-			console.log("check");
 		} else {
 			$("#expiration").prop('disabled', false);
-			console.log("no check");
 		}
 	})
 });

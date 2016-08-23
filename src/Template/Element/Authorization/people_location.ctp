@@ -1,4 +1,4 @@
-<?= $this->element('tableHeader', ['title' => 'Perosonas'])?>
+<?= $this->element('tableHeader', ['title' => 'Personas'])?>
 <div class="box-body">
 	<div class="row">
 		<div class="col-md-6">

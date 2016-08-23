@@ -66,15 +66,18 @@ class DoorsController extends AppController
         $door = $this->Doors->newEntity();
         if ($this->request->is('post')) {
             $door = $this->Doors->patchEntity($door, $this->request->data);
+            $door->company_id = $this->Auth->user()['company_id'];
             if ($this->Doors->save($door)) {
-                $this->Flash->success(__('The door has been saved.'));
+                $this->Flash->success(__('La puerta ha sido gurdada.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The door could not be saved. Please, try again.'));
+                $this->Flash->error(__('La puerta no ha podido ser gurdada. Por favor, intente nuevamente.'));
             }
         }
-        $companies = $this->Doors->Companies->find('list', ['limit' => 200]);
-        $this->set(compact('door', 'companies'));
+        $enclosures = $this->Doors->Enclosures->find(['list']);
+
+        // debug($enclosures->toArray()); die;
+        $this->set(compact('door', 'enclosures'));
         $this->set('_serialize', ['door']);
     }
 
@@ -99,7 +102,7 @@ class DoorsController extends AppController
                 $this->Flash->error(__('The door could not be saved. Please, try again.'));
             }
         }
-        $companies = $this->Doors->Companies->find('list', ['limit' => 200]);
+        $companies = $this->Doors->Companies->find('list');
         $this->set(compact('door', 'companies'));
         $this->set('_serialize', ['door']);
     }

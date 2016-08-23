@@ -36,7 +36,7 @@ class VehicleAccessRequestTable extends Table
             'foreignKey' => 'vehicle_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('AccessRequests', [
+        $this->belongsTo('AccessRequest', [
             'foreignKey' => 'access_request_id',
             'joinType' => 'INNER'
         ]);
@@ -67,7 +67,7 @@ class VehicleAccessRequestTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['vehicle_id'], 'Vehicles'));
-        $rules->add($rules->existsIn(['access_request_id'], 'AccessRequests'));
+        $rules->add($rules->existsIn(['access_request_id'], 'AccessRequest'));
         return $rules;
     }
 }

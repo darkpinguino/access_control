@@ -11,15 +11,15 @@
             <td><?= h($vehicle->number_plate) ?></td>
 	        </tr>
 	        <tr>
-            <th><?= __('Empresa') ?></th>
-            <td><?= $vehicle->has('company') ? $this->Html->link($vehicle->company->name, ['controller' => 'Companies', 'action' => 'view', $vehicle->company->id]) : '' ?></td>
-	        </tr>
-	        <tr>
             <th><?= __('ID') ?></th>
             <td><?= h($vehicle->id) ?></td>
 	        </tr>
 	        <tr>
-            <th><?= __('Empresa') ?></th>
+            <th><?= __('Tipo') ?></th>
+            <td><?= h($vehicle->vehicle_type->type) ?></td>
+	        </tr>
+	        <tr>
+            <th><?= __('Creado') ?></th>
             <td><?= h($vehicle->created) ?></td>
 	        </tr>
 	        <tr>
