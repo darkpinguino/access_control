@@ -23,6 +23,7 @@ class DoorsController extends AppController
      */
     public function index()
     {   
+        debug($this->request->data); die;
         $doors = $this->paginate($this->Doors);
 
         $this->set(compact('doors'));

@@ -1,7 +1,4 @@
-var passengerRut = '\
-		<div class="form-group" text="">\
-			<input class="form-control" name="rut" id="rut" type="text">\
-		</div>';
+var passengerCount = 0;
 
 $(document).ready(function () {
 	$(document).on("click", ".authorization", function () {
@@ -32,19 +29,20 @@ $(document).ready(function () {
 			type: "GET",
 			success: function (result, status, xhr) {
 				$(".modal-body").html(result);
+				$("#actual-state-modal").modal();
 			}
 		});
 
-		$("#actual-state-modal").modal();
 	});
 
 	$("#passenger").on('click', function () {
 		if ($(this).is(':checked')) {
+			passengerCount = 0;
 			$("#passenger-form").empty();
 			$("#passenger-form").html(
 				'<label for="rut">Rut Pasajeros</label>\
 				<div id="passenger-rut-wrapper">' +
-					passengerRut +
+					passengerRut(passengerCount) +
 				'</div>\
 				<div class="btn-group pull-right">\
 					<button id=plus-passenger type="button" class="btn btn-success">\
@@ -61,10 +59,44 @@ $(document).ready(function () {
 	});
 
 	$(document).on('click', '#plus-passenger', function () {
-		$("#passenger-rut-wrapper").append(passengerRut);
+		passengerCount++;
+		$("#passenger-rut-wrapper").append(passengerRut(passengerCount));
 	});
 
 	$(document).on('click', '#less-passenger', function () {
-		$("#passenger-rut-wrapper div:last").remove();
-	})
+		if (passengerCount > 0){
+			passengerCount--;
+			$("#passenger-rut-wrapper div:last").remove();
+		}
+	});
+
+	insideAlert();
+
+	setInterval(insideAlert, 1000*60);
 });
+
+function passengerRut(count) {
+	return '\
+		<div class="form-group" text="">\
+			<input class="form-control" name="passanger' + count +
+				'-rut" id="passanger' + count + '-rut" type="text">\
+		</div>';
+}
+
+function insideAlert() {
+	$.ajax({
+		url: "insideAlert",
+		type: "GET",
+		success: function (result, status, xhr) {
+			if (result) {
+				$(".modal-body").html(result);
+				if (!($("#inside-alert-modal").data('bs.modal') || {}).isShown) {
+					$("#inside-alert-modal").modal();
+				}
+			} else {
+				$("#inside-alert-modal").modal('hide');
+			}
+		}
+	});
+
+}

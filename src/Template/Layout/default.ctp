@@ -33,9 +33,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   <!-- Bootstrap 3.3.5 -->
   <?= $this->Html->css('bootstrap/bootstrap.min', ['block' => true]) ?>
   <!-- Font Awesome -->
-  <?= $this->Html->css('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', ['block' => true]) ?>
-  <!-- Ionicons -->
-  <?= $this->Html->css('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css', ['block' => true])?>
+  <?= $this->Html->css('font-awesome/font-awesome.min', ['block' => true]) ?>  
   <!-- bootstrap datepicker -->
   <?= $this->Html->css('plugins/datepicker/datepicker3', ['block' => true])?>
   <!-- Theme style -->
@@ -43,6 +41,8 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <?= $this->Html->css('adminLTE/skins/_all-skins.min', ['block' => true]) ?>
+  <!-- Colored Modal Headings -->
+  <?= $this->Html->css('custom') ?>
 
   <!-- jQuery 2.1.4 -->
   <?= $this->Html->script('plugins/jQuery/jQuery-2.1.4.min', ['block' => true]) ?>

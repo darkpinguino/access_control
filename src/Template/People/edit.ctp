@@ -1,19 +1,36 @@
 <?= $this->Html->script('people/edit.js', ['block' => 'scriptView']); ?>
-<?php $status = $this->request->query('status');?>
+<?php 
+	$status = $this->request->query('status');
+	$driver = $this->request->query('driver');
+?>
 
 <div class="box">
 		<div class="box-header">
 				<h3 class="box-title">
-				<?=
-					strcmp($status, 'pending') ? 'Editar Persona' : 'Completar datos Persona';
-					
-				?></h3>
+				<?php 
+					if (strcmp($status, 'pending') == 0) {
+						if (strcmp($driver, 'driver') == 0) {
+							$title = 'Completar datos Conductor';
+						} elseif (strcmp($driver, 'passanger') == 0) {
+							$title = 'Completar datos Pasajero';
+						} else {
+							$title = 'Completar datos Persona';
+						}
+					} else {
+						$title = 'Editar Persona';
+					}
+
+					echo $title;
+				?>
+				</h3>
 		</div>
 	<?= $this->Form->create($person) ?>
 	<div class="box-body">
 			<fieldset>
 				<?php
-					echo strcmp($status, 'pending') ? $this->Form->input('rut') : '';
+					if (strcmp($status, 'pending') or strcmp($driver, 'driver')) {
+						echo $this->Form->input('rut');
+					}
 					echo $this->Form->input('name', ['label' => 'Nombre']);
 					echo $this->Form->input('lastname', ['label' => 'Apellido']);
 					echo $this->Form->input('phone', ['label' => 'Telefono']);
@@ -35,7 +52,12 @@
 			</fieldset>
 	</div>
 	<div class="box-footer">
-			<?= $this->Form->button(__('Guardar')) ?>
+		<?= $this->Form->button('Guardar') ?>
+		<?php
+			if (strcmp($driver, '')) {
+				echo $this->Form->button('Agregar Pasajero');
+			}
+		?>
 	</div>
 	<?= $this->Form->end() ?>
 </div>

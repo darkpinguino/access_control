@@ -4,6 +4,7 @@
 use App\Controller\AppController;
 use Cake\Event\Event;
 use Cake\I18n\Date;
+use Cake\I18n\Time;
 
  /**
  * 
@@ -24,6 +25,9 @@ use Cake\I18n\Date;
       $this->loadModel('VehicleTypes');
 
       $door_id = $this->Auth->user()['doorCharge_id'];
+
+      // $this->redirect(['controller' => 'Doors', 'action' => 'index', $this->request->data]);
+      // debug($this->request->data); die;
 
       if ($this->request->is(['patch', 'post', 'put'])) {
       	$this->accessControl();
@@ -65,24 +69,45 @@ use Cake\I18n\Date;
 
       $this->set('people_locations', $people_locations);
       $this->render('/Element/Authorization/actual_state');
+
+      // debug($people_locations); die;
     }
 
     public function view()
     {
-      $company_id = $this->Auth->user()['company_id'];
+      $this->viewBuilder()->options([
+        'pdfConfing' => [
+          'filename' => 'prueba_pdf.pdf'
+        ]
+      ]);
 
-      $people_locations = $this->getPeopleLocation($company_id);
+    }
 
-      // $this->set($people_locations, 'people_locations');
-      $this->viewBuilder()->layout('excel');
-      // $this->response->type('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    public function insideAlert()
+    {
+      if (1) {
+        $this->loadModel('PeopleLocations');
+
+        $company_id = $this->Auth->user()['company_id'];
+
+        $people_locations = $this->getPeopleLocationInsideAlert($company_id);
+
+        if (!empty($people_locations)) {
+          $this->set('people_locations', $people_locations);
+          $this->render('/Element/Authorization/actual_state');
+        } else {
+          $this->render(false);
+        }
+      }
+
+      // debug($people_locations); die;
     }
 
     private function getPeopleLocation($company_id)
     {
-      $this->loadModel('Doors');
+      $this->loadModel('PeopleLocations');
 
-      $people_locations = $this->Doors->Enclosures->PeopleLocations->find()
+      $people_locations = $this->PeopleLocations->find()
         ->contain([
           'People.CompanyPeople.Profiles' => function ($q) use ($company_id)
           {
@@ -100,12 +125,36 @@ use Cake\I18n\Date;
       return $people_locations;
     }
 
+    private function getPeopleLocationInsideAlert($company_id)
+    {
+      $this->loadModel('PeopleLocations');
+
+      $actualTime = new time('-1 minute');
+
+      $people_locations = $this->PeopleLocations->find()->
+        where(['PeopleLocations.created <' => $actualTime])->
+        matching('Enclosures', function ($q) use ($company_id)
+        {
+          return $q->where(['Enclosures.company_id' => $company_id]);
+      })->contain([
+        'People.CompanyPeople.Profiles' => function ($q) use ($company_id)
+        {
+          return $q->where(['CompanyPeople.company_id' => $company_id]);
+        },
+        'Enclosures'
+      ])->toArray();
+
+      return $people_locations;
+    }
+
    	private function accessControl()
    	{
    		$this->loadModel('AccessRequest');
       $this->loadModel('PeopleLocations');
 
       $rut = $this->request->data('rut');
+      $number_plate = $this->request->data('number_plate');
+      $driver =  $this->request->data('driver');
       $door_id = $this->Auth->user()['doorCharge_id'];
 
       $door = $this->Doors
@@ -118,7 +167,13 @@ use Cake\I18n\Date;
       $access_request = '';
 
       if (is_null($person)) {
-        return $this->newPerson($person, $rut, $door);
+        $person = $this->newPerson($person, $rut, $door);
+
+        if (!is_null($this->request->data('vehicle'))) {
+          $vehicle = $this->newVehicle($number_plate);
+          return $this->vehicleAuthorizationRequest($vehicle, $driver, $person, $door);
+        }
+        return $this->authorizationRequest($person, $door);
       }
 
       $isInside = $this->isInside($person, $door);
@@ -141,20 +196,36 @@ use Cake\I18n\Date;
       } elseif (!$isInside) {
         $expiredRole = $this->isExpiredRole($person);
 
-        if ($expiredRole) {
+        if ($expiredRole) { // expiracion del rol para entrada
 
           if ($person->profile_id != 2) {
-            $this->authorizationRequest($person, $door);
+            if (!is_null($this->request->data('vehicle'))) {
+              $this->vehicleAuthorizationRequest($vehicle, $driver, $person, $door);
+            } else {
+              $this->authorizationRequest($person, $door);
+            }
           }
 
           $access_request = $this->saveAccessRequest($person->id, $door->id, 3);
+
+          if (!is_null($this->request->data('vehicle'))) {
+            $vehicle = $this->newVehicle($number_plate);
+            $this->saveVehicleAccessRequest($vehicle, $access_request, $driver);
+          }
+
           if (!$this->request->is('ajax')) 
             $this->Flash->error("No se autoriza el ingreso, la fecha de ingreso expiro");
-        } else {
+        } else { //verificar atorizacion para la entrada
           $authorizedPerson = $this->isAuthorizedPerson($person, $door);
 
           if ($authorizedPerson) {
             $access_request = $this->saveAccessRequest($person->id, $door->id, 1);
+            if (!is_null($this->request->data('vehicle'))) {
+              $vehicle = $this->newVehicle($number_plate);
+              $this->saveVehicleAccessRequest($vehicle, $access_request, $driver);
+
+              //save vehicleLocation
+            }
             $this->savePeopleLocation($person, $door);
             if (!$this->request->is('ajax'))
               $this->Flash->success("Se autoriza el ingreso");
@@ -170,29 +241,29 @@ use Cake\I18n\Date;
               $this->Flash->error("No se autoriza el ingreso, ya se registro un ingreso");
       }
 
-      if (!is_null($this->request->data('vehicle'))) {
-        $number_plate = $this->request->data('number_plate');
-        $vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->findByNumberPlate($number_plate)->first();
+      // if (!is_null($this->request->data('vehicle'))) {
+      //   $number_plate = $this->request->data('number_plate');
+      //   $vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->findByNumberPlate($number_plate)->first();
 
-        if (is_null($vehicle)) {
-          $vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->newEntity();
-          $vehicle->number_plate = $number_plate;
+      //   if (is_null($vehicle)) {
+      //     $vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->newEntity();
+      //     $vehicle->number_plate = $number_plate;
 
-          if ($this->AccessRequest->VehicleAccessRequest->Vehicles->save($vehicle)) {
-            # code...
-          }
-        }
+      //     if ($this->AccessRequest->VehicleAccessRequest->Vehicles->save($vehicle)) {
+      //       # code...
+      //     }
+      //   }
 
-        $vehicle_access_request = $this->AccessRequest->VehicleAccessRequest->newEntity();
-        $vehicle_access_request->vehicle = $vehicle;
-        $vehicle_access_request->access_request = $access_request;
+      //   $vehicle_access_request = $this->AccessRequest->VehicleAccessRequest->newEntity();
+      //   $vehicle_access_request->vehicle = $vehicle;
+      //   $vehicle_access_request->access_request = $access_request;
 
-        if ($this->AccessRequest->VehicleAccessRequest->save($vehicle_access_request)) {
+      //   if ($this->AccessRequest->VehicleAccessRequest->save($vehicle_access_request)) {
           
-        }
+      //   }
 
         // debug($access_request); die;
-      }
+      // }
    	}
 
     private function newPerson($person, $rut, $door)
@@ -202,8 +273,26 @@ use Cake\I18n\Date;
       $person->company_id = $this->Auth->user()['company_id']; 
       $this->People->save($person);
 
-      $this->authorizationRequest($person, $door);
+      return $person;
 
+      // $this->authorizationRequest($person, $door);
+
+    }
+
+    private function newVehicle($number_plate)
+    {
+      $vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->findByNumberPlate($number_plate)->first();
+
+      if (is_null($vehicle)) {
+        $vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->newEntity();
+        $vehicle->number_plate = $number_plate;
+
+        if ($this->AccessRequest->VehicleAccessRequest->Vehicles->save($vehicle)) {
+          # code...
+        }
+      }
+
+      return $vehicle;
     }
 
     private function authorizationRequest($person, $door)
@@ -220,6 +309,22 @@ use Cake\I18n\Date;
         'action' => 'edit',
         $person->id,
         '?' => ['status' => 'pending']
+      ]);
+    }
+
+    private function vehicleAuthorizationRequest($vehicle, $driver, $person, $door)
+    {
+      $accessRequest = $this->saveAccessRequest($person->id, $door->id, 2);
+      $this->saveVehicleAccessRequest($vehicle, $accessRequest, $driver);
+
+      return $this->redirect([
+        'controller' => 'people',
+        'action' => 'edit',
+        $person->id,
+        '?' => [
+          'status' => 'pending',
+          'driver' => 'driver'
+          ]
       ]);
     }
 
@@ -318,6 +423,20 @@ use Cake\I18n\Date;
 
       return $accessRequest;
    	}
+
+    private function saveVehicleAccessRequest($vehicle, $access_request, $driver)
+    {
+      $this->loadModel('Vehicles');
+      $this->loadModel('VehicleAccessRequest');
+
+      $vehicleAccessRequest = $this->AccessRequest->newEntity();
+      $vehicleAccessRequest->vehicle_id = $vehicle->id;
+      $vehicleAccessRequest->access_request_id = $access_request->id;
+      $vehicleAccessRequest->driver = $driver;
+      $this->VehicleAccessRequest->save($vehicleAccessRequest);
+
+      return $vehicleAccessRequest;
+    }
 
    	public function registerPeopleLocation($person, $door, $acction)
    	{

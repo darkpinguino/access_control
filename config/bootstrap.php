@@ -182,23 +182,23 @@ Request::addDetector('tablet', function ($request) {
 
 Plugin::load('Migrations');
 
-Plugin::load('CakeExcel', ['bootstrap' => true, 'routes' => true]);
+// Plugin::load('CakeExcel', ['bootstrap' => true, 'routes' => true]);
 
-// Plugin::load('CakePdf', ['bootstrap' => true, 'routes' => true]);
+Plugin::load('CakePdf', ['bootstrap' => true, 'routes' => true]);
 
-// Configure::write('CakePdf', [
-// 	'engine' => [
-// 		'className' => 'CakePdf.WkHtmlToPdf',
-// 		'binary' => '/usr/local/bin/wkhtmltopdf', // Si estas en Mac OS X / Linux
-// 		// 'binary' => 'C:\\Progra~1\\wkhtmltopdf\\bin\\wkhtmltopdf.exe',
-// 		'options' => [
-// 			'print-media-type' => false,
-// 			'outline' => true,
-// 			'dpi' => 96
-// 		],
-// 	],
-// 	'download' => true
-// ]);
+Configure::write('CakePdf', [
+	'engine' => [
+		'className' => 'CakePdf.WkHtmlToPdf',
+		'binary' => '/usr/bin/wkhtmltopdf', // Si estas en Mac OS X / Linux
+		// 'binary' => 'C:\\Progra~1\\wkhtmltopdf\\bin\\wkhtmltopdf.exe',
+		'options' => [
+			'print-media-type' => false,
+			'outline' => true,
+			'dpi' => 96
+		],
+	],
+	'download' => true
+]);
 
 // Only try to load DebugKit in development mode
 // Debug Kit should not be installed on a production system

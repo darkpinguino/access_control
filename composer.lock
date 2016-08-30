@@ -393,16 +393,16 @@
         },
         {
             "name": "friendsofcake/cakepdf",
-            "version": "3.2.0",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfCake/CakePdf.git",
-                "reference": "d112b1cac8173b46d10286dcfb037234b1e94b3b"
+                "reference": "edc55dc2dabbd94340584f7238062bfbf2e43d39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfCake/CakePdf/zipball/d112b1cac8173b46d10286dcfb037234b1e94b3b",
-                "reference": "d112b1cac8173b46d10286dcfb037234b1e94b3b",
+                "url": "https://api.github.com/repos/FriendsOfCake/CakePdf/zipball/edc55dc2dabbd94340584f7238062bfbf2e43d39",
+                "reference": "edc55dc2dabbd94340584f7238062bfbf2e43d39",
                 "shasum": ""
             },
             "require": {
@@ -432,7 +432,7 @@
             ],
             "description": "CakePHP plugin for creating and/or rendering Pdfs, several Pdf engines supported.",
             "homepage": "http://github.com/friendsofcake/CakePdf",
-            "time": "2016-04-14 17:55:53"
+            "time": "2016-08-22 21:51:12"
         },
         {
             "name": "mobiledetect/mobiledetectlib",

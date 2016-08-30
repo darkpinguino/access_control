@@ -40,7 +40,9 @@ use Cake\Routing\Router;
  * `:action` markers.
  *
  */
-Router::extensions('xlsx');
+// Router::extensions('xlsx');
+
+Router::extensions(['pdf']);
 
 Router::defaultRouteClass('DashedRoute');
 
