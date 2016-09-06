@@ -4,7 +4,7 @@
 <section class="sidebar">
   <!-- sidebar menu: : style can be found in sidebar.less -->
   <ul class="sidebar-menu">
-    <li class="header">MAIN NAVIGATION</li>
+    <li class="header">Navegación Principal</li>
     <?= '<li class="treeview'. (strcmp($controller, 'Companies') ? '' : ' active').'">' ?> 
       <a href="#">
         <i class="fa fa-industry"></i> <span>Empresas</span> <i class="fa fa-angle-left pull-right"></i>
@@ -180,7 +180,7 @@
         </li>
       </ul>
     </li>
-    <?= '<li class="treeview'. ((strcmp($controller, 'AccessRequest')) and (strcmp($controller, 'VehicleAccessRequest')) ? '' : ' active').'">' ?>
+    <?= '<li class="treeview'. ((strcmp($controller, 'AccessRequest') and strcmp($controller, 'VehicleAccessRequest')) ? '' : ' active').'">' ?>
       <a href="#">
         <i class="fa fa-share"></i> <span>Peticiones de acceso</span> <i class="fa fa-angle-left pull-right"></i>
       </a>

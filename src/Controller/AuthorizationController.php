@@ -73,13 +73,24 @@ use Cake\I18n\Time;
       // debug($people_locations); die;
     }
 
-    public function view()
+    public function exportActualState()
     {
-      $this->viewBuilder()->options([
-        'pdfConfing' => [
-          'filename' => 'prueba_pdf.pdf'
-        ]
-      ]);
+      // $this->viewBuilder()->layout('pdf/default');
+      $time = new Time();
+      // $time = $time->toString();
+
+      // $this->viewBuilder()->options([
+      //   'pdfConfing' => [
+      //     'filename' => 'estado_actual.pdf'
+      //   ]
+      // ]);
+
+      $company_id = $this->Auth->user()['company_id'];
+
+      $people_locations = $this->getPeopleLocation($company_id);
+
+      $this->set('people_locations', $people_locations);
+      $this->set('time', $time);
 
     }
 

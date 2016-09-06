@@ -41,7 +41,6 @@ use Cake\Routing\Router;
  *
  */
 // Router::extensions('xlsx');
-
 Router::extensions(['pdf']);
 
 Router::defaultRouteClass('DashedRoute');
@@ -77,6 +76,13 @@ Router::scope('/', function (RouteBuilder $routes) {
      */
     $routes->fallbacks('DashedRoute');
 });
+
+
+// Router::scope('/authorization', function ($routes) {
+//     $routes->extensions('pdf');
+//     $routes->connect('/exportActualState/*', ['controller' => 'Authorization', 'action' => 'exportActualState']);
+//     $routes->fallbacks('InflectedRoute');
+// });
 
 /**
  * Load all plugin routes.  See the Plugin documentation on

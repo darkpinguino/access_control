@@ -42,7 +42,8 @@
 		?>
 	</div>
 	<div class="box-footer">
-		<?= $this->Form->button("Generar Reporte", ['type' => 'submit', 'class' => 'btn btn-primary']) ?>
+		<?= $this->Form->button("Generar Reporte", ['name' => 'submit', 'value' => 'generate', 'type' => 'submit', 'class' => 'btn btn-primary']) ?>
+		<?= $this->Form->button("Exportar Reporte", ['name' => 'submit', 'value' => 'export', 'type' => 'submit', 'class' => 'btn btn-primary']) ?>
 		<?= $this->Form->end() ?>
 	</div>
 </div>

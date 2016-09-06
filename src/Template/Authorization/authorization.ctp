@@ -104,7 +104,7 @@
 	  </div>
 	  <div class="modal-footer">
 		<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
-		<?= $this->Html->link(__('Export to excel'), ['action' => 'view', '_ext' => 'xlsx'], ['class' => 'btn btn-primary']); ?>
+		<?= $this->Html->link(__('Exportar'), ['action' => 'exportActualState', '_ext' => 'pdf'], ['class' => 'btn btn-primary']); ?>
 	  </div>
 	</div>
   </div>

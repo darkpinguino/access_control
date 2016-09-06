@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\I18n\Date;
+use Cake\I18n\Time;
 
 /**
  * AccessRequest Controller
@@ -127,7 +128,7 @@ class AccessRequestController extends AppController
 		$this->paginate = [
 		  'contain' => ['People.AccessRolePeople']
 		];
-	
+
 		$query = $this->AccessRequest->find()
 			->distinct('AccessRequest.people_id')
 			->notMatching('People.AccessRolePeople', function ($q)
@@ -151,10 +152,25 @@ class AccessRequestController extends AppController
 
 	public function report()
 	{
-		if ($this->request->is(['patch', 'post', 'put'])) {
-			debug($this->request->data); die;
-		}
 		$company_id = $this->Auth->user()['company_id'];
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			$this->loadModel('AccessRequest');
+
+			$this->request->session()->write('requestData', $this->request->data());
+
+			if (strcmp($this->request->data('submit'), 'generate')) {
+				$export = true;
+			} else {
+				$export = false;
+			}
+
+			if ($export) {
+				$this->redirect(['controller' => 'AccessRequest', 'action' => 'exportReport.pdf']);
+			} else {
+				$this->redirect(['controller' => 'AccessRequest', 'action' => 'viewReport']);
+			}
+		}
+
 		$this->loadModel('People');
 		$this->loadModel('Enclosures');
 
@@ -163,11 +179,9 @@ class AccessRequestController extends AppController
 			{
 				return $q->where(['Companies.id' => $company_id]);
 			})->toArray();
-		// $people[0] = 'Todos';
 		ksort($people);
 
 		$profiles = $this->People->Profiles->find('list')->toArray();
-		// $profiles[0] = 'Todos';
 		ksort($profiles);
 
 		$enclosures = $this->Enclosures->find('list')
@@ -175,9 +189,104 @@ class AccessRequestController extends AppController
 			{
 				return $q->where(['Companies.id' => $company_id]);
 			})->toArray();
-		// $enclosures[0] = 'Todos';
 		ksort($enclosures);
 
 		$this->set(compact('profiles', 'people', 'enclosures'));
+	}
+
+	public function viewReport()
+	{
+		$company_id = $this->Auth->user()['company_id'];
+		$requestData = $this->request->session()->read('requestData');
+
+		$data = $this->getReportDataRequest($requestData);
+
+		$accessRequest = $this->getAccessRequest($data, $company_id);
+
+		$this->set('accessRequest', $this->paginate($accessRequest));
+	}
+
+	public function exportReport()
+	{
+		$company_id = $this->Auth->user()['company_id'];
+		$requestData = $this->request->session()->read('requestData');
+
+		$data = $this->getReportDataRequest($requestData);
+
+		$accessRequest = $this->getAccessRequest($data, $company_id);
+
+		$time = new Time();
+
+		$this->viewBuilder()->options([
+	    'pdfConfig' => [
+	      'filename' => 'Peticiones_de_acceso_'.$time.'.pdf'
+	    ]
+    ]);
+
+		$this->set('accessRequest', $accessRequest);
+		$this->set('time', $time);
+	}
+
+	private function getRangeDate($dateRange)
+	{
+		$dates = explode(' - ', $dateRange);
+
+		$dates[0] = new Date($dates[0]);
+		$dates[1] = new Date($dates[1]);
+		$dates[1]->modify('+1 day');
+
+		return $dates;
+	}
+
+	private function getAccessRequest($data, $company_id)
+	{
+		$accessRequest = $this->AccessRequest->find('all', [
+			'conditions' => [
+				'AccessRequest.created >=' => $data['dates'][0], 'AccessRequest.created <=' => $data['dates'][1]
+			],
+			'contain' => ['People', 'People.CompanyPeople.Profiles', 'Doors', 'AccessStatus'],
+			'order' => ['AccessRequest.created' => 'DESC']
+		])->
+			matching('Doors', function ($q) use ($data)
+			{
+				return $q->Where(['Doors.enclosure_id IN' => $data['enclosures_id']]);
+			})->
+			matching('People.CompanyPeople', function ($q) use ($data, $company_id)
+			{
+				return $q->where([
+					'CompanyPeople.profile_id IN' => $data['profiles_id'],
+					'CompanyPeople.company_id' => $company_id
+				]);
+			})->
+			matching('People', function ($q) use ($data)
+			{
+				return $q->where(['People.id IN' => $data['people_id']]);
+			});
+
+			return $accessRequest;
+	}
+
+	private function getReportDataRequest($data)
+	{
+		if ($data['fullRange'] == 1) {
+			$dates[0] = new date('0000-00-00');
+			$dates[1] = new date();
+			$dates[1]->modify('+1 day');
+		} else {
+			$dates = $this->getRangeDate($data['range-report']);
+		}
+		
+		$enclosures_id = $data['enclosures_id'];
+		$profiles_id = $data['profile_id'];
+		$people_id = $data['person_id'];
+
+		$dataArray = [
+			'dates' => $dates,
+			'enclosures_id' => $enclosures_id,
+			'profiles_id' => $profiles_id,
+			'people_id' => $people_id
+		];
+
+		return $dataArray;
 	}
 }

@@ -197,7 +197,8 @@ Configure::write('CakePdf', [
 			'dpi' => 96
 		],
 	],
-	'download' => true
+	'download' => true,
+	'encoding' => 'UTF-8'
 ]);
 
 // Only try to load DebugKit in development mode
@@ -219,6 +220,12 @@ DispatcherFactory::add('ControllerFactory');
  *
  * Also enable immutable time objects in the ORM.
  */
+
+Cake\I18n\Time::setToStringFormat('dd-MM-yyyy HH:mm:ss');
+Cake\I18n\FrozenTime::setToStringFormat('dd-MM-yyyy HH:mm:ss');
+Cake\I18n\Date::setToStringFormat('dd-MM-yyyy');
+Cake\I18n\FrozenDate::setToStringFormat('dd-MM-yyyy');
+
 Type::build('time')
 	->useImmutable()
 	->useLocaleParser();
