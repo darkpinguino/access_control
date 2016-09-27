@@ -32,7 +32,17 @@ $(document).ready(function () {
 				$("#actual-state-modal").modal();
 			}
 		});
+	});
 
+	$("#vehicle-actual-state").on('click', function () {
+		$.ajax({
+			url: "vehicleActualState",
+			type: "GET",
+			success: function (result, status, xhr) {
+				$(".modal-body").html(result);
+				$("#vehicle-actual-state-modal").modal();
+			}
+		});
 	});
 
 	$("#passenger").on('click', function () {
@@ -45,10 +55,10 @@ $(document).ready(function () {
 					passengerRut(passengerCount) +
 				'</div>\
 				<div class="btn-group pull-right">\
-					<button id=plus-passenger type="button" class="btn btn-success">\
+					<button id=plus-passenger type="button" class="btn btn-default">\
 						<i class="fa fa-plus"></i>\
 					</button>\
-					<button id=less-passenger type="button" class="btn btn-danger">\
+					<button id=less-passenger type="button" class="btn btn-default">\
 						<i class="fa fa-minus"></i>\
 					</button>\
 				</div>'
@@ -70,16 +80,26 @@ $(document).ready(function () {
 		}
 	});
 
+	$(document).on('click', '#notifications-menu', function () {
+		insideAlertCount();
+	});
+
+	$(document).on('click', "#notification-people", function () {
+		insideAlert();
+	});
+
 	insideAlert();
+	insideAlertCount();
 
 	setInterval(insideAlert, 1000*60);
+	setInterval(insideAlertCount, 1000*60);
 });
 
 function passengerRut(count) {
 	return '\
 		<div class="form-group" text="">\
-			<input class="form-control" name="passanger' + count +
-				'-rut" id="passanger' + count + '-rut" type="text">\
+			<input class="form-control" name="passanger-rut[' + count +
+				']" id="passanger' + count + '-rut" type="text">\
 		</div>';
 }
 
@@ -98,5 +118,43 @@ function insideAlert() {
 			}
 		}
 	});
+}
 
+function insideAlertCount() {
+	$.ajax({
+		url: "insideAlertCount",
+		type: "GET",
+		dataType: "json", 
+		success: function (result, status, xhr) {
+			populeteNotification(result['countPeople'])
+		}
+	});
+}
+
+function populeteNotification(countPeople) {
+	$("#notifications-count").remove();
+	$("#notifications-dropdown").empty();
+	if (countPeople > 0) {
+		var message = '';
+		$("#notifications-menu").append(
+			'<span id="notifications-count" class="label label-danger">' + countPeople + '</span>'
+		);
+
+		if (countPeople == 1) {
+			message = ' Persona excedida ';
+		} else {
+			message = ' Personas excedidas ';
+		}
+
+		$("#notifications-dropdown").html(
+							'<li>\
+	              <ul class="menu">\
+	                <li>\
+	                  <a id="notification-people" href="#">\
+	                    <i class="fa fa-users text-red"></i> <span>' + countPeople + message + 'en tiempo</span>\
+	                  </a>\
+	                </li>\
+	              </ul>\
+	            </li>');
+	}
 }

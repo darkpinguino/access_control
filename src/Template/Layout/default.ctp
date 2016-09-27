@@ -82,6 +82,18 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   		  </a>
   		  <div class="navbar-custom-menu">
   		    <ul class="nav navbar-nav">
+
+          <?php $controller = $this->request->params['controller']; 
+            if (!strcmp($controller, 'Authorization')) {
+            echo '<li class="dropdown notifications-menu">
+            <a id="notifications-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+            </a>
+            <ul id="notifications-dropdown" class="dropdown-menu">
+            </ul>
+              </li>';
+            }
+          ?>
   		      <!-- User Account: style can be found in dropdown.less -->
   		      <li class="dropdown user-menu">
   		        <a href="#" class="dropdown-toggle" data-toggle="dropdown">

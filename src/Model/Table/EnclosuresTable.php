@@ -15,60 +15,64 @@ use Cake\Validation\Validator;
 class EnclosuresTable extends Table
 {
 
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
-    public function initialize(array $config)
-    {
-        parent::initialize($config);
+	/**
+	 * Initialize method
+	 *
+	 * @param array $config The configuration for the Table.
+	 * @return void
+	 */
+	public function initialize(array $config)
+	{
+		parent::initialize($config);
 
-        $this->table('enclosures');
-        $this->displayField('name');
-        $this->primaryKey('id');
+		$this->table('enclosures');
+		$this->displayField('name');
+		$this->primaryKey('id');
 
-        $this->addBehavior('Timestamp');
+		$this->addBehavior('Timestamp');
 
-        $this->belongsTo('Companies', [
-            'foreignKey' => 'company_id',
-            'joinType' => 'INNER'
-        ]);
+		$this->belongsTo('Companies', [
+			'foreignKey' => 'company_id',
+			'joinType' => 'INNER'
+		]);
 
-        $this->hasMany('PeopleLocations', [
-            'foreignKey' => 'enclosure_id'
-        ]);
-        
-        $this->hasMany('Doors', [
-            'foreignKey' => 'enclosure_id'
-        ]);
-    }
+		$this->hasMany('PeopleLocations', [
+			'foreignKey' => 'enclosure_id'
+		]);
+		
+		$this->hasMany('Doors', [
+			'foreignKey' => 'enclosure_id'
+		]);
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator)
-    {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
+		$this->hasMany('VehicleLocations', [
+			'foreignKey' => 'enclosure_id'
+		]);
+	}
 
-        $validator
-            ->requirePresence('name', 'create')
-            ->notEmpty('name');
+	/**
+	 * Default validation rules.
+	 *
+	 * @param \Cake\Validation\Validator $validator Validator instance.
+	 * @return \Cake\Validation\Validator
+	 */
+	public function validationDefault(Validator $validator)
+	{
+		$validator
+			->integer('id')
+			->allowEmpty('id', 'create');
 
-        $validator
-            ->requirePresence('description', 'create')
-            ->notEmpty('description');
+		$validator
+			->requirePresence('name', 'create')
+			->notEmpty('name');
 
-        $validator
-            ->requirePresence('location', 'create')
-            ->notEmpty('location');
+		$validator
+			->requirePresence('description', 'create')
+			->notEmpty('description');
 
-        return $validator;
-    }
+		$validator
+			->requirePresence('location', 'create')
+			->notEmpty('location');
+
+		return $validator;
+	}
 }

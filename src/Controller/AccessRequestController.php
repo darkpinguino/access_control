@@ -16,7 +16,7 @@ class AccessRequestController extends AppController
 	  'limit' => 10,
 	  'contain' => ['People', 'Doors', 'AccessStatus'],
 	  'order' => [
-		'created' => 'desc']
+		'id' => 'desc']
 	];
 
 	/**
@@ -159,12 +159,6 @@ class AccessRequestController extends AppController
 			$this->request->session()->write('requestData', $this->request->data());
 
 			if (strcmp($this->request->data('submit'), 'generate')) {
-				$export = true;
-			} else {
-				$export = false;
-			}
-
-			if ($export) {
 				$this->redirect(['controller' => 'AccessRequest', 'action' => 'exportReport.pdf']);
 			} else {
 				$this->redirect(['controller' => 'AccessRequest', 'action' => 'viewReport']);

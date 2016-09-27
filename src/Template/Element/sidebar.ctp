@@ -36,7 +36,7 @@
         </li>
       </ul>
     </li>
-    <?= '<li class="treeview'. (strcmp($controller, 'Profile') ? '' : ' active').'">' ?>
+    <?= '<li class="treeview'. (strcmp($controller, 'Profiles') ? '' : ' active').'">' ?>
       <a href="#">
         <i class="fa fa-users"></i> <span>Perfiles</span> <i class="fa fa-angle-left pull-right"></i>
       </a>

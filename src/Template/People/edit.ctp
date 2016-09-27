@@ -53,11 +53,6 @@
 	</div>
 	<div class="box-footer">
 		<?= $this->Form->button('Guardar') ?>
-		<?php
-			if (strcmp($driver, '')) {
-				echo $this->Form->button('Agregar Pasajero');
-			}
-		?>
 	</div>
 	<?= $this->Form->end() ?>
 </div>

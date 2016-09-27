@@ -32,7 +32,7 @@
 			</div>
 
 			<div id="status-location" class="box">
-			  <?= $this->element('Authorization/people_location', ['peopleLocations' => $peopleLocations, 'people_out' => $people_out, 'door_id' => $door_id])?>
+			  <?= $this->element('Authorization/people_locations', ['people_locations' => $people_locations, 'people_out' => $people_out, 'door_id' => $door_id])?>
 			  <div class="box-footer clearfix">
 			  </div>
 			</div>
@@ -73,7 +73,7 @@
 								]);
 
 
-								echo $this->Form->hidden('vehicle'); 
+								echo $this->Form->hidden('vehicle', ['value' => 1]); 
 								echo $this->Form->hidden('driver', ['value' => 1]); 
 							?>
 							<div id="passenger-form">
@@ -82,10 +82,22 @@
 						</div>
 						<div class="box-footer">
 							<?= $this->Form->button('Verificar')?>
+							<?= $this->Form->button('Estado actual', [
+								'id' => 'vehicle-actual-state',
+								'class' => 'btn btn-primary pull-right', 
+								'type' => 'button',
+								'door_id' => $door_id,
+							  ]) ?>
 						</div>
 						<?= $this->Form->end()?>
 					</div>
 				</div>
+			</div>
+
+			<div id="status-location" class="box">
+			  <?= $this->element('Authorization/vehicle_locations', ['vehicles_locations' => $vehicles_locations, 'people_out' => $people_out, 'door_id' => $door_id])?>
+			  <div class="box-footer clearfix">
+			  </div>
 			</div>
 		</div>
 	</div>
@@ -105,6 +117,24 @@
 	  <div class="modal-footer">
 		<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
 		<?= $this->Html->link(__('Exportar'), ['action' => 'exportActualState', '_ext' => 'pdf'], ['class' => 'btn btn-primary']); ?>
+	  </div>
+	</div>
+  </div>
+</div>
+
+<div id="vehicle-actual-state-modal" class="modal fade">
+  <div class="modal-dialog modal-lg">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">×</span></button>
+		<h4 class="modal-title">Estado Actual</h4>
+	  </div>
+	  <div class="modal-body">
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
+		<?= $this->Html->link(__('Exportar'), ['action' => 'exportVehicleActualState', '_ext' => 'pdf'], ['class' => 'btn btn-primary']); ?>
 	  </div>
 	</div>
   </div>

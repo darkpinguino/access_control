@@ -41,11 +41,11 @@ class AppController extends Controller
 	{
 		parent::initialize();
 
-		$this->loadComponent('RequestHandler', [
-			'viewClassMap' => [
-				'xlsx' => 'CakeExcel.Excel'
-			]
-		]);
+		// $this->loadComponent('RequestHandler', [
+		// 	'viewClassMap' => [
+		// 		'xlsx' => 'CakeExcel.Excel'
+		// 	]
+		// ]);
 		$this->loadComponent('RequestHandler');
 		$this->loadComponent('Flash');
 		$this->loadComponent('Auth', [
@@ -57,7 +57,13 @@ class AppController extends Controller
 			'logoutRedirect' => [
 				'controller' => 'Users',
 				'action' => 'login'
-			]
+			],
+			'flash' => [
+				'element' => 'error_login',
+				'key' => 'auth',
+			],
+			'authError' => 'No tiene autorizacion para acceder.',
+			'loginError' => 'Nombre de usuario o contraseña incorrectos.'
 		]);
 	}
 
@@ -88,7 +94,7 @@ class AppController extends Controller
 	public function beforeFilter(Event $event)
   {
 	// $this->Auth->allow(['index', 'view', 'display']);
-	$this->Auth->allow(['display']);
+		$this->Auth->allow(['display']);
   }
 
   public function isAuthorized($user)

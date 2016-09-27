@@ -27,7 +27,7 @@ class VehiclesTable extends Table
 		parent::initialize($config);
 
 		$this->table('vehicles');
-		$this->displayField('id');
+		$this->displayField('number_plate');
 		$this->primaryKey('id');
 
 		$this->addBehavior('Timestamp');
@@ -42,7 +42,11 @@ class VehiclesTable extends Table
 			'joinType' => 'INNER'
 		]);
 		
-		$this->hasMany('VehicleAccessRequests', [
+		$this->hasMany('VehicleAccessRequest', [
+			'foreignKey' => 'vehicle_id'
+		]);
+
+		$this->hasMany('VehicleLocations', [
 			'foreignKey' => 'vehicle_id'
 		]);
 	}

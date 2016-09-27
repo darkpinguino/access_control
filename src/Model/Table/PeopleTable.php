@@ -63,6 +63,10 @@ class PeopleTable extends Table
 		$this->hasMany('AccessRolePeople', [
 			'foreignKey' => 'people_id'
 		]);
+
+		$this->hasMany('VehicleLocations', [
+			'foreignKey' => 'person_id'
+		]);
 		
 		$this->belongsToMany('AccessRoles', [
 			'foreignKey' => 'people_id',

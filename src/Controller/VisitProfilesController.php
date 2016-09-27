@@ -62,6 +62,7 @@ class VisitProfilesController extends AppController
 			}
 		}
 		$this->viewBuilder()->layout('ajax');
+		$this->loadModel('Profiles');
 		// $people = $this->VisitProfiles->People->find('list', ['limit' => 200]);
 		$company_id = $this->Auth->user()['company_id'];
 
@@ -82,6 +83,8 @@ class VisitProfilesController extends AppController
 			{
 				return $q->where(['CompanyPeople.is_visited' => 1, 'CompanyPeople.company_id' => $company_id]);
 			});
+
+		$visitProfile->maxTime = $this->Profiles->findByNameAndCompany_id('visita', $company_id)->first()->maxTime;
 
 		// debug($personToVisit); die;
 

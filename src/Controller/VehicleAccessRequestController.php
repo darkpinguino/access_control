@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\I18n\Time;
 
 /**
  * VehicleAccessRequest Controller
@@ -15,7 +16,7 @@ class VehicleAccessRequestController extends AppController
 	  'limit' => 10,
 	  'contain' => ['Vehicles', 'AccessRequest.People', 'AccessRequest.Doors', 'AccessRequest.AccessStatus'],
 	  'order' => [
-		'created' => 'desc']
+		'id' => 'desc']
 	];
 
 	/**
@@ -112,5 +113,123 @@ class VehicleAccessRequestController extends AppController
 			$this->Flash->error(__('The vehicle access request could not be deleted. Please, try again.'));
 		}
 		return $this->redirect(['action' => 'index']);
+	}
+
+	public function report()
+	{
+		$company_id = $this->Auth->user()['company_id'];
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			$this->loadModel('AccessRequest');
+
+			$this->request->session()->write('requestData', $this->request->data());
+
+			if (strcmp($this->request->data('submit'), 'generate')) {
+				$this->redirect(['controller' => 'VehicleAccessRequest', 'action' => 'exportReport.pdf']);
+			} else {
+				$this->redirect(['controller' => 'VehicleAccessRequest', 'action' => 'viewReport']);
+			}
+		}
+
+		$this->loadModel('People');
+		$this->loadModel('Enclosures');
+		$this->loadModel('Vehicles');
+
+		$people = $this->People->find('list')
+			->matching('Companies', function ($q) use ($company_id)
+			{
+				return $q->where(['Companies.id' => $company_id]);
+			})->toArray();
+		ksort($people);
+
+		$profiles = $this->People->Profiles->find('list')->toArray();
+		ksort($profiles);
+
+		$enclosures = $this->Enclosures->find('list')
+			->matching('Companies', function ($q) use ($company_id)
+			{
+				return $q->where(['Companies.id' => $company_id]);
+			})->toArray();
+		ksort($enclosures);
+
+		$vehicles = $this->Vehicles->find('list')
+			->matching('VehicleAccessRequest.AccessRequest.Doors', function ($q) use ($company_id)
+			{
+				return $q->where(['Doors.company_id' => $company_id]);
+			})->toArray();
+		ksort($vehicles);
+
+		// debug($people); debug($vehicles); die;
+
+		$this->set(compact('profiles', 'people', 'enclosures', 'vehicles'));
+	}
+
+	public function viewReport()
+	{
+		$company_id = $this->Auth->user()['company_id'];
+		$requestData = $this->request->session()->read('requestData');
+
+		$this->loadComponent('Report');
+		$data = $this->Report->getReportDataRequest($requestData);
+		// $data = $this->getReportDataRequest($requestData);
+
+		$vehicles_access_request = $this->getVehicleAccessRequest($data, $company_id);
+
+		// debug($vehicles_access_request->toArray()); die;
+
+		$this->set('vehicles_access_request', $this->paginate($vehicles_access_request));
+	}
+
+	public function exportReport()
+	{
+		$company_id = $this->Auth->user()['company_id'];
+		$request_data = $this->request->session()->read('requestData');
+
+		$this->loadComponent('Report');
+		$data = $this->Report->getReportDataRequest($request_data);
+
+		$vehicles_access_request = $this->getVehicleAccessRequest($data, $company_id);
+
+		$time = new Time();
+
+		$this->viewBuilder()->options([
+	    'pdfConfig' => [
+	      'filename' => 'Peticiones_de_acceso_Vehiculos'.$time.'.pdf'
+	    ]
+    ]);
+
+		$this->set('vehicles_access_request', $vehicles_access_request);
+		$this->set('time', $time);
+	}
+
+	private function getVehicleAccessRequest($data, $company_id)
+	{
+		$vehicles_access_request = $this->VehicleAccessRequest->find('all', [
+			'conditions' => [
+				'VehicleAccessRequest.created >=' => $data['dates'][0], 'VehicleAccessRequest.created <=' => $data['dates'][1]
+			],
+			'contain' => ['AccessRequest.People', 'AccessRequest.People.CompanyPeople.Profiles', 'AccessRequest.Doors', 'AccessRequest.AccessStatus', 'Vehicles'],
+			'order' => ['VehicleAccessRequest.created' => 'DESC']
+		])->
+			matching('AccessRequest.Doors', function ($q) use ($data)
+			{
+				return $q->Where(['Doors.enclosure_id IN' => $data['enclosures_id']]);
+			})->
+			matching('AccessRequest.People.CompanyPeople', function ($q) use ($data, $company_id)
+			{
+				return $q->where([
+					'CompanyPeople.profile_id IN' => $data['profiles_id'],
+					'CompanyPeople.company_id' => $company_id
+				]);
+			})->
+			matching('AccessRequest.People', function ($q) use ($data)
+			{
+				return $q->where(['People.id IN' => $data['people_id']]);
+			})->
+			matching('Vehicles', function ($q) use ($data)
+			{
+				return $q->where(['Vehicles.id IN' => $data['vehicle_id']]);
+			});
+
+			return $vehicles_access_request;
 	}
 }

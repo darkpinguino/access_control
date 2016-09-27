@@ -50,4 +50,17 @@ $(document).ready(function function_name() {
 	});
 	$("#person-id").multiselect('selectAll', false);
 	$("#person-id").multiselect('updateButtonText');
+
+	$("#vehicle-id").multiselect({
+		includeSelectAllOption: true,
+		enableFiltering: true,
+		enableCaseInsensitiveFiltering: true,
+		selectAllText: 'Todos',
+		filterPlaceholder: 'Patente Vehiculo',
+		nonSelectedText: 'Ninguna vehiculo seleccionado',
+		allSelectedText: 'Todos',
+		nSelectedText: ' - Vehiculos'
+	});
+	$("#vehicle-id").multiselect('selectAll', false);
+	$("#vehicle-id").multiselect('updateButtonText');
 })

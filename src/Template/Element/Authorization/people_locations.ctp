@@ -36,11 +36,11 @@
 				</tr>
 			  </thead>
 			  <tbody>
-				  <?php foreach ($peopleLocations as $location): ?>
+				  <?php foreach ($people_locations as $location): ?>
 				  <tr>
 						<td><?= h($location->person->rut)?></td>
 					  <td><?= h($location->person->name)?> &nbsp; <?= h($location->person->lastname)?></td>
-					  <td><?= h($location->person->profile->name)?></td>
+					  <td><?= h($location->person->company_people[0]->profile->name)?></td>
 					  <td><?= h($location->enclosure->name)?></td>
 					  <td>
 						<button type="button" person-rut=<?= h($location->person->rut)?>  door-id=<?= h($door_id)?>
