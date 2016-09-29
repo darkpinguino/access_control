@@ -25,7 +25,7 @@ class UserRolesTable extends Table
         parent::initialize($config);
 
         $this->table('user_roles');
-        $this->displayField('id');
+        $this->displayField('role');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');

@@ -20,7 +20,11 @@ class UsersController extends AppController
 
   public function isAuthorized($user)
 	{
-		return parent::isAuthorized($user);
+		// debug($user['id']); die;
+		if (in_array($this->request->action, ['editMin']) and $this->request->params['pass'][0] == $user['id']) {
+			return true;
+		}
+ 		return parent::isAuthorized($user);
 	}
 
   public function login()
@@ -84,12 +88,12 @@ class UsersController extends AppController
 	{
 		$user = $this->Users->newEntity();
 		if ($this->request->is('post')) {
-			$user = $this->Users->patchEntity($user, $this->request->data);
+			$user = $this->Users->patchEntity($user, $this->request->data, ['validate' => 'Passwords']);
 			if ($this->Users->save($user)) {
-				$this->Flash->success(__('The user has been saved.'));
+				$this->Flash->success(__('El usuario ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error(__('The user could not be saved. Please, try again.'));
+				$this->Flash->error(__('El usuario no ha podido ser guradado. Por favor, intente nuevamente.'));
 			}
 		}
 		$userRoles = $this->Users->UserRoles->find('list', [
@@ -115,24 +119,54 @@ class UsersController extends AppController
 		$user = $this->Users->get($id, [
 			'contain' => []
 		]);
+		unset($user->password);
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$user = $this->Users->patchEntity($user, $this->request->data);
+			$user = $this->Users->patchEntity($user, $this->request->data, ['validate' => 'editPasswords']);
+
+			if (empty($user->errors('confirm_password')) and !empty($user->new_password)) {
+				$user->password = $user->new_password;
+			}
+
 			if ($this->Users->save($user)) {
-				$this->Flash->success(__('The user has been saved.'));
+				$this->Flash->success(__('El usuario ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error(__('The user could not be saved. Please, try again.'));
+				$this->Flash->error(__('El usuario no ha podido ser guardado. Por favor, intente nuevamente.'));
 			}
 		}
-		$userRoles = $this->Users->UserRoles->find('list', [
-			'limit' => 200,
-			'keyField' => 'id',
-			'valueField' => 'role'
-		]);
+
+		$userRoles = $this->Users->UserRoles->find('list');
 		$doors = $this->Users->Doors->find('list');
-		$people = $this->Users->People->find('list', ['limit' => 200]);
+		$people = $this->Users->People->find('list');
 		$companies = $this->Users->companies->find('list');
 		$this->set(compact('user', 'userRoles', 'people', 'doors', 'companies'));
+		$this->set('_serialize', ['user']);
+	}
+
+	public function editMin($id = null)
+	{
+		$user = $this->Users->get($id, [
+			'contain' => ['People']
+		]);
+		unset($user->password);
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			$user = $this->Users->patchEntity($user, $this->request->data, ['validate' => 'editPasswords']);
+			unset($user->username);
+
+			if (empty($user->errors('confirm_password')) and !empty($user->new_password)) {
+				$user->password = $user->new_password;
+			}
+
+			if ($this->Users->save($user)) {
+				$this->Flash->success(__('El usuario ha sido guardado.'));
+				return $this->redirect(['action' => 'index']);
+				// return $this->redirect($this->referer());
+			} else {
+				$this->Flash->error(__('El usuario no ha podido ser guardado. Por favor, intente nuevamente.'));
+			}
+		}
+
+		$this->set(compact('user'));
 		$this->set('_serialize', ['user']);
 	}
 

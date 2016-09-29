@@ -74,9 +74,51 @@ class UsersTable extends Table
 
 		$validator
 			->requirePresence('password', 'create')
-			->notEmpty('password');
+			->notEmpty('password', 'create');
+
+		$validator
+			->requirePresence('confirm_password', 'create')
+			->notEmpty('confirm_password', 'create')
+			->allowEmpty('confirm_password', 'edit');
+
+		$validator
+			->allowEmpty('new_password');
 
 		return $validator;
+	}
+
+	public function validationEditPasswords($validator)
+	{
+		$validator = $this->validationDefault($validator);
+
+    $validator->add('confirm_password', 'no-misspelling', [
+      'rule' => ['compareWith', 'new_password'],
+      'message' => 'Las contraseñas no son iguales',
+    ]);
+
+    $validator->add('new_password', 'no-misspelling', [
+      'rule' => ['compareWith', 'confirm_password'],
+      'message' => ' ',
+    ]);
+
+    return $validator;
+	}
+
+	public function validationPasswords($validator)
+	{
+		$validator = $this->validationDefault($validator);
+
+    $validator->add('confirm_password', 'no-misspelling', [
+      'rule' => ['compareWith', 'password'],
+      'message' => 'Las contraseñas no son iguales',
+    ]);
+
+    $validator->add('password', 'no-misspelling', [
+      'rule' => ['compareWith', 'confirm_password'],
+      'message' => ' ',
+    ]);
+
+    return $validator;
 	}
 
 	/**

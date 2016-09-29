@@ -105,12 +105,17 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   		          <!-- Menu Footer-->
   		          <li class="user-footer">
   		            <div >
+  		              <!-- <a href="#" class="btn btn-default btn-flat">Perfil</a> -->
+                    <?= $this->Html->link(
+                      'Perfil',
+                      '/users/editMin/'. $userAuth->id,
+                      ['class' => 'btn btn-default btn-flat']
+                    )?>
                     <?= $this->Html->link(
                       'Cerrar Sesión', 
                       '/users/logout',
-                      ['class' => 'btn btn-default btn-flat']
+                      ['class' => 'btn btn-default btn-flat pull-right']
                     )?>
-  		              <!-- <a href="#" class="btn btn-default btn-flat">Sign out</a> -->
   		            </div>
   		          </li>
   		        </ul>

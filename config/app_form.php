@@ -16,6 +16,8 @@
 						{{content}}
 					</div>
 			</div>',
-		'dateWidget' => '<input class="form-control" type="text" name="{{name}}"{{attrs}}>'
-		];
+		'dateWidget' => '<input class="form-control" type="text" name="{{name}}"{{attrs}}>',
+		'error' => '<span class="help-block">{{content}}</span>',
+		'inputContainerError' => '<div class="form-group has-error" {{type}}{{required}}>{{content}}{{error}}</div>'
+	];
  ?>
