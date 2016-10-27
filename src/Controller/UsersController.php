@@ -148,6 +148,9 @@ class UsersController extends AppController
 		$user = $this->Users->get($id, [
 			'contain' => ['People']
 		]);
+
+		// debug($this->referer()); die;
+
 		unset($user->password);
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$user = $this->Users->patchEntity($user, $this->request->data, ['validate' => 'editPasswords']);
@@ -159,13 +162,16 @@ class UsersController extends AppController
 
 			if ($this->Users->save($user)) {
 				$this->Flash->success(__('El usuario ha sido guardado.'));
-				return $this->redirect(['action' => 'index']);
-				// return $this->redirect($this->referer());
+				// return $this->redirect(['action' => 'index']);
+				$referer = $this->request->session()->read('referer');
+				$this->request->session()->delete('referer');
+				return $this->redirect($referer);
 			} else {
 				$this->Flash->error(__('El usuario no ha podido ser guardado. Por favor, intente nuevamente.'));
 			}
 		}
 
+		$this->request->session()->write('referer', $this->referer());
 		$this->set(compact('user'));
 		$this->set('_serialize', ['user']);
 	}

@@ -61,6 +61,8 @@ use Cake\I18n\Time;
 
 			$vehicles_locations = $this->getVehicleLocation($company_id);
 
+			// debug($vehicles_locations); die;
+
 			$vehicle_types = $this->VehicleTypes->find('list');
 
 			$person = $this->People->newEntity();
@@ -72,7 +74,7 @@ use Cake\I18n\Time;
 
 			if ($this->request->is('ajax')) 
 			{
-				$this->render('/Element/Authorization/people_location');
+				$this->render('/Element/Authorization/people_locations');
 			}
 		}
 
@@ -92,7 +94,7 @@ use Cake\I18n\Time;
 
 			$vehicles_locations = $this->getVehicleLocation($company_id);
 
-			$this->set('vehicle_locations', $vehicles_locations);
+			$this->set('vehicles_locations', $vehicles_locations);
 			$this->render('/Element/Authorization/vehicle_actual_state');
 
 			// debug($people_locations); die;
@@ -207,7 +209,7 @@ use Cake\I18n\Time;
 
 			$vehicles_locations = $this->VehicleLocations->find()
 				->contain([
-					'People.CompanyPeople.Profiles' => function ($q) use ($company_id)
+					'VehiclePeopleLocations.People.CompanyPeople.Profiles' => function ($q) use ($company_id)
 					{
 						return $q->where(['CompanyPeople.company_id' => $company_id]);
 					},
@@ -250,6 +252,8 @@ use Cake\I18n\Time;
 			$this->loadModel('AccessRequest');
 			$this->loadModel('PeopleLocations');
 
+			$this->loadComponent('Authorization');
+
 			$company_id = $this->Auth->user()['company_id'];
 			$vehicle_access = $this->request->session()->read('vehicle_access');
 
@@ -286,8 +290,6 @@ use Cake\I18n\Time;
 					return $q->where(['CompanyPeople.company_id' => $company_id]);
 				}])->first();
 
-			// debug($person->company_people[0]->profile_id); die;
-
 			$access_request = '';
 
 			if (is_null($person)) {
@@ -299,36 +301,66 @@ use Cake\I18n\Time;
 				return $this->authorizationRequest($person, $door);
 			}
 
-			$isInside = $this->isInside($person, $door);
-			$doorAction = $this->doorAction($person, $door, $isInside);
+			$isInside = $this->Authorization->isInside($person, $door);
+			$doorAction = $this->Authorization->doorAction($person, $door, $isInside);
 
 			if ($doorAction == 2) { //registro de salida
-				$access_request = $this->saveAccessRequest($person->id, $door->id, 1, 0);
-				$this->deletePeopleLocation($person, $door);
 
-				if (!is_null($this->request->data('vehicle'))) {
-					$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 0);
-					$this->deleteVehicleLocation($vehicle, $door);
-				}
+				$check = true;
 
-				if ($person->company_people[0]->profile_id != 2) {
-					$accessRoles = $this->People->AccessRolePeople->findByPeopleId($person->id);
+				if (!is_null($this->request->data('check'))) {
 
-						foreach ($accessRoles as $role) {
-							$role->expiration = new Date();
-							$this->People->AccessRolePeople->save($role);
-						}
-				}
-				if (!$this->request->is('ajax')) 
+					$vehicle_location = $this->People->VehicleLocations->find()
+						->where(['enclosure_id' => $door->enclosure_id])
+						->matching('VehiclePeopleLocations', function ($q) use ($person)
+						{
+							return $q->where(['VehiclePeopleLocations.person_id' => $person->id]);
+						})
+						->contain(['Vehicles', 'VehiclePeopleLocations.People'])
+						->first();
+
+					if (!is_null($vehicle_location) and count($vehicle_location->vehicle_people_locations) > 1) {
+						$active_vehicle_alert = 'alert';
+						$this->set('person_alert', $person);
+						$this->set(compact('active_vehicle_alert', 'vehicle_location'));
+						$check =  false;
+					} elseif (!is_null($vehicle_location) and count($vehicle_location->vehicle_people_locations) == 1) {
+						$active_vehicle_alert = 'restriction';
+						$this->set(compact('active_vehicle_alert', 'vehicle_location'));
+						$check =  false;
+					}
+				} 
+
+				if ($check) {
+
+					$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 1, 0);
+					$this->Authorization->deletePeopleLocation($person, $door);
+					$this->deleteVehiclePeopleLocations($person, $door);
+
+					if (!is_null($this->request->data('vehicle'))) {
+						$this->deleteVehicleLocation($person, $door, $vehicle);
+						$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 0);
+					}
+
+					if ($person->company_people[0]->profile_id != 2) {	//expirar roles de personas distintas a personal
+						$accessRoles = $this->People->AccessRolePeople->findByPeopleId($person->id);
+
+							foreach ($accessRoles as $role) {
+								$role->expiration = new Date();
+								$this->People->AccessRolePeople->save($role);
+							}
+					}
+					if (!$this->request->is('ajax')) 
 						$this->Flash->success("Salida registrada con éxito");
 
-				$this->passangerRedirect();
+					$this->passangerRedirect();
+				}
 			} elseif (!$isInside) {
-				$expiredRole = $this->isExpiredRole($person, $door);
+				$expiredRole = $this->Authorization->isExpiredRole($person, $door);
 
 				if ($expiredRole) { // expiracion del rol para entrada
 
-					$access_request = $this->saveAccessRequest($person->id, $door->id, 3, 1);
+					$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 3, 1);
 
 					if ($person->company_people[0]->profile_id != 2) {
 						if (!is_null($this->request->data('vehicle'))) {
@@ -342,7 +374,7 @@ use Cake\I18n\Time;
 					if (!$this->request->is('ajax')) 
 						$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->rut.", la fecha de ingreso expiro");
 				} else { //verificar atorizacion para la entrada
-					$authorizedPerson = $this->isAuthorizedPerson($person, $door);
+					$authorizedPerson = $this->Authorization->isAuthorizedPerson($person, $door);
 
 					if ($authorizedPerson) {
 						$pending_access_request = $this->AccessRequest->find()->
@@ -355,34 +387,30 @@ use Cake\I18n\Time;
 						  if (!is_null($vehicle_access_request_query)) {
 						  	$driver = $vehicle_access_request_query->driver;
 						  }
-						  // debug($pending_access_request);
-						  // debug($asd);
 						}
 
-						$access_request = $this->saveAccessRequest($person->id, $door->id, 1, 1);
+						$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 1, 1);
 
 						if (!is_null($this->request->data('vehicle'))) {
 							$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
 							$this->saveVehicleLocation($vehicle, $door, $person, $driver);
-
-							//save vehicleLocation
 						}
 						
-						$maxTime = $this->getMaxTime($person, $company_id);
-						$this->savePeopleLocation($person, $door, $maxTime);
+						$maxTime = $this->Authorization->getMaxTime($person, $company_id);
+						$this->Authorization->savePeopleLocation($person, $door, $maxTime);
 						if (!$this->request->is('ajax'))
 							$this->Flash->success("Se autoriza el ingreso de la persona con RUT: ".$person->rut);  //ingreso con exito
 
 						$this->passangerRedirect();
 
 					} else {
-						$access_request = $this->saveAccessRequest($person->id, $door->id, 3, 1);
+						$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 3, 1);
 						if (!$this->request->is('ajax'))
 							$this->Flash->error("No se autoriza el ingreso");
 					}
 				}
 			} else {
-				$access_request = $this->saveAccessRequest($person->id, $door->id, 3, 1);
+				$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 3, 1);
 				if (!$this->request->is('ajax'))
 							$this->Flash->error("No se autoriza el ingreso, ya se registro un ingreso");
 			}
@@ -401,29 +429,6 @@ use Cake\I18n\Time;
 			}
 		}
 
-		private function getMaxTime($person, $company_id)
-		{
-			$companyPeople = $this->People->CompanyPeople->find()->
-				where([
-					'person_id' => $person->id,
-					'CompanyPeople.company_id' => $company_id
-				])->
-				contain('Profiles')->first();
-
-			$maxTime = $companyPeople->profile->maxTime;
-
-			if (!strcmp($companyPeople->profile->name, 'Visita')) {
-				$this->loadModel('VisitProfiles');
-				$maxTime = $this->VisitProfiles->find()->
-					where([
-						'person_id' => $person->id,
-						'company_id' => $company_id
-					])->last()->maxTime;
-			}
-
-			return $maxTime;
-		}
-
 		private function newPerson($person, $rut, $door)
 		{
 			$person = $this->People->newEntity();
@@ -432,9 +437,6 @@ use Cake\I18n\Time;
 			$this->People->save($person);
 
 			return $person;
-
-			// $this->authorizationRequest($person, $door);
-
 		}
 
 		private function newVehicle($number_plate)
@@ -455,12 +457,7 @@ use Cake\I18n\Time;
 
 		private function authorizationRequest($person, $door)
 		{
-			// $accessRole =  $this->People->AccessRoles->get(-1);
-			// $accessRole->_joinData = $this->People->AccessRoles->newEntity();
-			
-			// $this->People->AccessRoles->link($person, [$accessRole]);
-
-			$this->saveAccessRequest($person->id, $door->id, 2, 1);
+			$this->Authorization->saveAccessRequest($person->id, $door->id, 2, 1);
 
 			return $this->redirect([
 				'controller' => 'people',
@@ -472,7 +469,7 @@ use Cake\I18n\Time;
 
 		private function vehicleAuthorizationRequest($vehicle, $driver, $person, $door)
 		{
-			$accessRequest = $this->saveAccessRequest($person->id, $door->id, 2, 1);
+			$accessRequest = $this->Authorization->saveAccessRequest($person->id, $door->id, 2, 1);
 			$this->saveVehicleAccessRequest($vehicle, $accessRequest, $driver, 1);
 
 			$this->request->session()->write('vehicle_access', $this->request->data());
@@ -488,133 +485,73 @@ use Cake\I18n\Time;
 			]);
 		}
 
-		private function doorAction($person, $door, $isInside)
-		{
-			switch ($door->type) {
-				case 1:
-					return 1;
-					break;
-				case 2:
-					return 2;
-					break;
-				case 3:
-					if ($isInside) {
-						return 2;
-					} else {
-						return 1;
-					}
-					break;
-				default:
-					break;
-			}
-		}
-
-		private function savePeopleLocation($person, $door, $maxTime)
-		{
-			$timeOut = new Time();
-			$timeOut->modify('+'.$maxTime.' minutes');
-
-			$personLocation = $this->People->PeopleLocations->newEntity();
-			$personLocation->people_id = $person->id;
-			$personLocation->enclosure_id = $door->enclosure_id;
-			$personLocation->timeOut = $timeOut;
-
-			$this->People->PeopleLocations->save($personLocation);
-		}
-
 		private function saveVehicleLocation($vehicle, $door, $person, $driver)
 		{
-			$vehicleLocation = $this->People->VehicleLocations->newEntity();
-			$vehicleLocation->vehicle_id = $vehicle->id;
-			$vehicleLocation->enclosure_id = $door->enclosure_id;
-			$vehicleLocation->person_id = $person->id;
-			$vehicleLocation->driver = $driver;
+			$vehicle_location = $this->People->VehicleLocations->find()->
+				where(['vehicle_id' => $vehicle->id, 'enclosure_id' => $door->enclosure_id]);
 
-			$this->People->VehicleLocations->save($vehicleLocation);
+			if ($vehicle_location->isEmpty()) {
+				$vehicle_location =  $this->People->VehicleLocations->newEntity();
+				$vehicle_location->vehicle_id = $vehicle->id;
+				$vehicle_location->enclosure_id = $door->enclosure_id;
+				$this->People->VehicleLocations->save($vehicle_location);
+			} else {
+				$vehicle_location = $vehicle_location->first();
+			}
+
+			$vehicle_people_location = $this->People->VehiclePeopleLocations->newEntity();
+			$vehicle_people_location->vehicle_location_id = $vehicle_location->id;
+			$vehicle_people_location->person_id = $person->id;
+			$vehicle_people_location->driver = $driver;
+			$this->People->VehiclePeopleLocations->save($vehicle_people_location);
+
+			// $vehicleLocation = $this->People->VehicleLocations->newEntity();
+			// $vehicleLocation->vehicle_id = $vehicle->id;
+			// $vehicleLocation->enclosure_id = $door->enclosure_id;
+			// $vehicleLocation->person_id = $person->id;
+			// $vehicleLocation->driver = $driver;
+
+			// $this->People->VehicleLocations->save($vehicleLocation);
 		}
 
-		private function deletePeopleLocation($person, $door)   
+		private function deleteVehicleLocation($person, $door, $vehicle)
 		{
-			$peopleLocation = $this->People->PeopleLocations->find()->where([
-				'people_id' => $person->id,
-				'enclosure_id' => $door->enclosure_id
-			])->first();
+			$vehicle_location = $this->People->VehicleLocations->find()
+				->where(['vehicle_id' => $vehicle->id, 'enclosure_id' => $door->enclosure_id])
+				->first();
 
-			$this->People->PeopleLocations->delete($peopleLocation);
+			if (is_null($vehicle_location)) {
+				$this->People->VehiclePeopleLocations->deleteAll([
+					'vehicle_location_id' => $vehicle_location->id
+				]);
+
+				$this->People->VehicleLocations->delete($vehicle_location);
+			}
+
+			// $this->People->VehicleLocations->deleteAll([
+			// 		'person_id' => $person->id,
+			// 		'enclosure_id' => $door->enclosure_id
+			// ], true);
 		}
 
-		private function deleteVehicleLocation($vehicle, $door)
+		private function deleteVehiclePeopleLocations($person, $door)
 		{
-			$vehicleLocation = $this->People->VehicleLocations->find()->
-				where([
-					'vehicle_id' => $vehicle->id,
-					'enclosure_id' => $door->enclosure_id
-			])->first();
+			$vehicle_location = $this->People->VehicleLocations->find()
+				->where(['enclosure_id' => $door->enclosure_id])
+				->matching('VehiclePeopleLocations', function ($q) use ($person)
+				{
+					return $q->where(['VehiclePeopleLocations.person_id' => $person->id]);
+				})
+				->first();
 
-			$this->People->vehicleLocations->delete($vehicleLocation);
+			if (!is_null($vehicle_location)) {
+				$this->People->VehiclePeopleLocations->deleteAll([
+						'person_id' => $person->id,
+						'vehicle_location_id' => $vehicle_location->id
+				]);
+			}
 		}
 		
-		private function isExpiredRole($person, $door)
-		{
-			$result = $this->People->findById($person->id)
-				->matching('AccessRoles.Doors', function ($q) use ($door)
-				{
-					return $q->where(['Doors.id' => $door->id]);
-				})
-				->matching('AccessRolePeople', function ($q)
-				{
-					return $q->where(['AccessRolePeople.expiration >' => new Date()])
-						->orWhere(['AccessRolePeople.expiration' => '0000-00-00']);
-				})->first();
-
-			if (is_null($result)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		private function isInside($person, $door)
-		{
-			$isInside = $this->People->PeopleLocations->find()->where([
-				'people_id' => $person->id,
-				'enclosure_id' => $door->enclosure_id
-			])->isEmpty();
-
-			if ($isInside) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-
-		private function isAuthorizedPerson($person, $door)
-		{
-			$result = $this->Doors->findById($door->id)->matching(
-				'AccessRoles.People', function ($q) use ($person)
-				{
-					return $q->where(['People.id' => $person->id]);
-				})->first();
-
-			if (is_null($result)) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-
-		private function saveAccessRequest($person_id, $door_id, $status_id, $action)
-		{
-			$accessRequest = $this->AccessRequest->newEntity();
-			$accessRequest->people_id = $person_id;
-			$accessRequest->door_id = $door_id;
-			$accessRequest->access_status_id = $status_id;
-			$accessRequest->action = $action;
-			$this->AccessRequest->save($accessRequest);
-
-			return $accessRequest;
-		}
-
 		private function saveVehicleAccessRequest($vehicle, $access_request, $driver, $action)
 		{
 			$this->loadModel('Vehicles');

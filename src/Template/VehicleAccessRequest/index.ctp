@@ -13,7 +13,7 @@
 					<th class="text-nowrap"><?= $this->Paginator->sort('AccessRequest.People.rut', ['label' => 'RUT']) ?></th>
 					<th class="text-nowrap"><?= $this->Paginator->sort('AccessRequest.People.name', ['label' => 'Persona']) ?></th>
 					<th class="text-nowrap"><?= $this->Paginator->sort('AccessRequest.Doors.name', ['label' => 'Puerta']) ?></th>
-					<th class="text-nowrap"><?= $this->Paginator->sort('action', ['label' => 'Accion']) ?></th>
+					<th class="text-nowrap"><?= $this->Paginator->sort('action', ['label' => 'Acción']) ?></th>
 					<th class="text-nowrap"><?= $this->Paginator->sort('AccessRequest.AccessStatus.id', ['label' => 'Estado de Acceso']) ?></th>
 					<th class="text-nowrap"><?= $this->Paginator->sort('created', ['label' => 'Creado']) ?></th>
 					<th class="text-nowrap"><?= $this->Paginator->sort('modified', ['label' => 'Modificado']) ?></th>

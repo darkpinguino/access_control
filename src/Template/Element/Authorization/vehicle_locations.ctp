@@ -6,29 +6,31 @@
 			  <thead>
 				<tr>
 					<th>Patente</th>
-				  <th>Rut Conductor</th>
-				  <th>Nombre Conductor</th>
+				  <th>Rut </th>
+				  <th>Nombre</th>
+				  <th>Conductor</th>
 				  <th>Perfil</th>
 				  <th>Reciento</th>
 				  <th><?= __('Acciones') ?></th>
 				</tr>
 			  </thead>
 			  <tbody>
-				  <?php foreach ($vehicles_locations as $location): 
-				  	if ($location->driver == 1): ?>
+				  <?php foreach ($vehicles_locations as $vehicle_location): 
+				  	foreach ($vehicle_location->vehicle_people_locations as $vehicle_people_location): ?>
 						  <tr>
-								<td><?= h($location->vehicle->number_plate) ?></td>
-								<td><?= h($location->person->rut) ?></td>
-							  <td><?= h($location->person->name)?> &nbsp; <?= h($location->person->lastname)?></td>
-							  <td><?= h($location->person->company_people[0]->profile->name)?></td>
-							  <td><?= h($location->enclosure->name)?></td>
+								<td><?= h($vehicle_location->vehicle->number_plate) ?></td>
+								<td><?= h($vehicle_people_location->person->rut) ?></td>
+							  <td><?= h($vehicle_people_location->person->name)?> &nbsp; <?= h($vehicle_people_location->person->lastname)?></td>
+							  <td><?= $this->element('driver', ['driver' => $vehicle_people_location->driver]) ?></td>
+							  <td><?= h($vehicle_people_location->person->company_people[0]->profile->name)?></td>
+							  <td><?= h($vehicle_location->enclosure->name)?></td>
 							  <td>
-								<button type="button" person-rut=<?= h($location->person->rut)?>  door-id=<?= h($door_id)?>
+								<button type="button" person-rut=<?= h($vehicle_people_location->person->rut)?>  door-id=<?= h($door_id)?>
 									acction="out" class="btn btn-xs btn-danger authorization">Retirar</button>
 							  </td>
 						  </tr>
-				  <?php endif;
-				  	endforeach; ?>
+						<?php endforeach;
+				  endforeach; ?>
 			  </tbody>
 			</table>
 		</div>

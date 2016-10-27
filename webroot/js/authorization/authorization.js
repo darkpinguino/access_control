@@ -6,21 +6,32 @@ $(document).ready(function () {
 		var door_id = $(this).attr("door-id");
 		var acction = $(this).attr("acction");
 
-
 		$.ajax({
 			url: "authorization",
-			// contentType: "application/json",
 			type: "POST",
-			// dataType: "json",
 			data: {
 				rut: rut,
 				door_id: door_id,
-				acction: acction
+				acction: acction,
+				check: 1
 			},
 			success: function (result, status, xhr) {
-				$("#status-location").html(result);
+				result = result.split('----');
+				$("#status-people-location").html(result[0]);
+				if (result.length > 1) {
+					if ($("#vehicle-alert-modal").length) {
+						$("#vehicle-alert-modal").replaceWith(result[1]);
+					} else {
+						$(".nav-tabs-custom").after(result[1]);
+					}
+					$("#vehicle-alert-modal").modal();
+				}
 			}
 		});
+	});
+
+	$(document).on("click", "#vehicle_alert_submit", function () {
+		$("#vehicle_alert_form").submit();
 	});
 
 	$("#actual-state").on('click', function () {
@@ -45,6 +56,23 @@ $(document).ready(function () {
 		});
 	});
 
+	$("#vehicle-rut").on('change', function () {
+			$.ajax({
+				url: "../VehicleAccessRequest/lastVehicle/" + $(this).val(),
+				type: "GET",
+				dataType: "json",
+				success: function (result, success, hrx) {
+					if (result['vehicleAccessRequest'] != null) {
+						$("#number-plate").val(result['vehicleAccessRequest']['vehicle']['number_plate']);
+						$("#vehicle-type").val(result['vehicleAccessRequest']['vehicle']['vehicle_type_id']);
+					} else {
+						$("#number-plate").val("");
+						$("#vehicle-type").val("");
+					}
+				}
+			})
+	})
+
 	$("#passenger").on('click', function () {
 		if ($(this).is(':checked')) {
 			passengerCount = 0;
@@ -67,6 +95,8 @@ $(document).ready(function () {
 			$("#passenger-form").empty();
 		}
 	});
+
+	$("#vehicle-alert-modal").modal();
 
 	$(document).on('click', '#plus-passenger', function () {
 		passengerCount++;
@@ -109,7 +139,7 @@ function insideAlert() {
 		type: "GET",
 		success: function (result, status, xhr) {
 			if (result) {
-				$(".modal-body").html(result);
+				$("#inside-alert-modal .modal-body").html(result);
 				if (!($("#inside-alert-modal").data('bs.modal') || {}).isShown) {
 					$("#inside-alert-modal").modal();
 				}

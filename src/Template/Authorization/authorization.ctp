@@ -15,10 +15,14 @@
 						</div>
 						<?= $this->Form->create($person) ?>
 						<div class="box-body">
-						  <?= $this->Form->input('rut', ['label' => 'Rut']) ?>
+						  <?php 
+							  echo $this->Form->input('rut', ['label' => 'Rut']);
+
+								echo $this->Form->hidden('check', ['value' => 1]); 
+							?>
 						</div>
 						  <div class="box-footer">
-							  <?= $this->Form->button(__('Verificar')) ?>
+							  <?= $this->Form->button('Verificar') ?>
 							  <?= $this->Form->button('Estado actual', [
 								'id' => 'actual-state',
 								'class' => 'btn btn-primary pull-right', 
@@ -31,7 +35,7 @@
 				</div>
 			</div>
 
-			<div id="status-location" class="box">
+			<div id="status-people-location" class="box">
 			  <?= $this->element('Authorization/people_locations', ['people_locations' => $people_locations, 'people_out' => $people_out, 'door_id' => $door_id])?>
 			  <div class="box-footer clearfix">
 			  </div>
@@ -48,8 +52,9 @@
 						<div class="box-body">
 							<?php
 								echo $this->Form->input('rut', [
+									'id' => 'vehicle-rut',
 									'label' => 'Rut',
-									'autocomplete' => 'off'
+									// 'autocomplete' => 'off'
 								]);
 							?>
 								<div class="row">
@@ -94,7 +99,7 @@
 				</div>
 			</div>
 
-			<div id="status-location" class="box">
+			<div id="status-vehicle-location" class="box">
 			  <?= $this->element('Authorization/vehicle_locations', ['vehicles_locations' => $vehicles_locations, 'people_out' => $people_out, 'door_id' => $door_id])?>
 			  <div class="box-footer clearfix">
 			  </div>
@@ -103,56 +108,18 @@
 	</div>
 </div>
 
-
-<div id="actual-state-modal" class="modal fade">
-  <div class="modal-dialog modal-lg">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		  <span aria-hidden="true">×</span></button>
-		<h4 class="modal-title">Estado Actual</h4>
-	  </div>
-	  <div class="modal-body">
-	  </div>
-	  <div class="modal-footer">
-		<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
-		<?= $this->Html->link(__('Exportar'), ['action' => 'exportActualState', '_ext' => 'pdf'], ['class' => 'btn btn-primary']); ?>
-	  </div>
-	</div>
-  </div>
+<div id="error">
+	
 </div>
 
-<div id="vehicle-actual-state-modal" class="modal fade">
-  <div class="modal-dialog modal-lg">
-	<div class="modal-content">
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		  <span aria-hidden="true">×</span></button>
-		<h4 class="modal-title">Estado Actual</h4>
-	  </div>
-	  <div class="modal-body">
-	  </div>
-	  <div class="modal-footer">
-		<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
-		<?= $this->Html->link(__('Exportar'), ['action' => 'exportVehicleActualState', '_ext' => 'pdf'], ['class' => 'btn btn-primary']); ?>
-	  </div>
-	</div>
-  </div>
-</div>
+<?= $this->element('Modal/actualState') ?>  
+<?= $this->element('Modal/vehicleActualState') ?>  
 
-<div id="inside-alert-modal" class="modal fade">
-  <div class="modal-dialog modal-lg">
-	<div class="modal-content">
-	  <div class="modal-header modal-header-danger">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		  <span aria-hidden="true">×</span></button>
-		<h4 class="modal-title">Personas que han excedido el tiempo de ingreso</h4>
-	  </div>
-	  <div class="modal-body">
-	  </div>
-	  <div class="modal-footer">
-			<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
-	  </div>
-	</div>
-  </div>
-</div>
+
+<?= $this->element('Modal/insideAlert') ?>  
+
+<?php 
+	if (isset($active_vehicle_alert)) {
+		// echo $this->element('Modal/vehicleAlert', ['person_alert' => $person_alert, 'vehicle_location' => $vehicle_location]);
+	}
+?>

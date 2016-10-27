@@ -62,7 +62,7 @@ class AppController extends Controller
 				'element' => 'error_login',
 				'key' => 'auth',
 			],
-			'authError' => 'No tiene autorizacion para acceder.',
+			'authError' => 'No tiene autorización para acceder.',
 			'loginError' => 'Nombre de usuario o contraseña incorrectos.'
 		]);
 	}

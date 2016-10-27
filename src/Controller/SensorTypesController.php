@@ -56,10 +56,10 @@ class SensorTypesController extends AppController
         if ($this->request->is('post')) {
             $sensorType = $this->SensorTypes->patchEntity($sensorType, $this->request->data);
             if ($this->SensorTypes->save($sensorType)) {
-                $this->Flash->success(__('The sensor type has been saved.'));
+                $this->Flash->success(__('El tipo de senson ha sido guardado.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The sensor type could not be saved. Please, try again.'));
+                $this->Flash->error(__('El tipo de senson no ha podido ser guradado. Por favor, intente nuevamente.'));
             }
         }
         $companies = $this->SensorTypes->Companies->find('list', ['limit' => 200]);

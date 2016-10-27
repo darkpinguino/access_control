@@ -115,6 +115,28 @@ class VehicleAccessRequestController extends AppController
 		return $this->redirect(['action' => 'index']);
 	}
 
+	public function lastVehicle($rut = null)
+	{
+		$company_id = $this->Auth->user()['company_id'];
+
+		$vehicleAccessRequest = $this->VehicleAccessRequest->find()->
+			contain(['Vehicles'])->
+			matching('AccessRequest.People', function ($q) use ($rut)
+			{
+				return $q->where(['People.rut' => $rut]);
+			})->
+			matching('AccessRequest.Doors', function ($q) use ($company_id)
+			{
+				return $q->where(['Doors.company_id' => $company_id]);
+			})->first();
+
+		// debug($vehicles_access_request); die;
+
+		$this->set(compact('vehicleAccessRequest'));
+		$this->set('_serialize', ['vehicleAccessRequest']);
+
+	}
+
 	public function report()
 	{
 		$company_id = $this->Auth->user()['company_id'];

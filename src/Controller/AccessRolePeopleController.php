@@ -73,9 +73,17 @@ class AccessRolePeopleController extends AppController
 	{
 		$accessRolePerson = $this->AccessRolePeople->newEntity();
 		if ($this->request->is('post')) {
-			$accessRolePerson = $this->AccessRolePeople->patchEntity($accessRolePerson, $this->request->data);
+			$existingAccessRolePerson = $this->AccessRolePeople->findByPeopleIdAndAccessRoleId($this->request->query('person'), $this->request->data('access_role_id'));
 
-			$accessRolePerson->people_id =  $this->request->query('person');
+			if ($existingAccessRolePerson->isEmpty()) {
+				$accessRolePerson = $this->AccessRolePeople->patchEntity($accessRolePerson, $this->request->data);
+				
+				$accessRolePerson->people_id =  $this->request->query('person');
+			} else {
+				$accessRolePerson = $existingAccessRolePerson->first();
+			}
+			
+			// debug($existingAccessRolePerson); die;
 
 			$expirationDate = new Date();
 			$expirationDate->modify('+1 day');

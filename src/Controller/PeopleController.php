@@ -41,7 +41,11 @@ class PeopleController extends AppController
 			$this->loadModel('AccessRequest');
 			$this->loadModel('Doors');
 
-			$person = $this->People->get($id);
+			try {
+				$person = $this->People->get($id);
+			} catch (\Cake\Datasource\Exception\RecordNotFoundException $e) {
+				debug($e); die;				
+			}
 
 			$accessRoles = $this->AccessRoles->find()->matching('People', 
 				function ($q) use ($person)
