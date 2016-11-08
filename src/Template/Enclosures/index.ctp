@@ -30,7 +30,7 @@
 									?>
 									<?= $this->Html->link(__('Editar'), 
 										['action' => 'edit', $enclosure->id], 
-										['class' => 'btn btn-success btn-xs']) 
+										['class' => 'btn btn-warning btn-xs']) 
 									?>
 									<?= $this->Form->postLink(__('Eliminar'), 
 										['action' => 'delete', $enclosure->id], 

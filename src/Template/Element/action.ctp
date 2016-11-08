@@ -5,7 +5,7 @@
 	?>
 	<?= $this->Html->link(__('Editar'), 
 		['action' => 'edit', $entityId], 
-		['class' => 'btn btn-success btn-xs']) 
+		['class' => 'btn btn-warning btn-xs']) 
 	?>
 	<?= $this->Form->postLink(__('Eliminar'), 
 		['action' => 'delete', $entityId], 
