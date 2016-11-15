@@ -1,5 +1,5 @@
 <div class="box">
-	<?= $this->element('tableHeader', ['title' => 'Receintos'])?>
+	<?= $this->element('tableHeader', ['title' => 'Recintos'])?>
 	<div class="box-body">
 		<table class="table table-bordered table-striped table-hover">
 			<thead>

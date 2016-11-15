@@ -28,16 +28,10 @@
   <div class="box-footer clearfix">
     <?= $this->element('paginator') ?>
   </div>
+  <div class="box-footer clearfix">
+    <?= $this->Html->link('Crear Formulario', ['action' => 'add'], ['class' => 'btn btn-info pull-left'])?>
+  </div>
 </div>
 
+        
 
-
-
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('New Form'), ['action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Companies'), ['controller' => 'Companies', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Company'), ['controller' => 'Companies', 'action' => 'add']) ?></li>
-    </ul>
-</nav>

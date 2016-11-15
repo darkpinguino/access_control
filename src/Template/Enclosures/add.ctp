@@ -1,6 +1,6 @@
 <div class="box">
     <div class="box-header">
-        <h3 class="box-title">Nuevo Reciento</h3>
+        <h3 class="box-title">Nuevo Recinto</h3>
     </div>
   <?= $this->Form->create($enclosure) ?>
   <div class="box-body">
