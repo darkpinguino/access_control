@@ -118,16 +118,42 @@ class VehicleAuthorizationsController extends AppController
 		$this->loadModel('People');
 		$this->loadModel('CompanyPeople');
 
+		$company_id = $this->Auth->user()['company_id'];
+
+			
 		if ($this->request->is('post')) {
 
-			$vehicle_authorizations = $this->VehicleAuthorizations->newEntities($this->passData($id, $this->request->data));
+			$vehicle_authorizations = $this->VehicleAuthorizations->newEntities($this->passData($id, $this->request->data('person_id')));
+
+
+			if (empty($this->request->data('person_id'))) {
+				$this->VehicleAuthorizations->deleteAll([
+					'Vehicle_id' => $id
+				]);
+			} else {
+				$this->VehicleAuthorizations->deleteAll([
+					'Vehicle_id' => $id,
+					'company_people_id NOT IN' => $this->request->data('person_id')
+				]);
+			}
+
+			// debug($this->request->data('person_id')); die;
+
 
 			$this->VehicleAuthorizations->saveMany($vehicle_authorizations);
 		}
-		
-		$company_id = $this->Auth->user()['company_id'];
 
 		$vehicle = $this->VehicleAuthorizations->Vehicles->get($id);
+
+		$vehicle_authorizations = $this->VehicleAuthorizations->find('list', [
+				'keyField' => 'company_people_id',
+				'valueField' => 'company_people_id'
+			])
+			->where(['vehicle_id' => $id])
+			->matching('CompanyPeople', function ($q) use ($company_id)
+			{
+				return $q->where(['CompanyPeople.company_id' => $company_id]);
+			})->toArray();
 
 		$people = $this->CompanyPeople->find('list', [
 			'keyField' => 'id',
@@ -138,25 +164,31 @@ class VehicleAuthorizationsController extends AppController
 			->contain(['People'])
 			->where(['company_id' => $company_id])->toArray();
 
-
-		// foreach ($people as $key => $value) {
-		// 	$people[$key] = [$value];
-		// }
-		debug($people); die;
-
-		$this->set(compact('vehicle', 'people'));
+		$this->set(compact('vehicle', 'people', 'vehicle_authorizations'));
 	}
 
 	private function passData($id_vehicle, $requestData)
 	{
 		$data = [];
 
-		if (!empty($requestData['person_id'])) {
-			foreach ($requestData['person_id'] as $CompanyPeopleId) {
+		$requestData = $this->passNewData($id_vehicle, $requestData);
+
+		if (!empty($requestData)) {
+			foreach ($requestData as $CompanyPeopleId) {
 				array_push($data, ['vehicle_id' => $id_vehicle, 'company_people_id' => $CompanyPeopleId]);
 			}
 		}
 
 		return $data;
+	}
+
+	private function passNewData($id_vehicle, $data)
+	{
+		return $this->VehicleAuthorizations->CompanyPeople->find('list')
+			->where(['CompanyPeople.id IN' => $data])
+			->notMatching('VehicleAuthorizations', function ($q) use ($data, $id_vehicle)
+			{
+				return $q->where(['company_people_id IN' => $data]);
+			})->toArray();
 	}
 }

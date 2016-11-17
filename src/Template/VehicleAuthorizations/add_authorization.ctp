@@ -22,4 +22,12 @@
 		<?= $this->Form->button('Guardar');?>
 		<?= $this->Form->end() ?>
 	</div>
+
+	<?php 
+		echo "<ul hidden id=\"vehicle_authorizations\" >";
+		foreach ($vehicle_authorizations as $key => $value) {
+			echo "<li id=\"asd_".$key."\">".$value."</li>";
+		}
+		echo "</ul>";
+	?>
 </div>
