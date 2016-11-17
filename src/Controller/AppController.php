@@ -101,7 +101,7 @@ class AppController extends Controller
 	{
 	  // Admin can access every action
 	  if (isset($user['userRole_id']) && $user['userRole_id'] == 1) {
-		return true;
+			return true;
 	  }
 
 	  // Default deny

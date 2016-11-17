@@ -44,7 +44,7 @@ $(document).ready(function function_name() {
 		enableCaseInsensitiveFiltering: true,
 		selectAllText: 'Todos',
 		filterPlaceholder: 'Nombre persona',
-		nonSelectedText: 'Ninguna persona seleccionado',
+		nonSelectedText: 'Ninguna persona seleccionada',
 		allSelectedText: 'Todos',
 		nSelectedText: ' - Personas'
 	});

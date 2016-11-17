@@ -31,3 +31,28 @@
 		</div>
 	</div>
 </div>
+
+<div class="box">
+	<?= $this->element('tableHeader', ['title' => 'Autorización'])?>
+  <div class="box-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><?= $this->Paginator->sort('company_person.person.rut', 'Rut') ?></th>
+          <th><?= $this->Paginator->sort('company_person.person.fullName', 'Nombre') ?></th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($vehicle_authorizations as $vehicle_authorization): ?>
+        <tr>
+        	<td><?= h($vehicle_authorization->company_person->person->rut)?></td>
+        	<td><?= h($vehicle_authorization->company_person->person->fullName)?></td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+  <div class="box-footer">
+  	<?= $this->element('paginator') ?>
+  </div>
+</div>

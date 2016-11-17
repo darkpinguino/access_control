@@ -5,13 +5,17 @@
   <?= $this->Form->create($vehicle) ?>
   <div class="box-body">
     <fieldset>
-        <?php
-          echo $this->Form->input('number_plate', ['label' => 'Patente']);
-          echo $this->Form->input('vehicle_type', [
-            'label' => 'tipo',
-            'options' => $vehicle_types 
-          ]);
-        ?>
+      <?php
+        echo $this->Form->input('number_plate', ['label' => 'Patente']);
+        echo $this->Form->input('vehicle_type_id', [
+          'label' => 'tipo',
+          'options' => $vehicle_types 
+        ]);
+        echo $this->Form->input('vehicle_profile', [
+          'label' => 'Perfil',
+          'options' => $vehicle_profiles
+        ]);
+      ?>
     </fieldset>
   </div>
   <div class="box-footer">
