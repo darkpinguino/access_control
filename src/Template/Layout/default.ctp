@@ -92,6 +92,20 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
             <ul id="notifications-dropdown" class="dropdown-menu">
             </ul>
               </li>';
+            echo '<li class="dropdown notifications-person">
+            <a id="notifications-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-male"></i>
+            </a>
+            <ul id="notifications-dropdown" class="dropdown-menu">
+            </ul>
+              </li>';
+            echo '<li class="dropdown notifications-car">
+            <a id="notifications-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-car"></i>
+            </a>
+            <ul id="notifications-dropdown" class="dropdown-menu">
+            </ul>
+              </li>';
             }
           ?>
   		      <!-- User Account: style can be found in dropdown.less -->

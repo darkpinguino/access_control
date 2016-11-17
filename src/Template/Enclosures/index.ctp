@@ -1,5 +1,5 @@
 <div class="box">
-	<?= $this->element('tableHeader', ['title' => 'Receintos'])?>
+	<?= $this->element('tableHeader', ['title' => 'Recintos'])?>
 	<div class="box-body">
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
@@ -30,7 +30,7 @@
 									?>
 									<?= $this->Html->link(__('Editar'), 
 										['action' => 'edit', $enclosure->id], 
-										['class' => 'btn btn-success btn-xs']) 
+										['class' => 'btn btn-warning btn-xs']) 
 									?>
 									<?= $this->Form->postLink(__('Eliminar'), 
 										['action' => 'delete', $enclosure->id], 

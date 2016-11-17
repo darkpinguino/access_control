@@ -68,6 +68,9 @@ class CompaniesTable extends Table
         $this->hasMany('Vehicles', [
             'foreignKey' => 'company_id'
         ]);
+         $this->hasMany('Forms', [
+            'foreignKey' => 'company_id'
+        ]);
     }
 
     /**

@@ -92,7 +92,21 @@
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Recintos', '/enclosures/index', ['escape' => false]) ?>
         </li>
         <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Receinto', '/enclosures/add', ['escape' => false]) ?>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Recinto', '/enclosures/add', ['escape' => false]) ?>
+        </li>
+      </ul>
+    </li>  
+        </li>
+    <?= '<li class="treeview'. (strcmp($controller, 'Forms') ? '' : ' active').'">' ?>
+      <a href="#">
+        <i class="fa fa-file-text"></i> <span>Formularios</span> <i class="fa fa-angle-left pull-right"></i>
+      </a>
+      <ul class="treeview-menu">
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Formularios', '/forms/index', ['escape' => false]) ?>
+        </li>
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Crear Nuevo Formulario', '/forms/add', ['escape' => false]) ?>
         </li>
       </ul>
     </li>  
@@ -141,16 +155,16 @@
       </a>
       <ul class="treeview-menu">
         <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Vehiculos', '/vehicles/index', ['escape' => false]) ?>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Vehículos', '/vehicles/index', ['escape' => false]) ?>
         </li>
         <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Vehiculos', '/vehicles/add', ['escape' => false]) ?>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Vehículos', '/vehicles/add', ['escape' => false]) ?>
         </li>
         <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar tipos de Vehiculos', '/vehicleTypes/index', ['escape' => false])?>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar tipos de Vehículos', '/vehicleTypes/index', ['escape' => false])?>
         </li>
         <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar tipos de Vehiculos', '/vehicleTypes/add', ['escape' => false]) ?>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar tipos de Vehículos', '/vehicleTypes/add', ['escape' => false]) ?>
         </li>
         <li>
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Autorización Vehiculos', '/vehicleAuthorizations/index', ['escape' => false]) ?>
@@ -198,7 +212,7 @@
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Peticiones de acceso', '/access-request/index', ['escape' => false]) ?>
         </li>
          <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Peticiones de acceso vehiculos', '/vehicle-access-request/index', ['escape' => false]) ?>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Peticiones de acceso vehículos', '/vehicle-access-request/index', ['escape' => false]) ?>
         </li>
         <li>
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Peticiones de acceso', '/access-request/add', ['escape' => false]) ?>
