@@ -136,10 +136,6 @@ class VehicleAuthorizationsController extends AppController
 					'company_people_id NOT IN' => $this->request->data('person_id')
 				]);
 			}
-
-			// debug($this->request->data('person_id')); die;
-
-
 			$this->VehicleAuthorizations->saveMany($vehicle_authorizations);
 		}
 
@@ -174,8 +170,8 @@ class VehicleAuthorizationsController extends AppController
 		$requestData = $this->passNewData($id_vehicle, $requestData);
 
 		if (!empty($requestData)) {
-			foreach ($requestData as $CompanyPeopleId) {
-				array_push($data, ['vehicle_id' => $id_vehicle, 'company_people_id' => $CompanyPeopleId]);
+			foreach ($requestData as $companyPeopleId) {
+				array_push($data, ['vehicle_id' => $id_vehicle, 'company_people_id' => $companyPeopleId]);
 			}
 		}
 
@@ -186,7 +182,7 @@ class VehicleAuthorizationsController extends AppController
 	{
 		return $this->VehicleAuthorizations->CompanyPeople->find('list')
 			->where(['CompanyPeople.id IN' => $data])
-			->notMatching('VehicleAuthorizations', function ($q) use ($data, $id_vehicle)
+			->notMatching('VehicleAuthorizations', function ($q) use ($data)
 			{
 				return $q->where(['company_people_id IN' => $data]);
 			})->toArray();
