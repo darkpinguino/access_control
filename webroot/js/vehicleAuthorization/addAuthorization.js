@@ -11,4 +11,13 @@ $(document).ready(function function_name() {
 	});
 	// $("#person-id").multiselect('selectAll', false);
 	$("#person-id").multiselect('updateButtonText');
+
+	var vehicle_authorizations = [];
+
+	$("#vehicle_authorizations > li").each(function () {
+		vehicle_authorizations.push($(this).text());
+	});
+
+	$("#person-id").multiselect('select', vehicle_authorizations);
+
 })
