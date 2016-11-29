@@ -11,10 +11,10 @@ use App\Controller\AppController;
 class DoorsController extends AppController
 {
 
-	public $paginate = [
-	  'limit' => 10,
-	  'contain' => ['Companies']
-	];
+	// public $paginate = [
+	//   'limit' => 10,
+	//   'contain' => ['Companies']
+	// ];
 	
 	/**
 	 * Index method
@@ -24,7 +24,14 @@ class DoorsController extends AppController
 	public function index()
 	{   
 		// debug($this->request->data); die;
+
+		$this->paginate = [
+			'contain' => ['Enclosures', 'Companies'],
+			'order' => ['Doors.id' => 'asc']
+		];
 		$doors = $this->paginate($this->Doors);
+
+		// debug($doors->toArray()); die;
 
 		$this->set(compact('doors'));
 		$this->set('_serialize', ['doors']);
@@ -75,9 +82,9 @@ class DoorsController extends AppController
 				$this->Flash->error(__('La puerta no ha podido ser gurdada. Por favor, intente nuevamente.'));
 			}
 		}
-		$enclosures = $this->Doors->Enclosures->find(['list']);
+		$enclosures = $this->Doors->Enclosures->find(['list'])->toArray();
+		// $enclosures[0] = 'Ninguno';
 
-		// debug($enclosures->toArray()); die;
 		$this->set(compact('door', 'enclosures'));
 		$this->set('_serialize', ['door']);
 	}
@@ -97,10 +104,10 @@ class DoorsController extends AppController
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$door = $this->Doors->patchEntity($door, $this->request->data);
 			if ($this->Doors->save($door)) {
-				$this->Flash->success(__('The door has been saved.'));
+				$this->Flash->success(__('La puerta ha sido gurdada.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error(__('The door could not be saved. Please, try again.'));
+				$this->Flash->error(__('La puerta no ha podido ser gurdada. Por favor, intente nuevamente.'));
 			}
 		}
 		$companies = $this->Doors->Companies->find('list');
@@ -120,9 +127,9 @@ class DoorsController extends AppController
 		$this->request->allowMethod(['post', 'delete']);
 		$door = $this->Doors->get($id);
 		if ($this->Doors->delete($door)) {
-			$this->Flash->success(__('The door has been deleted.'));
+			$this->Flash->success(__('La puerta ha sido eliminada'));
 		} else {
-			$this->Flash->error(__('The door could not be deleted. Please, try again.'));
+			$this->Flash->error(__('La puerta no ha podido ser eliminada. Por favor, intente nuevamente.'));
 		}
 		return $this->redirect(['action' => 'index']);
 	}
@@ -145,8 +152,6 @@ class DoorsController extends AppController
 	public function deleteRole($door_id = null, $access_role_id = null)
 	{
 		$this->request->allowMethod(['post', 'delete']);
-
-		// debug($id);  debug($asd); die;
 
 		$access_role = $this->Doors->AccessRoles->get($access_role_id);
 		$door = $this->Doors->get($door_id);
