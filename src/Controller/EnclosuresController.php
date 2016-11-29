@@ -43,7 +43,11 @@ class EnclosuresController extends AppController
 			'contain' => ['Companies']
 		]);
 
+		$doors = $this->Enclosures->Doors->find('all')
+			->where(['enclosure_id' => $id]);
+
 		$this->set('enclosure', $enclosure);
+		$this->set('doors', $this->paginate($doors));
 		$this->set('_serialize', ['enclosure']);
 	}
 
@@ -106,11 +110,30 @@ class EnclosuresController extends AppController
 		$this->request->allowMethod(['post', 'delete']);
 		$enclosure = $this->Enclosures->get($id);
 		if ($this->Enclosures->delete($enclosure)) {
-			$this->Flash->success(__('The enclosure has been deleted.'));
+			$this->Flash->success(__('El recinto ha sido eliminado.'));
 		} else {
-			$this->Flash->error(__('The enclosure could not be deleted. Please, try again.'));
+			$this->Flash->error(__('El recinto no ha podido ser eliminado. Por favor, intente nuevamente.'));
 		}
 		return $this->redirect(['action' => 'index']);
+	}
+
+	public function deleteDoor($enclosure_id = null, $doors_id = null)
+	{
+		// debug([$enclosure_id, $doors_id]);
+
+		// die;
+		$this->request->allowMethod(['post', 'delete']);
+
+		$door = $this->Enclosures->Doors->get($doors_id);
+		$door->enclosure_id = -1;
+
+		if ($this->Enclosures->Doors->save($door)) {
+			$this->Flash->success('Puerta quitada con exito.');
+		} else {
+			$this->Flash->error('La puerta no pudo ser quitada. Por favor, intene nuevamente');
+		}
+
+		return $this->redirect(['action' => 'view', $enclosure_id]);
 	}
 
 	public function addDoors($id = null)
@@ -125,5 +148,68 @@ class EnclosuresController extends AppController
 			->orWhere(['enclosure_id' => 0]);
 		$this->set(compact('enclosure', 'doors'));
 		$this->set('_serialize', ['enclosure']);
+	}
+
+	public function updateDoors($id)
+	{
+		$enclosure = $this->Enclosures->get($id);
+
+		if ($this->request->is('post')) {
+
+			$data = $this->passData($id, $this->request->data('doors_id'));
+
+			$this->Enclosures->Doors->query()->update()
+				->set(['enclosure_id' => $id])
+				->where(['id IN' => $this->request->data('doors_id')])
+				->execute();
+
+			if (!empty($data)) {
+				$this->Enclosures->Doors->query()->update()
+					->set(['enclosure_id' => -1])
+					->where(['id IN' => $data])
+					->execute();
+			}
+
+			$this->Flash->success('Puertas actualizadas');
+
+			return $this->redirect(['action' => 'index']);
+		}
+		
+		$company_id = $this->Auth->user('company_id');
+
+
+		$doors = $this->Enclosures->Doors->find('list')
+			->where(['enclosure_id' => $id])
+			->orWhere(['enclosure_id' => -1])
+			->andWhere(['company_id' => $company_id]);
+
+		$enclosure_doors = $this->Enclosures->Doors->find('list')
+			->where(['enclosure_id' => $id]);
+
+		$this->set(compact('enclosure', 'doors', 'enclosure_doors'));
+	}
+
+	private function passData($enclosure_id, $requestData)
+	{
+		$data = [];
+
+		if (empty($requestData)) {
+			$doors = $this->Enclosures->Doors->find('list')
+				->where([
+					'enclosure_id' => $enclosure_id,
+				]);
+		} else {
+			$doors = $this->Enclosures->Doors->find('list')
+				->where([
+					'enclosure_id' => $enclosure_id,
+					'id NOT IN' => $requestData
+				]);
+		}
+
+		foreach ($doors as $id => $name) {
+			array_push($data, $id);
+		}
+
+		return $data;
 	}
 }

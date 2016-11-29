@@ -6,6 +6,7 @@
 				<tr>
 					<th><?= $this->Paginator->sort('id', 'ID') ?></th>
 					<th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
+					<th><?= $this->Paginator->sort('enclosure.name', 'Recinto')?></th>
 					<th><?= $this->Paginator->sort('location', 'Ubicación') ?></th>
 					<th><?= $this->Paginator->sort('company_id', 'Empresa') ?></th>
 					<th><?= $this->Paginator->sort('created', 'Agregada') ?></th>
@@ -18,6 +19,7 @@
 					<tr>
 							<td><?= $this->Number->format($door->id) ?></td>
 							<td><?= h($door->name) ?></td>
+							<td><?= $door->has('enclosure') ? $this->Html->link($door->enclosure->name, ['controller' => 'Enclosures', 'action' => 'view', $door->enclosure->id]) : '' ?></td>
 							<td><?= h($door->location) ?></td>
 							<td><?= $door->has('company') ? $this->Html->link($door->company->name, ['controller' => 'Companies', 'action' => 'view', $door->company->id]) : '' ?></td>
 							<td><?= h($door->created) ?></td>
