@@ -9,7 +9,6 @@
           <th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
           <th><?= $this->Paginator->sort('lastname', 'Apellido') ?></th>
           <th><?= $this->Paginator->sort('phone', 'Telefono') ?></th>
-          <th><?= $this->Paginator->sort('company_id', 'Compañia') ?></th>
           <th><?= $this->Paginator->sort('created', 'Agregada') ?></th>
           <th><?= __('Acciones') ?></th>
         </tr>
@@ -22,7 +21,6 @@
           <td><?= h($person->name) ?></td>
           <td><?= h($person->lastname) ?></td>
           <td><?= h($person->phone) ?></td>
-          <td><?= $person->has('company') ? $this->Html->link($person->company->name, ['controller' => 'Companies', 'action' => 'view', $person->company->id]) : '' ?></td>
           <td><?= h($person->created) ?></td>
           <?= $this->element('action', ['entityId' => $person->id])?>
           </tr>
