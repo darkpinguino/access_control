@@ -8,7 +8,7 @@
 		'textarea' => '<textarea class="form-control" name="{{name}}"{{attrs}}>{{value}}</textarea>',
 		'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
 		'dateContainer' => 
-			'<div class="form-group" {{type}}{{required}}">
+			'<div class="form-group {{type}}"{{required}}>
 					<div class="input-group date">
 						<div class="input-group-addon">
               <i class="fa fa-calendar"></i>

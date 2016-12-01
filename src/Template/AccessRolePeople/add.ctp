@@ -1,3 +1,5 @@
+<?= $this->Html->css('plugins/bootstrapMultiselect/bootstrap-multiselect', ['block' => 'cssView']) ?>
+<?= $this->Html->script('plugins/bootstrapMultiselect/bootstrap-multiselect', ['block' => 'scriptView']) ?>
 <?= $this->Html->script('accessRolePeople/accessRolePeople.js', ['block' => 'scriptView']); ?>
 
 <div class="box">
@@ -8,8 +10,21 @@
 	<div class="box-body">
 		<fieldset>
 			<?php
-				echo $this->Form->input('people_id', ['label' => 'Persona', 'option' => 'people']);
-				echo $this->Form->input('access_role_id', ['label' => 'Rol de acceso', 'option' => 'accessRoles']);
+
+				echo $this->Form->label('Persona');
+				echo $this->Form->input('people_id',[
+						'options' => $people,
+						'label' => false,
+						'size' => 2
+				]);
+
+				echo $this->Form->label('Rol de acceso');
+				echo $this->Form->input('access_role_id',[
+						'options' => $accessRoles,
+						'label' => false,
+						'size' => 2
+				]);
+
 				echo $this->Form->label('Expira');
 				echo $this->Form->input('expiration', ['label' => false, 'type' => 'date']);
 				echo $this->Form->input('notExpire', [
