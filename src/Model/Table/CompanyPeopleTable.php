@@ -45,10 +45,18 @@ class CompanyPeopleTable extends Table
 			'foreignKey' => 'profile_id',
 			'joinType' => 'INNER'
 		]);
+
+		$this->belongsToMany('Vehicle', [
+			'foreignKey' => 'company_people_id',
+			'joinTable' => 'VehicleAuthorizations',
+			'joinType' => 'INNER'
+		]);
+
 		$this->hasMany('VehicleAuthorizations', [
 			'foreignKey' => 'company_people_id',
 			'joinType' => 'INNER'
 		]);
+
 	}
 
 	/**

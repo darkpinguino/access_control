@@ -40,13 +40,23 @@
         <tr>
           <th><?= $this->Paginator->sort('company_person.person.rut', 'Rut') ?></th>
           <th><?= $this->Paginator->sort('company_person.person.fullName', 'Nombre') ?></th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <?php foreach ($vehicle_authorizations as $vehicle_authorization): ?>
+        <?php foreach ($company_people as $company_person): ?>
         <tr>
-        	<td><?= h($vehicle_authorization->company_person->person->rut)?></td>
-        	<td><?= h($vehicle_authorization->company_person->person->fullName)?></td>
+        	<td><?= h($company_person->person->rut)?></td>
+        	<td><?= h($company_person->person->fullName)?></td>
+          <td>
+            <?= $this->Form->postLink(__('Eliminar'), 
+              ['action' => 'deleteAuthorization', $vehicle->id, $company_person->id], 
+              [
+                'confirm' => __('Are you sure you want to delete AUTORIZATION # {0}?', $company_person->id), 
+                'class' => 'btn btn-danger btn-xs'
+              ]) 
+            ?>
+      </td>
         </tr>
         <?php endforeach; ?>
       </tbody>
