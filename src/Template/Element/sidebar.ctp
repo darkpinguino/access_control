@@ -149,7 +149,7 @@
         </li>
       </ul>
     </li>
-    <?= '<li class="treeview'. ((strcmp($controller, 'Vehicles') and strcmp($controller, 'VehicleTypes') and strcmp($controller, 'VehicleProfiles')) ? '' : ' active').'">' ?>
+    <?= '<li class="treeview'. ((strcmp($controller, 'Vehicles') and strcmp($controller, 'VehicleTypes') and strcmp($controller, 'VehicleProfiles') and strcmp($controller, 'VehicleAuthorizations')) ? '' : ' active').'">' ?>
       <a href="#">
         <i class="fa fa-car"></i> <span>Vehiculos</span> <i class="fa fa-angle-left pull-right"></i>
       </a>

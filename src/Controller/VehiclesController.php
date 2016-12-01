@@ -53,18 +53,22 @@ class VehiclesController extends AppController
 	public function view($id = null)
 	{
 		$vehicle = $this->Vehicles->get($id, [
-			'contain' => ['VehicleTypes', 'VehicleAuthorizations']
+			'contain' => ['VehicleTypes']
 		]);
 
 		$this->paginate = [
-			'contain' => ['CompanyPeople.People']
+			'contain' => ['People']
 		];
 
-		$vehicle_authorizations = $this->paginate($this->Vehicles->VehicleAuthorizations->findByVehicleId($id));
+		$company_people = $this->Vehicles->CompanyPeople->find('all')
+			->matching('Vehicles', function ($q) use ($id)
+			{
+				return $q->where(['Vehicles.id' => $id]);
+			});
 
-		// debug($vehicle_authorizations); die;
-		// $this->set('vehicle', $vehicle);
-		$this->set(compact('vehicle', 'vehicle_authorizations'));
+		$company_people = $this->paginate($company_people);
+
+		$this->set(compact('vehicle', 'company_people'));
 		$this->set('_serialize', ['vehicle']);
 	}
 
@@ -159,5 +163,23 @@ class VehiclesController extends AppController
 			$this->Flash->error(__('El vehículo no ha podido ser eliminado. Por favor, intente nuevamente'));
 		}
 		return $this->redirect(['action' => 'index']);
+	}
+
+	public function deleteAuthorization($vehicle_id, $company_people_id)
+	{
+		$this->request->allowMethod(['post', 'delete']);
+
+		$vehicle = $this->Vehicles->get($vehicle_id);
+
+		$company_people = $this->Vehicles->CompanyPeople->find()
+			->where(['CompanyPeople.id' => $company_people_id])
+			->toArray();
+
+		// debug($company_people); die;	
+
+		$this->Vehicles->CompanyPeople->unlink($vehicle, $company_people);
+
+		return $this->redirect(['action' => 'view', $vehicle_id]);
+
 	}
 }

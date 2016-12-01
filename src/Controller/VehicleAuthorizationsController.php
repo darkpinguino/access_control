@@ -137,6 +137,8 @@ class VehicleAuthorizationsController extends AppController
 				]);
 			}
 			$this->VehicleAuthorizations->saveMany($vehicle_authorizations);
+
+			return $this->redirect(['action' => 'index', 'controller' => 'Vehicles']);
 		}
 
 		$vehicle = $this->VehicleAuthorizations->Vehicles->get($id);
