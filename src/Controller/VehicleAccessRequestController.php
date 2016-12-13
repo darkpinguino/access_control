@@ -132,7 +132,7 @@ class VehicleAccessRequestController extends AppController
 				{
 					return $q->where(['Doors.company_id' => $company_id]);
 				})
-			->first();
+			->last();
 
 		// debug($vehicles_access_request); die;
 

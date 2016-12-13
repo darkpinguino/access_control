@@ -123,6 +123,8 @@ class VehicleAuthorizationsController extends AppController
 			
 		if ($this->request->is('post')) {
 
+			// debug($this->request->data('person_id')); die;
+
 			$vehicle_authorizations = $this->VehicleAuthorizations->newEntities($this->passData($id, $this->request->data('person_id')));
 
 
@@ -137,6 +139,8 @@ class VehicleAuthorizationsController extends AppController
 				]);
 			}
 			$this->VehicleAuthorizations->saveMany($vehicle_authorizations);
+
+			$this->Flash->success('Autorizaciones actualizadas.');
 
 			return $this->redirect(['action' => 'index', 'controller' => 'Vehicles']);
 		}
@@ -182,11 +186,16 @@ class VehicleAuthorizationsController extends AppController
 
 	private function passNewData($id_vehicle, $data)
 	{
-		return $this->VehicleAuthorizations->CompanyPeople->find('list')
-			->where(['CompanyPeople.id IN' => $data])
-			->notMatching('VehicleAuthorizations', function ($q) use ($data)
-			{
-				return $q->where(['company_people_id IN' => $data]);
-			})->toArray();
+		if ($this->VehicleAuthorizations->findByVehicleId($id_vehicle)->isEmpty()){
+			return $data;
+		} else {
+			return $this->VehicleAuthorizations->CompanyPeople->find('list')
+				->where(['CompanyPeople.id IN' => $data])
+				->notMatching('VehicleAuthorizations', function ($q) use ($data)
+				{
+					return $q->where(['company_people_id IN' => $data]);
+				})->toArray();
+		}
+
 	}
 }

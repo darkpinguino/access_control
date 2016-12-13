@@ -43,6 +43,12 @@ class VehiclesTable extends Table
 			'joinType' => 'INNER'
 		]);
 
+		$this->belongsToMany('CompanyVehicles', [
+			'foreignKey' => 'vehicle_id',
+			'joinTable' => 'CompanyVehicles',
+			'joinType' => 'INNER'
+		]);
+
 		$this->hasMany('VehicleAuthorizations', [
 			'foreignKey' => 'vehicle_id',
 			'joinType' => 'INNER'

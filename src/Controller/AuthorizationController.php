@@ -340,14 +340,15 @@ use Cake\I18n\Time;
 							})->first();
 					}
 
-					if (!is_null($vehicle_location) and count($vehicle_location->vehicle_people_locations) > 1) {
+					if (is_null($this->request->data('vehicle')) and !is_null($vehicle_location) and count($vehicle_location->vehicle_people_locations) > 1) {
+
 						$active_vehicle_alert = 'alert';
 						$this->set('person_alert', $person);
 						$this->set(compact('active_vehicle_alert', 'vehicle_location'));
-					} elseif (!is_null($vehicle_location) and count($vehicle_location->vehicle_people_locations) == 1  and is_null($this->request->data('vehicle'))) {
+					} elseif (is_null($this->request->data('vehicle')) and !is_null($vehicle_location) and count($vehicle_location->vehicle_people_locations) == 1  and is_null($this->request->data('vehicle'))) {
 						$active_vehicle_alert = 'restriction';
 						$this->set(compact('active_vehicle_alert', 'vehicle_location'));
-					} elseif (!is_null($this->request->data('vehicle')) and is_null($vehicle_authorization)) {
+					} elseif (!is_null($this->request->data('vehicle')) and !is_null($vehicle_location) and is_null($vehicle_authorization)) {
 
 						if ($vehicle_location->vehicle->company_vehicles[0]->profile_id == 1) {
 							$check = true;
@@ -614,7 +615,7 @@ use Cake\I18n\Time;
 				->where(['vehicle_id' => $vehicle->id, 'enclosure_id' => $door->enclosure_id])
 				->first();
 
-			if (is_null($vehicle_location)) {
+			if (!is_null($vehicle_location)) {
 				$this->People->VehiclePeopleLocations->deleteAll([
 					'vehicle_location_id' => $vehicle_location->id
 				]);
