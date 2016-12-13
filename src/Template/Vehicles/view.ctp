@@ -7,23 +7,27 @@
 			<div class="box-body">
 		    <table class="table">
 	        <tr>
-            <th><?= __('Patente') ?></th>
+            <th><?= 'Patente' ?></th>
             <td><?= h($vehicle->number_plate) ?></td>
 	        </tr>
 	        <tr>
-            <th><?= __('ID') ?></th>
+            <th><?= 'ID' ?></th>
             <td><?= h($vehicle->id) ?></td>
 	        </tr>
 	        <tr>
-            <th><?= __('Tipo') ?></th>
+            <th><?= 'Tipo' ?></th>
             <td><?= h($vehicle->vehicle_type->type) ?></td>
 	        </tr>
+          <tr>
+            <th><?= 'Perfil' ?></th>
+            <td><?= h($vehicle->company_vehicles[0]->vehicle_profile->name)?></td>
+          </tr>
 	        <tr>
-            <th><?= __('Creado') ?></th>
+            <th><?= 'Creado' ?></th>
             <td><?= h($vehicle->created) ?></td>
 	        </tr>
 	        <tr>
-            <th><?= __('Modificado') ?></th>
+            <th><?= 'Modificado' ?></th>
             <td><?= h($vehicle->modified) ?></td>
 	        </tr>
 		    </table>
