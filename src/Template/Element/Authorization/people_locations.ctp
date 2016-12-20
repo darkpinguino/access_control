@@ -31,7 +31,7 @@
 					<th>RUT</th>
 				  <th>Nombre</th>
 				  <th>Perfil</th>
-				  <th>Reciento</th>
+				  <th>Recinto</th>
 				  <th><?= __('Acciones') ?></th>
 				</tr>
 			  </thead>

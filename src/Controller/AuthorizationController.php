@@ -219,8 +219,8 @@ use Cake\I18n\Time;
 				{
 					return $q->where(['Enclosures.company_id' => $company_id]);
 				})
-				->order(['\'created\'' => 'DESC'])
-				->distinct('person_id')->toArray();
+				->order(['\'created\'' => 'DESC'])->toArray();
+				//->distinct('person_id')->toArray();
 
 			return $vehicles_locations;
 		}
