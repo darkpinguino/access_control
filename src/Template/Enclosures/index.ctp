@@ -4,22 +4,30 @@
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
-					<th><?= $this->Paginator->sort('id', 'ID') ?></th>
+					<?php if ($userRole_id == 1): ?>
+						<th><?= $this->Paginator->sort('id', 'ID') ?></th>
+					<?php endif; ?>
 					<th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
 					<th><?= $this->Paginator->sort('location', 'Ubicación') ?></th>
-					<th><?= $this->Paginator->sort('company_id', 'Empresa') ?></th>
-					<th><?= $this->Paginator->sort('created', 'Agregada') ?></th>
-					<th><?= $this->Paginator->sort('modified', 'Modificada') ?></th>
+					<?php if ($userRole_id == 1): ?>
+						<th><?= $this->Paginator->sort('company_id', 'Empresa') ?></th>
+					<?php endif; ?>
+					<th><?= $this->Paginator->sort('created', 'Agregado') ?></th>
+					<th><?= $this->Paginator->sort('modified', 'Modificado') ?></th>
 					<th><?= __('Acciones') ?></th>
 				</tr>
 			</thead>
 			<tbody>
 					<?php foreach ($enclosures as $enclosure): ?>
 					<tr>
-							<td><?= $this->Number->format($enclosure->id) ?></td>
+							<?php if ($userRole_id == 1):?>
+								<td><?= $this->Number->format($enclosure->id) ?></td>
+							<?php endif; ?>
 							<td><?= h($enclosure->name) ?></td>
 							<td><?= h($enclosure->location) ?></td>
-							<td><?= $enclosure->has('company') ? $this->Html->link($enclosure->company->name, ['controller' => 'Companies', 'action' => 'view', $enclosure->company->id]) : '' ?></td>
+							<?php if ($userRole_id == 1):?>
+								<td><?= $enclosure->has('company') ? $this->Html->link($enclosure->company->name, ['controller' => 'Companies', 'action' => 'view', $enclosure->company->id]) : '' ?></td>
+							<?php endif; ?>
 							<td><?= h($enclosure->created) ?></td>
 							<td><?= h($enclosure->modified) ?></td>
 							

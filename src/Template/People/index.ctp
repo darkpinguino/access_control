@@ -4,7 +4,9 @@
 	  <table class="table table-bordered table-striped table-hover">
       <thead>
         <tr>
-          <th><?= $this->Paginator->sort('id', 'ID') ?></th>
+          <?php if ($userRole_id == 1): ?>
+            <th><?= $this->Paginator->sort('id', 'ID') ?></th>
+          <?php endif ?>
           <th><?= $this->Paginator->sort('rut', 'Rut') ?></th>
           <th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
           <th><?= $this->Paginator->sort('lastname', 'Apellido') ?></th>
@@ -16,7 +18,9 @@
       <tbody>
         <?php foreach ($people as $person): ?>
         <tr>
-          <td><?= h($person->id) ?></td>
+          <?php if ($userRole_id == 1): ?>
+            <td><?= h($person->id) ?></td>
+          <?php endif ?>
           <td><?= h($person->rut) ?></td>
           <td><?= h($person->name) ?></td>
           <td><?= h($person->lastname) ?></td>

@@ -4,7 +4,9 @@
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
-					<th><?= $this->Paginator->sort('id', 'ID') ?></th>
+					<?php if ($userRole_id == 1): ?>
+						<th><?= $this->Paginator->sort('id', 'ID') ?></th>
+					<?php endif ?>
 					<th><?= $this->Paginator->sort('Vehicle.number_plate', 'Patente') ?></th>
 					<th><?= $this->Paginator->sort('CompanyPeople.People', 'Nombre') ?></th>
 					<th><?= $this->Paginator->sort('created', 'Agregado') ?></th>
@@ -15,7 +17,9 @@
 			<tbody>
 					<?php foreach ($vehicleAuthorizations as $vehicleAuthorization): ?>
 					<tr>
-							<td><?= $this->Number->format($vehicleAuthorization->id) ?></td>
+							<?php if ($userRole_id == 1): ?>
+								<td><?= $this->Number->format($vehicleAuthorization->id) ?></td>
+							<?php endif ?>
 							<td><?= h($vehicleAuthorization->vehicle->number_plate) ?></td>
 							<td><?= h($vehicleAuthorization->company_person->person->name) ?> &nbsp; <?= h($vehicleAuthorization->company_person->person->lastname) ?></td>
 

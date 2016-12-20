@@ -1,3 +1,5 @@
+<?php //debug($door_id); die; ?>
+
 <?= $this->element('tableHeader', ['title' => 'Personas'])?>
 <div class="box-body">
 	<div class="row">
@@ -16,7 +18,7 @@
 						<td><?= h($person->rut)?></td>
 					  <td><?= h($person->name)?> &nbsp; <?= h($person->lastname)?></td>
 					  <td>
-						<button type="button" person-rut=<?= h($person->rut)?>  door-id=<?= h($door_id)?>
+						<button type="button" person-rut=<?= h($person->rut)?>  door-id=<?= h($door->id)?>
 							acction="in" class="btn btn-xs btn-success authorization">Ingresar</button>
 					  </td>
 				  </tr>
@@ -31,7 +33,7 @@
 					<th>RUT</th>
 				  <th>Nombre</th>
 				  <th>Perfil</th>
-				  <th>Reciento</th>
+				  <th>Recinto</th>
 				  <th><?= __('Acciones') ?></th>
 				</tr>
 			  </thead>
@@ -43,7 +45,7 @@
 					  <td><?= h($location->person->company_people[0]->profile->name)?></td>
 					  <td><?= h($location->enclosure->name)?></td>
 					  <td>
-						<button type="button" person-rut=<?= h($location->person->rut)?>  door-id=<?= h($door_id)?>
+						<button type="button" person-rut=<?= h($location->person->rut)?>  door-id=<?= h($door->id)?>
 							acction="out" class="btn btn-xs btn-danger authorization">Retirar</button>
 					  </td>
 				  </tr>

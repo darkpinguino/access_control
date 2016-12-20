@@ -14,10 +14,21 @@ class VehicleAccessRequestController extends AppController
 	
 	public $paginate = [
 	  'limit' => 10,
-	  'contain' => ['Vehicles', 'AccessRequest.People', 'AccessRequest.Doors', 'AccessRequest.AccessStatus'],
+	  'contain' => ['Vehicles', 'AccessRequest.People', 'AccessRequest.Doors.Companies', 'AccessRequest.AccessStatus'],
 	  'order' => [
 		'id' => 'desc']
 	];
+
+	public function isAuthorized($user)
+	{
+		$userRole_id = $user['userRole_id'];
+
+		if ($userRole_id == 2 || $userRole_id == 3 || $userRole_id == 4) {
+			return true;
+		}
+
+		return parent::isAuthorized($user);
+	}
 
 	/**
 	 * Index method
@@ -26,10 +37,21 @@ class VehicleAccessRequestController extends AppController
 	 */
 	public function index()
 	{
-		$vehicleAccessRequest = $this->paginate($this->VehicleAccessRequest);
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
 
-		// debug($vehicleAccessRequest); die;
-		$this->set(compact('vehicleAccessRequest'));
+		if ($userRole_id == 1) {
+			$vehicleAccessRequest = $this->paginate($this->VehicleAccessRequest);
+		} else {
+			$vehicleAccessRequest = $this->VehicleAccessRequest->find('all')
+				->matching('AccessRequest.Doors', function ($q) use ($company_id)
+				{
+					return $q->where(['company_id' => $company_id]);
+				});
+			$vehicleAccessRequest = $this->paginate($vehicleAccessRequest);
+		}
+
+		$this->set(compact('vehicleAccessRequest', 'userRole_id'));
 		$this->set('_serialize', ['vehicleAccessRequest']);
 	}
 

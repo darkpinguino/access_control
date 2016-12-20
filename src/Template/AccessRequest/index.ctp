@@ -4,10 +4,15 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th class="text-nowrap"><?= $this->Paginator->sort('id', 'ID') ?></th>
+					<?php if ($userRole_id == 1): ?>
+						<th class="text-nowrap"><?= $this->Paginator->sort('id', 'ID') ?></th>
+					<?php endif ?>
 					<th class="text-nowrap"><?= $this->Paginator->sort('People.rut', 'Rut') ?></th>
 					<th class="text-nowrap"><?= $this->Paginator->sort('people_id', 'Persona') ?></th>
 					<th class="text-nowrap"><?= $this->Paginator->sort('door_id', 'Puerta') ?></th>
+					<?php if ($userRole_id == 1): ?>
+						<th class="text-nowrap"><?= $this->Paginator->sort('Door.company.name', 'Empresa')?></th>
+					<?php endif; ?>
 					<th class="text-nowrap"><?= $this->Paginator->sort('action', 'Accion') ?></th>
 					<th class="text-nowrap"><?= $this->Paginator->sort('access_status_id', 'Estado de Accesso') ?></th>
 					<th class="text-nowrap"><?= $this->Paginator->sort('created', 'Agregado') ?></th>
@@ -18,11 +23,16 @@
 			<tbody>
 				<?php foreach ($accessRequest as $access_request): ?>
 				<tr>
-					<td class="text-nowrap"><?= h($access_request->id) ?></td>
+					<?php if ($userRole_id == 1): ?>
+						<td class="text-nowrap"><?= h($access_request->id) ?></td>
+					<?php endif ?>
 					<td class="text-nowrap"><?= $access_request->has('person') ? $this->Html->link($access_request->person->rut, ['controller' => 'People', 'action' => 'view', $access_request->person->id]) : '' ?>
 					</td>
 					<td class="text-nowrap"><?= $access_request->has('person') ? $this->Html->link($access_request->person->name, ['controller' => 'People', 'action' => 'view', $access_request->person->id]) : '' ?></td>
 					<td class="text-nowrap"><?= $access_request->has('door') ? $this->Html->link($access_request->door->name, ['controller' => 'Doors', 'action' => 'view', $access_request->door->id]) : '' ?></td>
+					<?php if ($userRole_id == 1): ?>
+						<td class="text-nowrap"><?= $access_request->has('door') ? $this->Html->link($access_request->door->company->name, ['controller' => 'Companies', 'action' => 'view', $access_request->door->compnay_id] ) : ''?></td>
+					<?php endif; ?>
 					<td class="text-nowrap"><?= $this->element('actionLabel', ['actionID' => $access_request->action]) ?></td>
 					<td class="text-nowrap"><?= $access_request->has('access_status') ? $this->element('statusLabel', ['statusID' => $access_request->access_status->id]) : '' ?></td>
 					<td class="text-nowrap"><?= h($access_request->created) ?></td>

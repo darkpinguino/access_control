@@ -14,11 +14,25 @@ class AccessRequestController extends AppController
 {
 	public $paginate = [
 	  'limit' => 10,
-	  'contain' => ['People', 'Doors', 'AccessStatus'],
+	  'contain' => ['People', 'Doors.Companies', 'AccessStatus'],
 	  'order' => [
 		'id' => 'desc']
 	];
 
+	public function isAuthorized($user)
+	{
+		$userRole_id = $user['userRole_id'];
+
+		if ($this->request->action === 'add') {
+			return false;
+		}
+		
+		if ($userRole_id == 2 || $userRole_id == 3 || $userRole_id == 4) {
+			return true;
+		}
+
+		return parent::isAuthorized($user);
+	}
 	/**
 	 * Index method
 	 *
@@ -26,11 +40,21 @@ class AccessRequestController extends AppController
 	 */
 	public function index()
 	{
-		
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
 
-		$accessRequest = $this->paginate($this->AccessRequest);
+		if ($userRole_id == 1) {
+			$accessRequest = $this->paginate($this->AccessRequest);
+		} else {
+			$accessRequest = $this->AccessRequest->find('all')
+				->matching('Doors', function ($q) use ($company_id)
+				{
+					return $q->where(['company_id' => $company_id]);
+				});
+			$accessRequest = $this->paginate($accessRequest);
+		}
 
-		$this->set(compact('accessRequest'));
+		$this->set(compact('accessRequest', 'userRole_id'));
 		$this->set('_serialize', ['accessRequest']);
 	}
 

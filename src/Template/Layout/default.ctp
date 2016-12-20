@@ -142,13 +142,25 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 	  </header>
 
 	  <!-- Left side column. contains the logo and sidebar -->
-	  <aside class="main-sidebar">
-	    <?= $this->element('sidebar') ?>
-	  </aside>
+    
+    <?php if ($userAuth->userRole_id == 4): ?>
+      <aside class="main-sidebar">
+        <?= $this->element('sidebar_min') ?>
+      </aside>
+    <?php elseif ($userAuth->userRole_id != 5): ?>
+      <aside class="main-sidebar">
+        <?= $this->element('sidebar') ?>
+      </aside>
+    <?php endif ?>
 
 
 	  <!-- Content Wrapper. Contains page content -->
-	  <div class="content-wrapper">
+
+    <?php if (!($userAuth->userRole_id == 5)): ?>
+      <div class="content-wrapper">
+    <?php else: ?>
+      <div class="content-wrapper" style="margin-left: 0px">
+    <?php endif ?>
 	    <!-- Content Header (Page header) -->
 	    <section class="content-header">
 	      <!-- <h1>
@@ -164,7 +176,11 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 	    <!-- Main content -->
 	    <section class="content">
 	      <div class="row">
-	      <div class="col-md-12">
+        <?php if (!($userAuth->userRole_id == 5)): ?>
+          <div class="col-md-12">
+        <?php else: ?>
+  	      <div class="col-md-10 col-md-offset-1">
+        <?php endif ?>
           <?= $this->Flash->render() ?>
 	      	<?= $this->fetch('content') ?>
 	      </div>

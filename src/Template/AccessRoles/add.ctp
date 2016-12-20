@@ -1,6 +1,6 @@
 <div class="box">
 	<div class="box-header">
-		<h3 class="box-title">Nueva Empresa</h3>
+		<h3 class="box-title">Nuevo rol de acceso</h3>
 	</div>
   <?= $this->Form->create($accessRole) ?>
   <div class="box-body">
@@ -8,11 +8,12 @@
       <?php
         echo $this->Form->input('name', ['label' => 'Nombre']);
         echo $this->Form->input('description', ['label' => 'Descripción']);
-        echo $this->Form->input('user_id', ['label' => 'Usuario']);
-        echo $this->Form->input('company_id', [
-          'options' => $companies, 
-          'label' => 'Empresa'
-        ]);
+        if ($userRole_id == 1) {
+          echo $this->Form->input('company_id', [
+            'options' => $companies, 
+            'label' => 'Empresa'
+          ]);
+        }
       ?>
     </fieldset>
   </div>

@@ -50,7 +50,7 @@ class UsersTable extends Table
 			'joinType' => 'INNER'
 		]);
 
-		$this->hasOne('Doors', [
+		$this->belongsTo('Doors', [
 			'foreignKey' => 'doorCharge_id',
 			'joinType' => 'INNER'
 		]);

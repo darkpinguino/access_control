@@ -6,8 +6,8 @@
 	<div class="box-body">
     <fieldset>
       <?php
-        echo $this->Form->input('door_id', ['options' => $doors]);
-        echo $this->Form->input('access_role_id', ['options' => $accessRoles]);
+        echo $this->Form->input('door_id', ['label' => 'Puerta', 'options' => $doors]);
+        echo $this->Form->input('access_role_id', ['label' => 'Rol de acceso', 'options' => $accessRoles]);
       ?>
     </fieldset>
 	</div>

@@ -10,6 +10,17 @@ use App\Controller\AppController;
  */
 class VehiclesController extends AppController
 {
+	public function isAuthorized($user)
+	{
+		$userRole_id = $user['userRole_id'];
+
+		if ($userRole_id == 2 || $userRole_id == 3) {
+			return true;
+		}
+
+		return parent::isAuthorized($user);
+	}
+
 	/**
 	 * Index method
 	 *
@@ -17,7 +28,8 @@ class VehiclesController extends AppController
 	 */
 	public function index()
 	{
-		$company_id = $this->Auth->user()['company_id'];
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
 
 		if ($this->Auth->user()['userRole_id'] == 1) {
 			$vehicles = $this->Vehicles->find()
@@ -34,7 +46,7 @@ class VehiclesController extends AppController
 
 		$vehicles = $this->paginate($vehicles);
 
-		$this->set(compact('vehicles'));
+		$this->set(compact('vehicles', 'userRole_id'));
 		$this->set('_serialize', ['vehicles']);
 	}
 
@@ -47,7 +59,8 @@ class VehiclesController extends AppController
 	 */
 	public function view($id = null)
 	{
-		$company_id = $this->Auth->user()['company_id'];
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
 
 		$vehicle = $this->Vehicles->get($id, [
 			'contain' => [
@@ -70,7 +83,7 @@ class VehiclesController extends AppController
 
 		$company_people = $this->paginate($company_people);
 
-		$this->set(compact('vehicle', 'company_people'));
+		$this->set(compact('vehicle', 'company_people', 'userRole_id'));
 		$this->set('_serialize', ['vehicle']);
 	}
 
@@ -182,8 +195,6 @@ class VehiclesController extends AppController
 		$company_people = $this->Vehicles->CompanyPeople->find()
 			->where(['CompanyPeople.id' => $company_people_id])
 			->toArray();
-
-		// debug($company_people); die;	
 
 		$this->Vehicles->CompanyPeople->unlink($vehicle, $company_people);
 

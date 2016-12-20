@@ -18,14 +18,16 @@
             <th><?= __('Descripción') ?></th>
             <td><?= h($enclosure->description) ?></td>
 	        </tr>
-	        <tr>
-            <th><?= __('Empresa') ?></th>
-            <td><?= $enclosure->has('company') ? $this->Html->link($enclosure->company->name, ['controller' => 'Companies', 'action' => 'view', $enclosure->company->id]) : '' ?></td>
-	        </tr>
-	        <tr>
-            <th><?= __('ID') ?></th>
-            <td><?= $this->Number->format($enclosure->id) ?></td>
-	        <tr>
+	        <?php if ($userRole_id == 1): ?>
+		        <tr>
+	            <th><?= __('Empresa') ?></th>
+	            <td><?= $enclosure->has('company') ? $this->Html->link($enclosure->company->name, ['controller' => 'Companies', 'action' => 'view', $enclosure->company->id]) : '' ?></td>
+		        </tr>
+		        <tr>
+	            <th><?= __('ID') ?></th>
+	            <td><?= $this->Number->format($enclosure->id) ?></td>
+		        <tr>
+	        <?php endif; ?>
             <th><?= __('Agregada') ?></th>
             <td><?= h($enclosure->created) ?></td>
 	        </tr>
@@ -45,7 +47,9 @@
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
-					<th><?= $this->Paginator->sort('id', 'ID') ?></th>
+					<?php if ($userRole_id == 1): ?>
+						<th><?= $this->Paginator->sort('id', 'ID') ?></th>
+					<?php endif ?>
 					<th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
 					<th>Acciones</th>
 				</tr>
@@ -53,7 +57,9 @@
 			<tbody>
 				<?php foreach ($doors as $door): ?>
 				<tr>
-					<td><?= h($door->id) ?></td>
+					<?php if ($userRole_id == 1): ?>
+						<td><?= h($door->id) ?></td>
+					<?php endif ?>
 					<td><?= h($door->name) ?></td>
 					<td>
 						<?= $this->Form->postLink(__('Quitar'), 

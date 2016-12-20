@@ -10,11 +10,16 @@ use App\Controller\AppController;
  */
 class PeopleController extends AppController
 {
-	// public $paginate = [
-	// 	'limit' => 10,
-	// 	// 'contain' => ['Companies']
-	// ];
+	public function isAuthorized($user)
+	{
+		$userRole_id = $user['userRole_id'];
 
+		if ($userRole_id == 2 || $userRole_id == 3) {
+			return true;
+		}
+
+		return parent::isAuthorized($user);
+	}
 	/**
 	 * Index method
 	 *
@@ -22,15 +27,21 @@ class PeopleController extends AppController
 	 */
 	public function index()
 	{
-		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
 
-		$people = $this->People->find('all')
-			->matching('Companies', function ($q) use ($company_id)
-			{
-				return $q->where(['Companies.id' => $company_id]);
-			});
+		if ($this->Auth->user('userRole_id') == 1) {
+			$people = $this->People->find('all');
+		} else {
+			$company_id = $this->Auth->user('company_id');
+			$people = $this->People->find('all')
+				->matching('Companies', function ($q) use ($company_id)
+				{
+					return $q->where(['Companies.id' => $company_id]);
+				});
+		}
 
 		$this->set('people', $this->paginate($people));
+		$this->set(compact('userRole_id'));
 		$this->set('_serialize', ['people']);
 	}
 
@@ -47,11 +58,8 @@ class PeopleController extends AppController
 		$this->loadModel('AccessRequest');
 		$this->loadModel('Doors');
 
-		try {
-			$person = $this->People->get($id);
-		} catch (\Cake\Datasource\Exception\RecordNotFoundException $e) {
-			debug($e); die;				
-		}
+		$userRole_id = $this->Auth->user('userRole_id');
+		$person = $this->People->get($id);
 
 		$accessRoles = $this->AccessRoles->find()->matching('People', 
 			function ($q) use ($person)
@@ -59,9 +67,9 @@ class PeopleController extends AppController
 				return $q->where(['People.id' => $person->id]);
 			}
 		);
-		$this->set('person', $person);
+		
+		$this->set(compact('person', 'userRole_id'));
 		$this->set('accessRoles', $this->paginate($accessRoles));
-		// $this->set('accessRequests', $this->paginate($accessRequests));
 		$this->set('_serialize', ['person']);
 	}
 

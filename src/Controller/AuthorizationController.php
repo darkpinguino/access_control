@@ -16,6 +16,14 @@ use Cake\I18n\Time;
 				parent::beforeRender($event);
 				// $this->viewBuilder()->helpers(['CakeExcel']);
 		}
+
+		public function isAuthorized($user)
+		{
+			
+			return true;
+			
+			return parent::isAuthorized($user);
+		}
 		
 		public function authorization($rut = null, $door = null)
 		{
@@ -30,39 +38,36 @@ use Cake\I18n\Time;
 			$door_id = $this->Auth->user()['doorCharge_id'];
 			$vehicle_access = $this->request->session()->read('vehicle_access');
 
-			// debug($vehicle_access); die;
-
-			// $this->redirect(['controller' => 'Doors', 'action' => 'index', $this->request->data]);
-			// debug($this->request->data); die;
-
 			if ($this->request->is(['patch', 'post', 'put']) || !is_null($vehicle_access)) {
 				$this->accessControl();
 			}
 
 			try {
 				$door = $this->Doors->get($door_id);
-			} catch (Exception $e) {
-				$e->getMessage();
+			} catch (\Exception $e) {
+				$door = null;
 			}
 
-			$people_out = $this->People->find()->
-				notMatching('PeopleLocations', function ($q) use ($door)
-				{
-					return $q->where([
-						'PeopleLocations.enclosure_id' => $door->enclosure_id]);
-				})->
-				matching('CompanyPeople', function ($q)
-				{
-					return $q->where([
-						'CompanyPeople.profile_id' => 2
-					]);
+			if (!is_null($door)) {
+				$people_out = $this->People->find()->
+					notMatching('PeopleLocations', function ($q) use ($door)
+					{
+						return $q->where([
+							'PeopleLocations.enclosure_id' => $door->enclosure_id]);
+					})->
+					matching('CompanyPeople', function ($q)
+					{
+						return $q->where([
+							'CompanyPeople.profile_id' => 2
+						]);
 				});
+			} else {
+				$people_out = null;
+			}
 
 			$people_locations = $this->getPeopleLocation($company_id);
 
 			$vehicles_locations = $this->getVehicleLocation($company_id);
-
-			// debug($vehicles_locations); die;
 
 			$vehicle_types = $this->VehicleTypes->find('list');
 			$vehicle_profiles = $this->VehicleProfiles->find('list');
@@ -73,7 +78,7 @@ use Cake\I18n\Time;
 			$this->set('people_locations', $people_locations);
 			$this->set('people_out', $people_out);
 			$this->set('vehicles_locations', $vehicles_locations);
-			$this->set(compact('person', 'door_id', 'vehicle_types', 'vehicle_profiles'));  
+			$this->set(compact('person', 'door', 'vehicle_types', 'vehicle_profiles'));  
 
 			if ($this->request->is('ajax')) 
 			{
@@ -99,21 +104,11 @@ use Cake\I18n\Time;
 
 			$this->set('vehicles_locations', $vehicles_locations);
 			$this->render('/Element/Authorization/vehicle_actual_state');
-
-			// debug($people_locations); die;
 		}
 
 		public function exportActualState()
 		{
-			// $this->viewBuilder()->layout('pdf/default');
 			$time = new Time();
-			// $time = $time->toString();
-
-			// $this->viewBuilder()->options([
-			//   'pdfConfing' => [
-			//     'filename' => 'estado_actual.pdf'
-			//   ]
-			// ]);
 
 			$company_id = $this->Auth->user()['company_id'];
 
@@ -126,15 +121,7 @@ use Cake\I18n\Time;
 
 		public function exportVehicleActualState()
 		{
-			// $this->viewBuilder()->layout('pdf/default');
 			$time = new Time();
-			// $time = $time->toString();
-
-			// $this->viewBuilder()->options([
-			//   'pdfConfing' => [
-			//     'filename' => 'estado_actual.pdf'
-			//   ]
-			// ]);
 
 			$company_id = $this->Auth->user()['company_id'];
 

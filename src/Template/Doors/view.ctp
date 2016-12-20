@@ -21,31 +21,23 @@
 					</tr>
 					<tr>
 						<th><?= __('Tipo') ?></th>
-						<td><?php 
-							$type = h($door->type); 
-							switch ($type) {
-									case 1:
-											echo "Entrada";
-											break;
-									case 2:
-											echo "Salida";
-											break;
-									case 3:
-											echo "Entrada/Salida";
-											break;
-									default:
-											echo "";
-							}
-							?></td>
+						<td><?= $this->element('door_type', ['typeID' => $door->type])?></td>
 					</tr>
 					<tr>
-						<th><?= __('Empresa') ?></th>
-						<td><?= $door->has('company') ? $this->Html->link($door->company->name, ['controller' => 'Companies', 'action' => 'view', $door->company->id]) : '' ?></td>
+						<th><?= __('Acceso') ?></th>
+						<td><?= $this->element('door_access', ['accessID' => $door->access_type])?></td>
 					</tr>
-					<tr>
-						<th><?= __('ID') ?></th>
-						<td><?= $this->Number->format($door->id) ?></td>
-					<tr>
+
+					<?php if ($userRole_id == 1): ?>
+						<tr>
+							<th><?= __('Empresa') ?></th>
+							<td><?= $door->has('company') ? $this->Html->link($door->company->name, ['controller' => 'Companies', 'action' => 'view', $door->company->id]) : '' ?></td>
+						</tr>
+						<tr>
+							<th><?= __('ID') ?></th>
+							<td><?= $this->Number->format($door->id) ?></td>
+						<tr>
+					<?php endif ?>
 						<th><?= __('Agregada') ?></th>
 						<td><?= h($door->created) ?></td>
 					</tr>
@@ -64,7 +56,9 @@
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
-					<th><?= $this->Paginator->sort('id', 'ID') ?></th>
+					<?php if ($userRole_id == 1): ?>
+						<th><?= $this->Paginator->sort('id', 'ID') ?></th>
+					<?php endif ?>
 					<th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
 					<th>Acciones</th>
 				</tr>
@@ -72,7 +66,9 @@
 			<tbody>
 				<?php foreach ($accessRoles as $accesRole): ?>
 				<tr>
-					<td><?= h($accesRole->id) ?></td>
+					<?php if ($userRole_id == 1): ?>
+						<td><?= h($accesRole->id) ?></td>
+					<?php endif ?>
 					<td><?= h($accesRole->name) ?></td>
 					<td>
 						<?= $this->Form->postLink(__('Eliminar'), 

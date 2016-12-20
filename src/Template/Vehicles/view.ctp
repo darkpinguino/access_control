@@ -10,18 +10,22 @@
             <th><?= 'Patente' ?></th>
             <td><?= h($vehicle->number_plate) ?></td>
 	        </tr>
-	        <tr>
-            <th><?= 'ID' ?></th>
-            <td><?= h($vehicle->id) ?></td>
-	        </tr>
+          <?php if ($userRole_id == 1): ?>
+            <tr>
+              <th><?= 'ID' ?></th>
+              <td><?= h($vehicle->id) ?></td>
+            </tr>
+          <?php endif ?>
 	        <tr>
             <th><?= 'Tipo' ?></th>
             <td><?= h($vehicle->vehicle_type->type) ?></td>
 	        </tr>
-          <tr>
-            <th><?= 'Perfil' ?></th>
-            <td><?= h($vehicle->company_vehicles[0]->vehicle_profile->name)?></td>
-          </tr>
+          <?php if ($userRole_id == 2): ?>
+            <tr>
+              <th><?= 'Perfil' ?></th>
+              <td><?= h($vehicle->company_vehicles[0]->vehicle_profile->name)?></td>
+            </tr>
+          <?php endif ?>
 	        <tr>
             <th><?= 'Creado' ?></th>
             <td><?= h($vehicle->created) ?></td>

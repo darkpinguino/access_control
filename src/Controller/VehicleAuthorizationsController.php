@@ -10,6 +10,16 @@ use App\Controller\AppController;
  */
 class VehicleAuthorizationsController extends AppController
 {
+	public function isAuthorized($user)
+	{
+		$userRole_id = $this->Auth->user('userRole_id');
+
+		if ($userRole_id == 2 || $userRole_id == 3) {
+			return true;
+		}
+
+		return parent::isAuthorized($user);
+	}
 
 	/**
 	 * Index method
@@ -18,12 +28,14 @@ class VehicleAuthorizationsController extends AppController
 	 */
 	public function index()
 	{
+		$userRole_id = $this->Auth->user('userRole_id');
+
 		$this->paginate = [
 			'contain' => ['Vehicles', 'CompanyPeople.People']
 		];
 		$vehicleAuthorizations = $this->paginate($this->VehicleAuthorizations);
 
-		$this->set(compact('vehicleAuthorizations'));
+		$this->set(compact('vehicleAuthorizations', 'userRole_id'));
 		$this->set('_serialize', ['vehicleAuthorizations']);
 	}
 
@@ -122,8 +134,6 @@ class VehicleAuthorizationsController extends AppController
 
 			
 		if ($this->request->is('post')) {
-
-			// debug($this->request->data('person_id')); die;
 
 			$vehicle_authorizations = $this->VehicleAuthorizations->newEntities($this->passData($id, $this->request->data('person_id')));
 

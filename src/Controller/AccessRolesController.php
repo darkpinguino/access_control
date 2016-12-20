@@ -11,6 +11,20 @@ use App\Controller\AppController;
 class AccessRolesController extends AppController
 {
 
+	public function isAuthorized($user)
+	{
+		$userRole_id = $user['userRole_id'];
+
+		if ($this->request->action === 'add') {
+			return false;
+		}
+		if ($userRole_id == 2 || $userRole_id == 3) {
+			return true;
+		}
+
+		return parent::isAuthorized($user);
+	}
+
 	public $paginate = [
 	  // 'contain' => ['Users', 'Companies']
 	  'contain' => ['Companies']
@@ -23,10 +37,12 @@ class AccessRolesController extends AppController
 	 */
 	public function index()
 	{
-		
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
+
 		$accessRoles = $this->paginate($this->AccessRoles);
 
-		$this->set(compact('accessRoles'));
+		$this->set(compact('accessRoles', 'userRole_id'));
 		$this->set('_serialize', ['accessRoles']);
 	}
 
@@ -39,12 +55,12 @@ class AccessRolesController extends AppController
 	 */
 	public function view($id = null)
 	{
+		$userRole_id = $this->Auth->user('userRole_id');
 		$accessRole = $this->AccessRoles->get($id, [
-			// 'contain' => ['Users', 'Companies', 'AccessRoleDoors']
-			'contain' => ['Companies', 'AccessRoleDoors']
+			'contain' => ['Companies']
 		]);
 
-		$this->set('accessRole', $accessRole);
+		$this->set(compact('accessRole', 'userRole_id'));
 		$this->set('_serialize', ['accessRole']);
 	}
 
@@ -55,20 +71,28 @@ class AccessRolesController extends AppController
 	 */
 	public function add()
 	{
+		$userRole_id = $this->Auth->user('userRole_id');
 		$accessRole = $this->AccessRoles->newEntity();
 		if ($this->request->is('post')) {
 			$accessRole = $this->AccessRoles->patchEntity($accessRole, $this->request->data);
+
+			if ($userRole_id != 1) {
+				$accessRole['company_id'] = $this->Auth->user('company_id');
+			}
+
 			if ($this->AccessRoles->save($accessRole)) {
-				$this->Flash->success(__('The access role has been saved.'));
+				$this->Flash->success(__('El rol de acceso ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error(__('The access role could not be saved. Please, try again.'));
+				$this->Flash->error(__('El rol de acceso no ha podido ser guardado. Por favor, intente nuevamente.'));
 			}
 		}
-		// $users = $this->AccessRoles->Users->find('list', ['limit' => 200]);
-		$companies = $this->AccessRoles->Companies->find('list', ['limit' => 200]);
-		// $this->set(compact('accessRole', 'users', 'companies'));
-		$this->set(compact('accessRole', 'companies'));
+
+		if ($userRole_id == 1) {
+			$companies = $this->AccessRoles->Companies->find('list');
+			$this->set(compact('companies'));
+		}
+		$this->set(compact('accessRole', 'userRole_id'));
 		$this->set('_serialize', ['accessRole']);
 	}
 
@@ -81,22 +105,30 @@ class AccessRolesController extends AppController
 	 */
 	public function edit($id = null)
 	{
+		$userRole_id = $this->Auth->user('userRole_id');
 		$accessRole = $this->AccessRoles->get($id, [
 			'contain' => []
 		]);
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$accessRole = $this->AccessRoles->patchEntity($accessRole, $this->request->data);
+
+			if ($userRole_id != 1) {
+				$accessRole['company_id'] = $this->Auth->user('company_id');
+			}
+
 			if ($this->AccessRoles->save($accessRole)) {
-				$this->Flash->success(__('The access role has been saved.'));
+				$this->Flash->success(__('El rol de acceso ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error(__('The access role could not be saved. Please, try again.'));
+				$this->Flash->error(__('El rol de acceso no ha podido ser guardado. Por favor, intente nuevamente.'));
 			}
 		}
-		// $users = $this->AccessRoles->Users->find('list', ['limit' => 200]);
-		$companies = $this->AccessRoles->Companies->find('list', ['limit' => 200]);
-		// $this->set(compact('accessRole', 'users', 'companies'));
-		$this->set(compact('accessRole', 'companies'));
+
+		if ($userRole_id == 1) {
+			$companies = $this->AccessRoles->Companies->find('list');
+			$this->set(compact('companies'));
+		}
+		$this->set(compact('accessRole', 'userRole_id'));
 		$this->set('_serialize', ['accessRole']);
 	}
 
@@ -112,9 +144,9 @@ class AccessRolesController extends AppController
 		$this->request->allowMethod(['post', 'delete']);
 		$accessRole = $this->AccessRoles->get($id);
 		if ($this->AccessRoles->delete($accessRole)) {
-			$this->Flash->success(__('The access role has been deleted.'));
+			$this->Flash->success(__('El control de acceso ha sido eliminado.'));
 		} else {
-			$this->Flash->error(__('The access role could not be deleted. Please, try again.'));
+			$this->Flash->error(__('El control de acceso no ha podido ser eliminado. por favor, intente nuevamente.'));
 		}
 		return $this->redirect(['action' => 'index']);
 	}

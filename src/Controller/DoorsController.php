@@ -11,10 +11,14 @@ use App\Controller\AppController;
 class DoorsController extends AppController
 {
 
-	// public $paginate = [
-	//   'limit' => 10,
-	//   'contain' => ['Companies']
-	// ];
+	public function isAuthorized($user)
+	{
+		if ($user['userRole_id'] == 2) {
+			return true;
+		}
+
+		return parent::isAuthorized($user);
+	}
 	
 	/**
 	 * Index method
@@ -23,17 +27,31 @@ class DoorsController extends AppController
 	 */
 	public function index()
 	{   
-		// debug($this->request->data); die;
+		$userRole_id = $this->Auth->user('userRole_id');
+		$company_id = $this->Auth->user('company_id');
 
 		$this->paginate = [
 			'contain' => ['Enclosures', 'Companies'],
 			'order' => ['Doors.id' => 'asc']
 		];
+
+		if ($userRole_id == 1) {
+			$this->paginate = [
+				'contain' => ['Enclosures', 'Companies'],
+				'order' => ['Doors.id' => 'asc']
+			];
+		} else {
+			$this->paginate = [
+				'contain' => ['Enclosures'],
+				'order' => ['Doors.id' => 'asc'],
+				'where' => ['company_id' => $company_id]
+			];
+		}
+
 		$doors = $this->paginate($this->Doors);
 
-		// debug($doors->toArray()); die;
 
-		$this->set(compact('doors'));
+		$this->set(compact('doors', 'userRole_id'));
 		$this->set('_serialize', ['doors']);
 	}
 
@@ -46,9 +64,9 @@ class DoorsController extends AppController
 	 */
 	public function view($id = null)
 	{
-			$this->loadModel('AccessRoles');
+		$this->loadModel('AccessRoles');
+		$userRole_id = $this->Auth->user('userRole_id');
 		$door = $this->Doors->get($id, [
-			// 'contain' => ['Companies', 'AccessRequests', 'AccessRoleDoors', 'Sensors']
 			'contain' => ['Companies']
 		]);
 
@@ -59,7 +77,7 @@ class DoorsController extends AppController
 			}
 		);
 
-		$this->set('door', $door);
+		$this->set(compact('door', 'userRole_id'));
 		$this->set('accessRoles', $this->paginate($accessRoles));        
 		$this->set('_serialize', ['door']);
 	}
@@ -71,21 +89,29 @@ class DoorsController extends AppController
 	 */
 	public function add()
 	{
+		$userRole_id = $this->Auth->user('userRole_id');
 		$door = $this->Doors->newEntity();
 		if ($this->request->is('post')) {
 			$door = $this->Doors->patchEntity($door, $this->request->data);
-			$door->company_id = $this->Auth->user()['company_id'];
+			if ($userRole_id != 1) {
+				$door->company_id = $this->Auth->user()['company_id'];
+			}
+			
 			if ($this->Doors->save($door)) {
-				$this->Flash->success(__('La puerta ha sido gurdada.'));
+				$this->Flash->success(__('La puerta ha sido guardada.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error(__('La puerta no ha podido ser gurdada. Por favor, intente nuevamente.'));
+				$this->Flash->error(__('La puerta no ha podido ser guardada. Por favor, intente nuevamente.'));
 			}
 		}
 		$enclosures = $this->Doors->Enclosures->find(['list'])->toArray();
-		// $enclosures[0] = 'Ninguno';
 
-		$this->set(compact('door', 'enclosures'));
+		if ($userRole_id == 1) {
+			$companies = $this->Doors->Companies->find('list');
+			$this->set(compact('companies'));
+		}
+
+		$this->set(compact('door', 'enclosures', 'userRole_id'));
 		$this->set('_serialize', ['door']);
 	}
 
@@ -104,10 +130,10 @@ class DoorsController extends AppController
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$door = $this->Doors->patchEntity($door, $this->request->data);
 			if ($this->Doors->save($door)) {
-				$this->Flash->success(__('La puerta ha sido gurdada.'));
+				$this->Flash->success(__('La puerta ha sido guardada.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error(__('La puerta no ha podido ser gurdada. Por favor, intente nuevamente.'));
+				$this->Flash->error(__('La puerta no ha podido ser guardada. Por favor, intente nuevamente.'));
 			}
 		}
 		$companies = $this->Doors->Companies->find('list');

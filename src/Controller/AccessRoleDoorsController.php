@@ -11,6 +11,13 @@ use App\Controller\AppController;
 class AccessRoleDoorsController extends AppController
 {
 
+	public function isAuthorized($user)
+	{
+		if ($this->request->action === 'add') {
+			return true;
+		}
+	}
+
 	public $paginate = [
 		'contain' => ['Doors', 'AccessRoles']
 	];
@@ -53,6 +60,9 @@ class AccessRoleDoorsController extends AppController
 	 */
 	public function add()
 	{
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
+
 		$accessRoleDoor = $this->AccessRoleDoors->newEntity();
 		if ($this->request->is('post')) {
 			$accessRoleDoor = $this->AccessRoleDoors->patchEntity($accessRoleDoor, $this->request->data);
@@ -63,8 +73,18 @@ class AccessRoleDoorsController extends AppController
 				$this->Flash->error(__('El rol de acceso no ha podido ser asignado. Por favor, intente nuevamente.'));
 			}
 		}
-		$doors = $this->AccessRoleDoors->Doors->find('list', ['limit' => 200]);
-		$accessRoles = $this->AccessRoleDoors->AccessRoles->find('list', ['limit' => 200]);
+
+		if ($userRole_id == 1) {
+			$doors = $this->AccessRoleDoors->Doors->find('list');
+			$accessRoles = $this->AccessRoleDoors->AccessRoles->find('list');
+		} else {
+			$doors = $this->AccessRoleDoors->Doors->find('list')
+				->where(['company_id' => $company_id]);
+			$accessRoles = $this->AccessRoleDoors->AccessRoles->find('list')
+				->where(['company_id' => $company_id]);
+
+		}
+
 		$this->set(compact('accessRoleDoor', 'doors', 'accessRoles'));
 		$this->set('_serialize', ['accessRoleDoor']);
 	}
