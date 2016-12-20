@@ -61,8 +61,10 @@
 		}
 		if (!strcmp($active_vehicle_alert, 'alert')) {
 		 	echo $this->element('Modal/vehicleAlert', ['person_alert' => $person_alert, 'vehicle_location' => $vehicle_location]);
-		} else {
+		} elseif (!strcmp($active_vehicle_alert, 'restriction')) {
 			echo $this->element('Modal/vehicleRestriction', ['vehicle_location' => $vehicle_location]);
+		} elseif (!strcmp($active_vehicle_alert, 'unauthorized')) {
+			echo $this->element('Modal/vehicleUnauthorized', ['person_alert' => $person_alert, 'vehicle_location' => $vehicle_location, 'vehicle' => $vehicle]);
 		}
 	} 
 ?>

@@ -16,7 +16,7 @@
 					</tr>
 					<tr>
 						<th><?= __('Nombre') ?></th>
-						<td><?= h($user->person->name) ?></td>
+						<td><?= h($user->person->fullName) ?></td>
 					</tr>
 					<tr>
 						<th><?= __('ID') ?></th>

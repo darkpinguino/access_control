@@ -58,13 +58,20 @@
 								]);
 							?>
 								<div class="row">
-									<div class="col-md-6">
+									<div class="col-md-4">
 										<?= $this->Form->input('number_plate', ['label' => 'Patente']) ?>
+										<?=  $this->Form->hidden('check', ['value' => 1]) ?>
 									</div>
-									<div class="col-md-6">
+									<div class="col-md-4">
 										<?= $this->Form->input('vehicle_type', [
 											'label' => 'Tipo', 
 											'options' => $vehicle_types
+										])?>
+									</div>
+									<div class="col-md-4">
+										<?= $this->Form->input('vehicle_profile', [
+											'label' => 'Perfil',
+											'options' => $vehicle_profiles
 										])?>
 									</div>
 								</div>

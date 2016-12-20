@@ -10,11 +10,6 @@ use App\Controller\AppController;
  */
 class VehiclesController extends AppController
 {
-
-	public $paginate = [
-	  'contain' => ['VehicleTypes']
-	];
-
 	/**
 	 * Index method
 	 *
@@ -22,7 +17,22 @@ class VehiclesController extends AppController
 	 */
 	public function index()
 	{
-		$vehicles = $this->paginate($this->Vehicles);
+		$company_id = $this->Auth->user()['company_id'];
+
+		if ($this->Auth->user()['userRole_id'] == 1) {
+			$vehicles = $this->Vehicles->find()
+				->contain(['VehicleTypes', 'CompanyVehicles.VehicleProfiles']);
+
+		} else {
+			$vehicles = $this->Vehicles->find()
+				->matching('CompanyVehicles', function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyVehicles.company_id' => $company_id]);
+				})
+				->contain(['VehicleTypes', 'CompanyVehicles.VehicleProfiles']);
+		}	
+
+		$vehicles = $this->paginate($vehicles);
 
 		$this->set(compact('vehicles'));
 		$this->set('_serialize', ['vehicles']);
@@ -37,11 +47,30 @@ class VehiclesController extends AppController
 	 */
 	public function view($id = null)
 	{
+		$company_id = $this->Auth->user()['company_id'];
+
 		$vehicle = $this->Vehicles->get($id, [
-			'contain' => ['VehicleTypes']
+			'contain' => [
+				'VehicleTypes', 
+				'CompanyVehicles.VehicleProfiles' => function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyVehicles.company_id' => $company_id]);
+				}]
 		]);
 
-		$this->set('vehicle', $vehicle);
+		$this->paginate = [
+			'contain' => ['People']
+		];
+
+		$company_people = $this->Vehicles->CompanyPeople->find('all')
+			->matching('Vehicles', function ($q) use ($id)
+			{
+				return $q->where(['Vehicles.id' => $id]);
+			});
+
+		$company_people = $this->paginate($company_people);
+
+		$this->set(compact('vehicle', 'company_people'));
 		$this->set('_serialize', ['vehicle']);
 	}
 
@@ -53,18 +82,30 @@ class VehiclesController extends AppController
 	public function add()
 	{
 		$vehicle = $this->Vehicles->newEntity();
+		$company_id = $this->Auth->user()['company_id'];
 		if ($this->request->is('post')) {
 			$vehicle = $this->Vehicles->patchEntity($vehicle, $this->request->data);
 			if ($this->Vehicles->save($vehicle)) {
-				$this->Flash->success(__('El vehículo ha sido guardado.'));
-				return $this->redirect(['action' => 'index']);
+				$company_vehicle = $this->Vehicles->CompanyVehicles->newEntity();
+				$company_vehicle->vehicle_id = $vehicle->id;
+				$company_vehicle->company_id = $company_id;
+				$company_vehicle->profile_id = $this->request->data('vehicle_profile');
+
+				if ($this->Vehicles->CompanyVehicles->save($company_vehicle)) {
+					$this->Flash->success(__('El vehículo ha sido guardado.'));
+					return $this->redirect(['action' => 'index']);
+				} else {
+					$this->Flash->error(__('El vehículo no ha podido ser gurdado. Por favor, intente nuevamente. 1'));
+				}
 			} else {
-				$this->Flash->error(__('El vehículo no ha podido ser gurdado. Por favor, intente nuevamente.'));
+				$this->Flash->error(__('El vehículo no ha podido ser gurdado. Por favor, intente nuevamente. 2'));
 			}
 		}
 
 		$vehicle_types = $this->Vehicles->VehicleTypes->find('list');
-		$this->set(compact('vehicle', 'vehicle_types'));
+		$vehicle_profiles = $this->Vehicles->CompanyVehicles->VehicleProfiles->find('list')
+			->where(['company_id' => $company_id]);
+		$this->set(compact('vehicle', 'vehicle_types', 'vehicle_profiles'));
 		$this->set('_serialize', ['vehicle']);
 	}
 
@@ -77,11 +118,25 @@ class VehiclesController extends AppController
 	 */
 	public function edit($id = null)
 	{
+		$company_id = $this->Auth->user()['company_id'];
 		$vehicle = $this->Vehicles->get($id, [
-			'contain' => ['VehicleTypes']
+			'contain' => [
+				'VehicleTypes', 
+				'CompanyVehicles.VehicleProfiles' => function ($q) use ($id, $company_id)
+				{
+					return $q->where(['vehicle_id' => $id, 'CompanyVehicles.company_id' => $company_id]);
+				}]
 		]);
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$vehicle = $this->Vehicles->patchEntity($vehicle, $this->request->data);
+
+			$vehicle->id = $id;
+			$vehicle == $this->Vehicles->patchEntity($vehicle, $this->request->data, [
+				'associated' => [
+					'VehicleTypes',
+					'CompanyVehicles'
+				]
+			]);
+
 			if ($this->Vehicles->save($vehicle)) {
 				$this->Flash->success(__('El vehículo ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
@@ -89,8 +144,13 @@ class VehiclesController extends AppController
 				$this->Flash->error(__('El vehículo no ha podido ser gurdado. Por favor, intente nuevamente.'));
 			}
 		}
-		$vehicle_types = $this->Vehicles->VehicleTypes->find('list');
-		$this->set(compact('vehicle', 'vehicle_types'));
+
+		$vehicle_types = $this->Vehicles->VehicleTypes->find('list')->toArray();
+		$vehicle_profiles = $this->Vehicles->CompanyVehicles->VehicleProfiles->find('list')
+			->where(['company_id' => $company_id])
+			->toArray();
+
+		$this->set(compact('vehicle', 'vehicle_types', 'vehicle_profiles'));
 		$this->set('_serialize', ['vehicle']);
 	}
 
@@ -111,5 +171,23 @@ class VehiclesController extends AppController
 			$this->Flash->error(__('El vehículo no ha podido ser eliminado. Por favor, intente nuevamente'));
 		}
 		return $this->redirect(['action' => 'index']);
+	}
+
+	public function deleteAuthorization($vehicle_id, $company_people_id)
+	{
+		$this->request->allowMethod(['post', 'delete']);
+
+		$vehicle = $this->Vehicles->get($vehicle_id);
+
+		$company_people = $this->Vehicles->CompanyPeople->find()
+			->where(['CompanyPeople.id' => $company_people_id])
+			->toArray();
+
+		// debug($company_people); die;	
+
+		$this->Vehicles->CompanyPeople->unlink($vehicle, $company_people);
+
+		return $this->redirect(['action' => 'view', $vehicle_id]);
+
 	}
 }
