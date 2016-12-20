@@ -19,7 +19,7 @@
 			]);
 			echo $this->Form->input('enclosure_id', [
             'options' => $enclosures, 
-            'label' => 'Recinto'
+            'label' => 'Reciento'
           ]);
 		?>
 		</fieldset>
