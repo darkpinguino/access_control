@@ -7,11 +7,14 @@
 		['action' => 'edit', $entityId], 
 		['class' => 'btn btn-warning btn-xs']) 
 	?>
-	<?= $this->Form->postLink(__('Eliminar'), 
-		['action' => 'delete', $entityId], 
-		[
-			'confirm' => __('Are you sure you want to delete # {0}?', $entityId), 
-			'class' => 'btn btn-danger btn-xs'
-		]) 
+	<?php 
+	echo $this->Html->link(__('Eliminar'),
+			[],
+	       ['class'=>'btn btn-danger btn-xs btn-confirm',
+	       'data-toggle'=> 'modal',
+	       'data-target' => '#myModalDelete',
+	       'data-action'=> $this->request->here.'/delete/'.$entityId,
+	       'escape' => false], 
+	false);
 	?>
 </td>
