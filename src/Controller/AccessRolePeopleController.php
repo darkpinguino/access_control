@@ -49,15 +49,11 @@ class AccessRolePeopleController extends AppController
 	 */
 	public function add()
 	{
-		$company_id = $this->Auth->user('company_id');
 		$accessRolePerson = $this->AccessRolePeople->newEntity();
 		if ($this->request->is('post')) {
-				// debug($this->request->data); die;
-				
-				if ($this->request->data['notExpire']) {
+				if ($this->request->data['notexpire']) {
 					$this->request->data['expiration'] = '';
 				}
-
 
 			$accessRolePerson = $this->AccessRolePeople->patchEntity($accessRolePerson, $this->request->data);
 			if ($this->AccessRolePeople->save($accessRolePerson)) {
@@ -67,15 +63,8 @@ class AccessRolePeopleController extends AppController
 				$this->Flash->error(__('El rol de acceso no ha podido ser asignado. Por favor, intente nuevamente.'));
 			}
 		}
-		$people = $this->AccessRolePeople->People->find('list')
-			->matching('Companies', function ($q) use ($company_id)
-			{
-				return $q->where(['Companies.id' => $company_id]);
-			});
-		$accessRoles = $this->AccessRolePeople->AccessRoles->find('list')
-			->where(['company_id' => $company_id])
-			->orWhere(['company_id' => -1]);
-
+		$people = $this->AccessRolePeople->People->find('list');
+		$accessRoles = $this->AccessRolePeople->AccessRoles->find('list');
 		$this->set(compact('accessRolePerson', 'people', 'accessRoles'));
 		$this->set('_serialize', ['accessRolePerson']);
 	}

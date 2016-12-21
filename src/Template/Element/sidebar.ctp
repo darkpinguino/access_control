@@ -149,7 +149,7 @@
         </li>
       </ul>
     </li>
-    <?= '<li class="treeview'. ((strcmp($controller, 'Vehicles') and strcmp($controller, 'VehicleTypes') and strcmp($controller, 'VehicleProfiles') and strcmp($controller, 'VehicleAuthorizations')) ? '' : ' active').'">' ?>
+    <?= '<li class="treeview'. ((strcmp($controller, 'Vehicles') and strcmp($controller, 'VehicleTypes')) ? '' : ' active').'">' ?>
       <a href="#">
         <i class="fa fa-car"></i> <span>Vehiculos</span> <i class="fa fa-angle-left pull-right"></i>
       </a>
@@ -165,15 +165,6 @@
         </li>
         <li>
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar tipos de Vehículos', '/vehicleTypes/add', ['escape' => false]) ?>
-        </li>
-        <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Autorización Vehiculos', '/vehicleAuthorizations/index', ['escape' => false]) ?>
-        </li>
-        <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Perfiles Vehiculos', '/VehicleProfiles/index', ['escape' => false]) ?>
-        </li>
-        <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Perfiles Vehiculos', '/VehicleProfiles/add', ['escape' => false]) ?>
         </li>
       </ul>
     </li>

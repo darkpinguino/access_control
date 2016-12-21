@@ -38,38 +38,3 @@
 		</div>
 	</div>
 </div>
-
-<div class="box">
-	<?= $this->element('tableHeader', ['title' => 'Puertas'])?>
-	<div class="box-body">
-		<table class="table table-bordered table-striped table-hover">
-			<thead>
-				<tr>
-					<th><?= $this->Paginator->sort('id', 'ID') ?></th>
-					<th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
-					<th>Acciones</th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php foreach ($doors as $door): ?>
-				<tr>
-					<td><?= h($door->id) ?></td>
-					<td><?= h($door->name) ?></td>
-					<td>
-						<?= $this->Form->postLink(__('Quitar'), 
-		              ['action' => 'deleteDoor', $enclosure->id, $door->id], 
-		              [
-		                'confirm' => __('Are you sure you want to delete DOOR # {0}?', $door->id), 
-		                'class' => 'btn btn-danger btn-xs'
-		              ]) 
-		            ?>
-					</td>
-				</tr>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
-	</div>
-	<div class="box-footer clearfix">
-		<?= $this->element('paginator') ?>
-	</div>
-</div>

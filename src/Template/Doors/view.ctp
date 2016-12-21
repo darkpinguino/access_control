@@ -66,7 +66,6 @@
 				<tr>
 					<th><?= $this->Paginator->sort('id', 'ID') ?></th>
 					<th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
-					<th>Acciones</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -74,15 +73,7 @@
 				<tr>
 					<td><?= h($accesRole->id) ?></td>
 					<td><?= h($accesRole->name) ?></td>
-					<td>
-						<?= $this->Form->postLink(__('Eliminar'), 
-		              ['action' => 'deleteRole', $door->id, $accesRole->id], 
-		              [
-		                'confirm' => __('Are you sure you want to delete ROLE # {0}?', $door->id), 
-		                'class' => 'btn btn-danger btn-xs'
-		              ]) 
-		            ?>
-					</td>
+					</tr>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>

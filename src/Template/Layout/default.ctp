@@ -69,11 +69,9 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   		<!-- Logo -->
   		<a href="index2.html" class="logo">
   		  <!-- mini logo for sidebar mini 50x50 pixels -->
-  		  <span class="logo-mini">
-          <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
-        </span>
+  		  <span class="logo-mini"><b>A</b>LT</span>
   		  <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg">Control de Acceso</span>
+        <span class="logo-lg"><b>Admin</b>LTE</span>
   		</a>
 
   		<!-- Header Navbar: style can be found in header.less -->
