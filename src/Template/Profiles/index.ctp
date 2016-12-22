@@ -15,8 +15,12 @@
 				<tr>
 					<td><?= h($profile->id) ?></td>
 					<td><?= h($profile->name) ?></td>
-					<td><?= h($profile->maxTime)?></td>
-					<?= $this->element('action', ['entityId' => $profile->id])?>
+					<td><?= h($profile->company_profiles[0]->maxTime)?></td>
+					<?php if ($userRole_id == 1): ?>
+						<?= $this->element('action', ['entityId' => $profile->id]) ?>
+					<?php else: ?>
+						<?= $this->element('action_min', ['entityId' => $profile->id]) ?>
+					<?php endif; ?>
 					</tr>
 				</tr>
 				<?php endforeach; ?>

@@ -94,6 +94,8 @@ class DoorsTable extends Table
 	public function buildRules(RulesChecker $rules)
 	{
 		$rules->add($rules->existsIn(['company_id'], 'Companies'));
+		$rules->add($rules->isUnique(['name', 'company_id'], 
+			'El nombre de la puerta ya está en uso.'));
 		return $rules;
 	}
 }

@@ -18,14 +18,16 @@
             <th><?= __('Descripción') ?></th>
             <td><?= h($enclosure->description) ?></td>
 	        </tr>
-	        <tr>
-            <th><?= __('Empresa') ?></th>
-            <td><?= $enclosure->has('company') ? $this->Html->link($enclosure->company->name, ['controller' => 'Companies', 'action' => 'view', $enclosure->company->id]) : '' ?></td>
-	        </tr>
-	        <tr>
-            <th><?= __('ID') ?></th>
-            <td><?= $this->Number->format($enclosure->id) ?></td>
-	        <tr>
+	        <?php if ($userRole_id == 1): ?>
+		        <tr>
+	            <th><?= __('Empresa') ?></th>
+	            <td><?= $enclosure->has('company') ? $this->Html->link($enclosure->company->name, ['controller' => 'Companies', 'action' => 'view', $enclosure->company->id]) : '' ?></td>
+		        </tr>
+		        <tr>
+	            <th><?= __('ID') ?></th>
+	            <td><?= $this->Number->format($enclosure->id) ?></td>
+		        <tr>
+	        <?php endif; ?>
             <th><?= __('Agregada') ?></th>
             <td><?= h($enclosure->created) ?></td>
 	        </tr>
@@ -36,5 +38,44 @@
 		    </table>
 			</div>
 		</div>
+	</div>
+</div>
+
+<div class="box">
+	<?= $this->element('tableHeader', ['title' => 'Puertas'])?>
+	<div class="box-body">
+		<table class="table table-bordered table-striped table-hover">
+			<thead>
+				<tr>
+					<?php if ($userRole_id == 1): ?>
+						<th><?= $this->Paginator->sort('id', 'ID') ?></th>
+					<?php endif ?>
+					<th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($doors as $door): ?>
+				<tr>
+					<?php if ($userRole_id == 1): ?>
+						<td><?= h($door->id) ?></td>
+					<?php endif ?>
+					<td><?= h($door->name) ?></td>
+					<td>
+						<?= $this->Form->postLink(__('Quitar'), 
+		              ['action' => 'deleteDoor', $enclosure->id, $door->id], 
+		              [
+		                'confirm' => __('Are you sure you want to delete DOOR # {0}?', $door->id), 
+		                'class' => 'btn btn-danger btn-xs'
+		              ]) 
+		            ?>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
+	<div class="box-footer clearfix">
+		<?= $this->element('paginator') ?>
 	</div>
 </div>

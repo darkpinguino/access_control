@@ -7,12 +7,6 @@
 			<fieldset>
 				<?php
 					echo $this->Form->input('name', ['label' => 'Nombre']);
-					echo $this->Form->input('maxTime', ['label' => 'Horas máximas de ingreso']);
-					echo $this->Form->input('company_id', [
-						'options' => $companies, 
-						'label' => 'Empresa'
-					]);
-
 				?>
 			</fieldset>
 	</div>

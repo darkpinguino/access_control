@@ -12,16 +12,14 @@
 				</tr>
 				<tr>
 				  <th><?= __('Horas máximas de ingreso') ?></th>
-				  <td><?= h($profile->maxTime) ?></td>
+				  <td><?= h($profile->company_profiles[0]->maxTime) ?></td>
 				</tr>
-				<tr>
-				  <th><?= __('Empresa') ?></th>
-				  <td><?= $profile->has('company') ? $this->Html->link($profile->company->name, ['controller' => 'Companies', 'action' => 'view', $profile->company->id]) : '' ?></td>
-				</tr>
-				<tr>
-				  <th><?= __('ID') ?></th>
-				  <td><?= h($profile->id) ?></td>
-				</tr>
+				<?php if ($userRole_id == 1): ?>
+					<tr>
+					  <th><?= __('ID') ?></th>
+					  <td><?= h($profile->id) ?></td>
+					</tr>
+				<?php endif ?>
 				<tr>
 				  <th><?= __('Agregado') ?></th>
 				  <td><?= h($profile->created) ?></td>

@@ -67,18 +67,41 @@ class CompanyPeopleTable extends Table
         return $validator;
     }
 
-    /**
-     * Returns a rules checker object that will be used for validating
-     * application integrity.
-     *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function buildRules(RulesChecker $rules)
-    {
-        $rules->add($rules->existsIn(['people_id'], 'People'));
-        $rules->add($rules->existsIn(['company_id'], 'Companies'));
-        $rules->add($rules->existsIn(['profile_id'], 'Profiles'));
-        return $rules;
-    }
+	/**
+	 * Default validation rules.
+	 *
+	 * @param \Cake\Validation\Validator $validator Validator instance.
+	 * @return \Cake\Validation\Validator
+	 */
+	public function validationDefault(Validator $validator)
+	{
+		$validator
+			->integer('id')
+			->allowEmpty('id', 'create');
+
+		$validator
+			->boolean('is_visited')
+			->requirePresence('is_visited', 'create')
+			->notEmpty('is_visited');
+
+		return $validator;
+	}
+
+	/**
+	 * Returns a rules checker object that will be used for validating
+	 * application integrity.
+	 *
+	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Cake\ORM\RulesChecker
+	 */
+	public function buildRules(RulesChecker $rules)
+	{
+		$rules->add($rules->existsIn(['people_id'], 'People'));
+		$rules->add($rules->existsIn(['company_id'], 'Companies'));
+		$rules->add($rules->existsIn(['profile_id'], 'Profiles'));
+		$rules->add($rules->isUnique(['person_id', 'company_id'],
+			'La persona ya existe.'
+		));
+		return $rules;
+	}
 }

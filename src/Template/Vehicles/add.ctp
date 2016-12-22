@@ -1,3 +1,5 @@
+<?= $this->Html->script('vehicles/add.js', ['block' => 'scriptView']); ?>
+
 <div class="box">
 	<div class="box-header">
 		<h3 class="box-title">Nueva Vehiculo</h3>

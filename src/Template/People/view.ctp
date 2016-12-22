@@ -18,10 +18,12 @@
 				  <th><?= __('Apellido') ?></th>
 				  <td><?= h($person->lastname) ?></td>
 				</tr>
-				<tr>
-				  <th><?= __('ID') ?></th>
-				  <td><?= h($person->id) ?></td>
-				</tr>
+				<?php if ($userRole_id == 1): ?>
+					<tr>
+					  <th><?= __('ID') ?></th>
+					  <td><?= h($person->id) ?></td>
+					</tr>
+				<?php endif ?>
 				<tr>
 				  <th><?= __('Telefono') ?></th>
 				  <td><?= h($person->phone) ?></td>

@@ -79,7 +79,10 @@ class VehiclesTable extends Table
 	 */
 	public function buildRules(RulesChecker $rules)
 	{
-		$rules->add($rules->existsIn(['company_id'], 'Companies'));
+		$rules->add($rules->isUnique(['number_plate'], 
+			'El vehículo ya existe.'
+		));
+
 		return $rules;
 	}
 }

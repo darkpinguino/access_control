@@ -129,23 +129,28 @@ class AuthorizationComponent extends Component
 	{
 		$this->People = TableRegistry::get('People');
 
-		$companyPeople = $this->People->CompanyPeople->find()->
-			where([
+		$companyPeople = $this->People->CompanyPeople->find()
+			->where([
 				'person_id' => $person->id,
 				'CompanyPeople.company_id' => $company_id
-			])->
-			contain('Profiles')->first();
+			])
+			->contain(['Profiles.CompanyProfiles' => function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyProfiles.company_id' => $company_id]);
+				}
+			])
+			->first();
 
-		$maxTime = $companyPeople->profile->maxTime;
+		$maxTime = $companyPeople->profile->company_profiles[0]->maxTime;
 
-		if (!strcmp($companyPeople->profile->name, 'Visita')) {
-			$this->VisitProfiles = TableRegistry::get('VisitProfiles');
-			$maxTime = $this->VisitProfiles->find()->
-				where([
-					'person_id' => $person->id,
-					'company_id' => $company_id
-				])->last()->maxTime;
-		}
+		// if (!strcmp($companyPeople->profile->name, 'Visita')) {
+		// 	$this->VisitProfiles = TableRegistry::get('VisitProfiles');
+		// 	$maxTime = $this->VisitProfiles->find()->
+		// 		where([
+		// 			'person_id' => $person->id,
+		// 			'company_id' => $company_id
+		// 		])->last()->maxTime;
+		// }
 
 		return $maxTime;
 	}

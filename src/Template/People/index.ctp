@@ -4,12 +4,16 @@
 	  <table class="table table-bordered table-striped table-hover">
       <thead>
         <tr>
-          <th><?= $this->Paginator->sort('id', 'ID') ?></th>
+          <?php if ($userRole_id == 1): ?>
+            <th><?= $this->Paginator->sort('id', 'ID') ?></th>
+          <?php endif ?>
           <th><?= $this->Paginator->sort('rut', 'Rut') ?></th>
           <th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
           <th><?= $this->Paginator->sort('lastname', 'Apellido') ?></th>
           <th><?= $this->Paginator->sort('phone', 'Telefono') ?></th>
-          <th><?= $this->Paginator->sort('company_id', 'Compañia') ?></th>
+          <?php if ($userRole_id == 2): ?>
+            <th><?= $this->Paginator->sort('company_people.profile.id', 'Perfil')?></th>
+          <?php endif ?>
           <th><?= $this->Paginator->sort('created', 'Agregada') ?></th>
           <th><?= __('Acciones') ?></th>
         </tr>
@@ -17,14 +21,25 @@
       <tbody>
         <?php foreach ($people as $person): ?>
         <tr>
-          <td><?= h($person->id) ?></td>
+          <?php if ($userRole_id == 1): ?>
+            <td><?= h($person->id) ?></td>
+          <?php endif ?>
           <td><?= h($person->rut) ?></td>
           <td><?= h($person->name) ?></td>
           <td><?= h($person->lastname) ?></td>
           <td><?= h($person->phone) ?></td>
-          <td><?= $person->has('company') ? $this->Html->link($person->company->name, ['controller' => 'Companies', 'action' => 'view', $person->company->id]) : '' ?></td>
+          <?php if ($userRole_id == 2): ?>
+            <td><?= $this->element('action_profile', ['profileID' => $person->company_people[0]->profile->id])?></td>
+          <?php endif ?>
           <td><?= h($person->created) ?></td>
-          <?= $this->element('action', ['entityId' => $person->id])?>
+          <?php if ($userRole_id == 1): ?>
+            <?= $this->element('action', ['entityId' => $person->id])?>
+          <?php else: ?>
+            <?= $this->element('action_delete_local', [
+                'entityId' => $person->company_people[0]->id, 
+                'controller' => 'CompanyPeople'
+              ]) ?>
+          <?php endif; ?>
           </tr>
         </tr>
         <?php endforeach; ?>

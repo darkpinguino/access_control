@@ -13,18 +13,20 @@
             <th><?= __('Descripción') ?></th>
             <td><?= h($accessRole->description) ?></td>
 	        </tr>
-	        <tr>
-            <th><?= __('Empresa') ?></th>
-            <td><?= $accessRole->has('company') ? $this->Html->link($accessRole->company->name, ['controller' => 'Companies', 'action' => 'view', $accessRole->company->id]) : '' ?></td>
-	        </tr>
-	        <tr>
-            <th><?= __('ID') ?></th>
-            <td><?= h($accessRole->id) ?></td>
-	        </tr>
-	        <tr>
-            <th><?= __('Usuario') ?></th>
-            <td><?= $this->Number->format($accessRole->user_id) ?></td>
-	        </tr>
+	        <?php if ($userRole_id == 1): ?>
+		        <tr>
+	            <th><?= __('Empresa') ?></th>
+	            <td><?= $accessRole->has('company') ? $this->Html->link($accessRole->company->name, ['controller' => 'Companies', 'action' => 'view', $accessRole->company->id]) : '' ?></td>
+		        </tr>
+		        <tr>
+	            <th><?= __('ID') ?></th>
+	            <td><?= h($accessRole->id) ?></td>
+		        </tr>
+		        <tr>
+	            <th><?= __('Usuario') ?></th>
+	            <td><?= $this->Number->format($accessRole->user_id) ?></td>
+		        </tr>
+	        <?php endif; ?>
 	        <tr>
             <th><?= __('Agregado') ?></th>
             <td><?= h($accessRole->created) ?></td>

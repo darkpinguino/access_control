@@ -10,6 +10,14 @@ use App\Controller\AppController;
  */
 class EnclosuresController extends AppController
 {
+	public function isAuthorized($user)
+	{
+		if ($user['userRole_id'] == 2) {
+			return true;
+		}
+
+		return parent::isAuthorized($user);
+	}
 
 	public $paginate = [
 	  'limit' => 10,
@@ -23,9 +31,20 @@ class EnclosuresController extends AppController
 	 */
 	public function index()
 	{
-		$enclosures = $this->paginate($this->Enclosures);
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
 
-		$this->set(compact('enclosures'));
+
+
+		if ($userRole_id == 1) {
+			$enclosures = $this->paginate($this->Enclosures);
+		} else {
+			$enclosures = $this->Enclosures->find('all')
+				->where(['company_id' => $company_id]);
+			$enclosures = $this->paginate($enclosures);
+		}
+
+		$this->set(compact('enclosures', 'userRole_id'));
 		$this->set('_serialize', ['enclosures']);
 	}
 
@@ -38,11 +57,16 @@ class EnclosuresController extends AppController
 	 */
 	public function view($id = null)
 	{
+		$userRole_id = $this->Auth->user('userRole_id');
 		$enclosure = $this->Enclosures->get($id, [
 			'contain' => ['Doors'],
 			'contain' => ['Companies']
 		]);
 
+		$doors = $this->Enclosures->Doors->find('all')
+			->where(['enclosure_id' => $id]);
+
+		$this->set('userRole_id', $userRole_id);
 		$this->set('enclosure', $enclosure);
 		$this->set('_serialize', ['enclosure']);
 	}
@@ -54,10 +78,17 @@ class EnclosuresController extends AppController
 	 */
 	public function add()
 	{
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
+
 		$enclosure = $this->Enclosures->newEntity();
 		if ($this->request->is('post')) {
 			$enclosure = $this->Enclosures->patchEntity($enclosure, $this->request->data);
-			$enclosure->company_id = $this->Auth->user()['company_id'];
+
+			if ($userRole_id != 1) {
+				$enclosure->company_id = $this->Auth->user()['company_id'];
+			}
+
 			if ($this->Enclosures->save($enclosure)) {
 				$this->Flash->success(__('El recinto ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
@@ -65,7 +96,13 @@ class EnclosuresController extends AppController
 				$this->Flash->error(__('El recinto no ha podido ser guardado. Por favor, intente nuevamente.'));
 			}
 		}
-		$this->set(compact('enclosure'));
+
+		if ($userRole_id == 1) {
+			$companies = $this->Enclosures->Companies->find('list');
+			$this->set(compact('companies'));
+		}
+
+		$this->set(compact('enclosure', 'userRole_id'));
 		$this->set('_serialize', ['enclosure']);
 	}
 
@@ -78,6 +115,8 @@ class EnclosuresController extends AppController
 	 */
 	public function edit($id = null)
 	{
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
 		$enclosure = $this->Enclosures->get($id, [
 			'contain' => []
 		]);
@@ -90,7 +129,13 @@ class EnclosuresController extends AppController
 				$this->Flash->error(__('El recinto no ha podido ser guardado. Por favor, intente nuevamente.'));
 			}
 		}
-		$this->set(compact('enclosure'));
+
+		if ($userRole_id == 1) {
+			$companies = $this->Enclosures->Companies->find('list');
+			$this->set(compact('companies'));
+		}
+
+		$this->set(compact('enclosure', 'userRole_id'));
 		$this->set('_serialize', ['enclosure']);
 	}
 

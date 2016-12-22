@@ -75,4 +75,19 @@ class EnclosuresTable extends Table
 
 		return $validator;
 	}
+
+	/**
+	 * Returns a rules checker object that will be used for validating
+	 * application integrity.
+	 *
+	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Cake\ORM\RulesChecker
+	 */
+	public function buildRules(RulesChecker $rules)
+	{
+		$rules->add($rules->isUnique(['name', 'company_id'], 
+			'El nombre del recinto ya está en uso.'));
+
+		return $rules;
+	}
 }

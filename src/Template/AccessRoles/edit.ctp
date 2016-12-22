@@ -6,10 +6,12 @@
   <div class="box-body">
     <fieldset>
       <?php
-        echo $this->Form->input('name');
-        echo $this->Form->input('description');
+        echo $this->Form->input('name', ['label' => 'Nombre']);
+        echo $this->Form->input('description', ['label' => 'Descripción']);
         echo $this->Form->input('user_id');
-        echo $this->Form->input('company_id', ['options' => $companies]);
+        if ($userRole_id == 1) {
+          echo $this->Form->input('company_id', ['label' => 'Empresa', 'options' => $companies]);
+        }
       ?>
     </fieldset>
   </div>

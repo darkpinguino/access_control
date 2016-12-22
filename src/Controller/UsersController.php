@@ -20,8 +20,9 @@ class UsersController extends AppController
 
   public function isAuthorized($user)
 	{
-		// debug($user['id']); die;
 		if (in_array($this->request->action, ['editMin']) and $this->request->params['pass'][0] == $user['id']) {
+			return true;
+		} elseif($user['userRole_id'] == 2) {
 			return true;
 		}
  		return parent::isAuthorized($user);
@@ -54,11 +55,22 @@ class UsersController extends AppController
 	public function index()
 	{
 		$this->paginate = [
-			'contain' => ['UserRoles', 'People']
+			'contain' => ['UserRoles', 'People', 'Companies']
 		];
-		$users = $this->paginate($this->Users);
 
-		$this->set(compact('users'));
+		$userRole_id = $this->Auth->user('userRole_id');
+
+		if ($userRole_id == 1) {
+			$users = $this->paginate($this->Users);
+		} else {
+			$company_id =  $this->Auth->user('company_id');
+			$users = $this->Users->find('all')
+				->contain(['UserRoles', 'People'])
+				->where(['company_id' => $company_id, 'userRole_id !=' => 1]);
+			$users = $this->paginate($users);
+		}
+
+		$this->set(compact('users', 'userRole_id'));
 		$this->set('_serialize', ['users']);
 	}
 
@@ -71,11 +83,13 @@ class UsersController extends AppController
 	 */
 	public function view($id = null)
 	{
+		$userRole_id = $this->Auth->user('userRole_id');
+
 		$user = $this->Users->get($id, [
-			'contain' => ['UserRoles', 'People', 'AccessRoles', 'Companies']
+			'contain' => ['UserRoles', 'People', 'AccessRoles', 'Companies', 'Doors']
 		]);
 
-		$this->set('user', $user);
+		$this->set(compact('user', 'userRole_id'));
 		$this->set('_serialize', ['user']);
 	}
 
@@ -87,8 +101,16 @@ class UsersController extends AppController
 	public function add()
 	{
 		$user = $this->Users->newEntity();
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
+
 		if ($this->request->is('post')) {
 			$user = $this->Users->patchEntity($user, $this->request->data, ['validate' => 'Passwords']);
+
+			if ($userRole_id != 1) {
+				$user->company_id = $this->Auth->user('company_id');
+			}
+
 			if ($this->Users->save($user)) {
 				$this->Flash->success(__('El usuario ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
@@ -99,11 +121,39 @@ class UsersController extends AppController
 		$userRoles = $this->Users->UserRoles->find('list', [
 			'keyField' => 'id',
 			'valueField' => 'role'
-		]);
-		$doors = $this->Users->Doors->find('list');
-		$people = $this->Users->People->find('list');
-		$companies = $this->Users->companies->find('list');
-		$this->set(compact('user', 'userRoles', 'people', 'doors', 'companies'));
+		])->toArray();
+
+		if ($userRole_id == 1) {
+			$companies = $this->Users->companies->find('list');
+			$doors = $this->Users->Doors->find('list')->toArray();
+			$doors[-1] = 'ninguna';
+			$people = $this->Users->People->find('list', [
+				'keyField' => 'id',
+				'valueField' => function ($people)
+					{
+						return $people->get('full_name');
+					}
+				]);
+			$this->set(compact('companies'));
+		} else {
+			unset($userRoles[1]);
+			$doors = $this->Users->Doors->find('list')
+				->where(['company_id' => $company_id])->toArray();
+			$doors[-1] = 'ninguna';
+			$people = $this->Users->People->find('list', [
+				'keyField' => 'id',
+				'valueField' => function ($people)
+					{
+						return $people->get('full_name');
+					}
+				])
+				->matching('CompanyPeople', function ($q) use ($company_id)
+				{
+					return $q->where(['company_id' => $company_id]);
+				});
+		}
+
+		$this->set(compact('user', 'userRoles', 'people', 'doors', 'userRole_id'));
 		$this->set('_serialize', ['user']);
 	}
 
@@ -116,6 +166,8 @@ class UsersController extends AppController
 	 */
 	public function edit($id = null)
 	{
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
 		$user = $this->Users->get($id, [
 			'contain' => []
 		]);
@@ -127,7 +179,14 @@ class UsersController extends AppController
 				$user->password = $user->new_password;
 			}
 
+			if ($userRole_id != 1) {
+				$user->company_id = $this->Auth->user('company_id');
+			}
+
 			if ($this->Users->save($user)) {
+				if ($user->id == $this->Auth->user()['id']) {
+					$this->Auth->setUser($user->toArray());
+				}
 				$this->Flash->success(__('El usuario ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
@@ -135,11 +194,42 @@ class UsersController extends AppController
 			}
 		}
 
-		$userRoles = $this->Users->UserRoles->find('list');
-		$doors = $this->Users->Doors->find('list');
-		$people = $this->Users->People->find('list');
-		$companies = $this->Users->companies->find('list');
-		$this->set(compact('user', 'userRoles', 'people', 'doors', 'companies'));
+		$userRoles = $this->Users->UserRoles->find('list', [
+			'keyField' => 'id',
+			'valueField' => 'role'
+		])->toArray();
+
+		if ($userRole_id == 1) {
+			$companies = $this->Users->companies->find('list');
+			$doors = $this->Users->Doors->find('list')->toArray();
+			$doors[-1] = 'ninguna';
+			$people = $this->Users->People->find('list', [
+				'keyField' => 'id',
+				'valueField' => function ($people)
+					{
+						return $people->get('full_name');
+					}
+				]);
+			$this->set(compact('companies'));
+		} else {
+			unset($userRoles[1]);
+			$doors = $this->Users->Doors->find('list')
+				->where(['company_id' => $company_id])->toArray();
+			$doors[-1] = 'ninguna';
+			$people = $this->Users->People->find('list', [
+				'keyField' => 'id',
+				'valueField' => function ($people)
+					{
+						return $people->get('full_name');
+					}
+				])
+				->matching('CompanyPeople', function ($q) use ($company_id)
+				{
+					return $q->where(['company_id' => $company_id]);
+				});
+		}
+
+		$this->set(compact('user', 'userRoles', 'people', 'doors', 'userRole_id'));
 		$this->set('_serialize', ['user']);
 	}
 
@@ -148,8 +238,6 @@ class UsersController extends AppController
 		$user = $this->Users->get($id, [
 			'contain' => ['People']
 		]);
-
-		// debug($this->referer()); die;
 
 		unset($user->password);
 		if ($this->request->is(['patch', 'post', 'put'])) {

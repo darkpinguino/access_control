@@ -19,14 +19,20 @@
 						<td><?= h($user->person->name) ?></td>
 					</tr>
 					<tr>
-						<th><?= __('ID') ?></th>
-						<td><?= $this->Number->format($user->id) ?></td>
+						<th><?= __('Puerta a cargo')?></th>
+						<td><?= h($user->door->name) ?></td>
 					</tr>
-					<tr>
-						<th><?= __('Empresa') ?></th>
-						<td><?= h($user->company->name) ?></td>
-					</tr>
-					<tr>
+					<?php if ($userRole_id == 1): ?>
+						<tr>
+							<th><?= __('ID') ?></th>
+							<td><?= $this->Number->format($user->id) ?></td>
+						</tr>
+						<tr>
+							<th><?= __('Empresa') ?></th>
+							<td><?= h($user->company->name) ?></td>
+						</tr>
+						<tr>
+					<?php endif ?>
 						<th><?= __('Agregado') ?></th>
 						<td><?= h($user->created) ?></td>
 					</tr>

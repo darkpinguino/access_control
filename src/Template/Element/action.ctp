@@ -1,4 +1,4 @@
-<td class="actions text-nowrap">
+<td nowrap class="actions">
 	<?= $this->Html->link(__('Ver'), 
 		['action' => 'view', $entityId], 
 		['class' => 'btn btn-primary btn-xs']) 

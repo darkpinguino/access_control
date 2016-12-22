@@ -10,14 +10,22 @@
 		  echo $this->Form->input('location');
 		  echo $this->Form->input('description');
 		  echo $this->Form->input('type', [
-			'options' => [
-				1 => 'Entrada', 
-				2 => 'Salida', 
-				3 => 'Entrada/Salida'
-			], 
-			'label' => 'Tipo'
+				'options' => [
+					1 => 'Entrada', 
+					2 => 'Salida', 
+					3 => 'Entrada/Salida'
+				], 
+				'label' => 'Tipo'
 		  ]);
-		  echo $this->Form->input('company_id', ['options' => $companies]);
+		  echo $this->Form->input('access_type', [
+				'options' => [
+					1 => 'Personas', 
+					2 => 'Vehículos', 
+					3 => 'Personas/Vehículos'
+				], 
+				'label' => 'Acceso'
+		  ]);
+		  echo $this->Form->input('company_id', ['label' => 'Empresa', 'options' => $companies]);
 		?>
 	  </fieldset>
   </div>

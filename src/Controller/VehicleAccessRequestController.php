@@ -14,10 +14,25 @@ class VehicleAccessRequestController extends AppController
 	
 	public $paginate = [
 	  'limit' => 10,
-	  'contain' => ['Vehicles', 'AccessRequest.People', 'AccessRequest.Doors', 'AccessRequest.AccessStatus'],
+	  'contain' => ['Vehicles', 'AccessRequest.People', 'AccessRequest.Doors.Companies', 'AccessRequest.AccessStatus'],
 	  'order' => [
 		'id' => 'desc']
 	];
+
+	public function isAuthorized($user)
+	{
+		$userRole_id = $user['userRole_id'];
+
+		if ($this->request->action === 'add' || $this->request->action === 'edit') {
+			return false;
+		}
+
+		if ($userRole_id == 2 || $userRole_id == 3 || $userRole_id == 4) {
+			return true;
+		}
+
+		return parent::isAuthorized($user);
+	}
 
 	/**
 	 * Index method
@@ -26,10 +41,21 @@ class VehicleAccessRequestController extends AppController
 	 */
 	public function index()
 	{
-		$vehicleAccessRequest = $this->paginate($this->VehicleAccessRequest);
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
 
-		// debug($vehicleAccessRequest); die;
-		$this->set(compact('vehicleAccessRequest'));
+		if ($userRole_id == 1) {
+			$vehicleAccessRequest = $this->paginate($this->VehicleAccessRequest);
+		} else {
+			$vehicleAccessRequest = $this->VehicleAccessRequest->find('all')
+				->matching('AccessRequest.Doors', function ($q) use ($company_id)
+				{
+					return $q->where(['company_id' => $company_id]);
+				});
+			$vehicleAccessRequest = $this->paginate($vehicleAccessRequest);
+		}
+
+		$this->set(compact('vehicleAccessRequest', 'userRole_id'));
 		$this->set('_serialize', ['vehicleAccessRequest']);
 	}
 
@@ -43,9 +69,10 @@ class VehicleAccessRequestController extends AppController
 	public function view($id = null)
 	{
 		$vehicleAccessRequest = $this->VehicleAccessRequest->get($id, [
-			'contain' => []
+			'contain' => ['Vehicles', 'AccessRequest.People', 'AccessRequest.Doors.Companies', 'AccessRequest.AccessStatus']
 		]);
 
+		// debug($vehicleAccessRequest); die;
 		$this->set('vehicleAccessRequest', $vehicleAccessRequest);
 		$this->set('_serialize', ['vehicleAccessRequest']);
 	}
@@ -108,9 +135,9 @@ class VehicleAccessRequestController extends AppController
 		$this->request->allowMethod(['post', 'delete']);
 		$vehicleAccessRequest = $this->VehicleAccessRequest->get($id);
 		if ($this->VehicleAccessRequest->delete($vehicleAccessRequest)) {
-			$this->Flash->success(__('The vehicle access request has been deleted.'));
+			$this->Flash->success(__('La petición de acceso de vehículo ha sido eliminada.'));
 		} else {
-			$this->Flash->error(__('The vehicle access request could not be deleted. Please, try again.'));
+			$this->Flash->error(__('La petición de acceso de vehículo no ha podido ser eliminada. Por favor, inetente nuevamente.'));
 		}
 		return $this->redirect(['action' => 'index']);
 	}

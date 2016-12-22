@@ -10,7 +10,6 @@ use App\Controller\AppController;
  */
 class UserRolesController extends AppController
 {
-
     /**
      * Index method
      *
@@ -52,10 +51,10 @@ class UserRolesController extends AppController
         if ($this->request->is('post')) {
             $userRole = $this->UserRoles->patchEntity($userRole, $this->request->data);
             if ($this->UserRoles->save($userRole)) {
-                $this->Flash->success(__('The user role has been saved.'));
+                $this->Flash->success(__('El rol de usuario ha sido guardado.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The user role could not be saved. Please, try again.'));
+                $this->Flash->error(__('El rol de usuario no ha podido ser guardado. por favor, intente nuevamente.'));
             }
         }
         $this->set(compact('userRole'));
@@ -77,10 +76,10 @@ class UserRolesController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $userRole = $this->UserRoles->patchEntity($userRole, $this->request->data);
             if ($this->UserRoles->save($userRole)) {
-                $this->Flash->success(__('The user role has been saved.'));
+                $this->Flash->success(__('El rol de usuario ha sido guardado.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The user role could not be saved. Please, try again.'));
+                $this->Flash->error(__('El rol de usuario no ha podido ser guardado. por favor, intente nuevamente.'));
             }
         }
         $this->set(compact('userRole'));
@@ -99,9 +98,9 @@ class UserRolesController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $userRole = $this->UserRoles->get($id);
         if ($this->UserRoles->delete($userRole)) {
-            $this->Flash->success(__('The user role has been deleted.'));
+            $this->Flash->success(__('El rol de usuario ha sido eliminado.'));
         } else {
-            $this->Flash->error(__('The user role could not be deleted. Please, try again.'));
+            $this->Flash->error(__('El rol de usuario no ha podido ser eliminado. Por favor, intente nuevamente.'));
         }
         return $this->redirect(['action' => 'index']);
     }

@@ -15,43 +15,59 @@ use Cake\Validation\Validator;
 class VehicleTypesTable extends Table
 {
 
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
-    public function initialize(array $config)
-    {
-        parent::initialize($config);
+	/**
+	 * Initialize method
+	 *
+	 * @param array $config The configuration for the Table.
+	 * @return void
+	 */
+	public function initialize(array $config)
+	{
+		parent::initialize($config);
 
-        $this->table('vehicle_types');
-        $this->displayField('type');
-        $this->primaryKey('id');
+		$this->table('vehicle_types');
+		$this->displayField('type');
+		$this->primaryKey('id');
 
-        $this->addBehavior('Timestamp');
+		$this->addBehavior('Timestamp');
 
-        $this->hasMany('Vehicles', [
-            'foreignKey' => 'vehicle_type_id'
-        ]);
-    }
+		$this->hasMany('Vehicles', [
+			'foreignKey' => 'vehicle_type_id'
+		]);
+	}
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator)
-    {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
+	/**
+	 * Default validation rules.
+	 *
+	 * @param \Cake\Validation\Validator $validator Validator instance.
+	 * @return \Cake\Validation\Validator
+	 */
+	public function validationDefault(Validator $validator)
+	{
+		$validator
+			->integer('id')
+			->allowEmpty('id', 'create');
 
-        $validator
-            ->requirePresence('type', 'create')
-            ->notEmpty('type');
+		$validator
+			->requirePresence('type', 'create')
+			->notEmpty('type');
 
-        return $validator;
-    }
+		return $validator;
+	}
+
+	/**
+	 * Returns a rules checker object that will be used for validating
+	 * application integrity.
+	 *
+	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Cake\ORM\RulesChecker
+	 */
+	public function buildRules(RulesChecker $rules)
+	{
+		$rules->add($rules->isUnique(['type'], 
+			'El tipo de vehículo ya existe.'
+		));
+
+		return $rules;
+	}
 }

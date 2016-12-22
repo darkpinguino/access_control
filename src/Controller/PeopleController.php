@@ -10,36 +10,44 @@ use App\Controller\AppController;
  */
 class PeopleController extends AppController
 {
-		public $paginate = [
-			'limit' => 10,
-			// 'contain' => ['Companies']
-		];
+	public function isAuthorized($user)
+	{
+		$userRole_id = $user['userRole_id'];
 
-		/**
-		 * Index method
-		 *
-		 * @return \Cake\Network\Response|null
-		 */
-		public function index()
-		{
-				$people = $this->paginate($this->People);
-
-				$this->set(compact('people'));
-				$this->set('_serialize', ['people']);
+		if ($userRole_id == 2 || $userRole_id == 3) {
+			return true;
 		}
 
-		/**
-		 * View method
-		 *
-		 * @param string|null $id Person id.
-		 * @return \Cake\Network\Response|null
-		 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-		 */
-		public function view($id = null)
-		{	
-			$this->loadModel('AccessRoles');
-			$this->loadModel('AccessRequest');
-			$this->loadModel('Doors');
+		return parent::isAuthorized($user);
+	}
+	/**
+	 * Index method
+	 *
+	 * @return \Cake\Network\Response|null
+	 */
+	public function index()
+	{
+		$userRole_id = $this->Auth->user('userRole_id');
+
+		if ($this->Auth->user('userRole_id') == 1) {
+			$people = $this->People->find('all');
+		} else {
+			$company_id = $this->Auth->user('company_id');
+			$people = $this->People->find('all')
+				->matching('Companies', function ($q) use ($company_id)
+				{
+					return $q->where(['Companies.id' => $company_id]);
+				})
+				->contain(['CompanyPeople.Profiles' => function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyPeople.company_id' => $company_id]);
+				}]);
+		}
+
+		$this->set('people', $this->paginate($people));
+		$this->set(compact('userRole_id'));
+		$this->set('_serialize', ['people']);
+	}
 
 			try {
 				$person = $this->People->get($id);
@@ -47,42 +55,70 @@ class PeopleController extends AppController
 				debug($e); die;				
 			}
 
-			$accessRoles = $this->AccessRoles->find()->matching('People', 
-				function ($q) use ($person)
-				{
-					return $q->where(['People.id' => $person->id]);
-				}
-			);
-			$this->set('person', $person);
-			$this->set('accessRoles', $this->paginate($accessRoles));
-			// $this->set('accessRequests', $this->paginate($accessRequests));
-			$this->set('_serialize', ['person']);
-		}
+		$userRole_id = $this->Auth->user('userRole_id');
+		$person = $this->People->get($id);
 
-		/**
-		 * Add method
-		 *
-		 * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
-		 */
-		public function add()
-		{
-			$person = $this->People->newEntity();
-			if ($this->request->is('post')) {
-				$this->loadModel('CompanyPeople');
-				$company_id = $this->Auth->user()['company_id'];
-				$company_people = $this->CompanyPeople->newEntity($this->request->data);
-				
+		$accessRoles = $this->AccessRoles->find()->matching('People', 
+			function ($q) use ($person)
+			{
+				return $q->where(['People.id' => $person->id]);
+			}
+		);
+		
+		$this->set(compact('person', 'userRole_id'));
+		$this->set('accessRoles', $this->paginate($accessRoles));
+		$this->set('_serialize', ['person']);
+	}
+
+	public function viewByRut($rut = null)
+	{
+		$person = $this->People->findByRut($rut)->first();
+
+		$this->set(compact('person'));
+		$this->set('_serialize', ['person']);
+	}
+
+	/**
+	 * Add method
+	 *
+	 * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+	 */
+	public function add()
+	{
+		$person = $this->People->newEntity();
+		if ($this->request->is('post')) {
+			$this->loadComponent('Util');
+			$this->loadModel('CompanyPeople');
+			$company_id = $this->Auth->user()['company_id'];
+			$company_people = $this->CompanyPeople->newEntity($this->request->data);
+			
+
+			$person = $this->People->findByRut($this->request->data('rut'));
+
+			if ($person->isEmpty()) {
+				$person = $this->People->newEntity();
 				$person = $this->People->patchEntity($person, $this->request->data);
-
 				if ($this->People->save($person)) {
 					$company_people->person_id = $person->id;
 					$company_people->company_id = $company_id;
 					if ($this->CompanyPeople->save($company_people)) {
 						$this->Flash->success(__('La persona se ha guardada.'));
 						return $this->redirect(['action' => 'index']);
+					} else {
+						$this->Flash->error(__('La persona no puedo ser gurdada. Por favor, intente nuevamente.'));
 					}
 				} else {
 					$this->Flash->error(__('La persona no puedo ser gurdada. Por favor, intente nuevamente.'));
+				}
+			} else {
+				$person = $person->first();
+				$company_people->person_id = $person->id;
+				$company_people->company_id = $company_id;
+				if ($this->CompanyPeople->save($company_people)) {
+					$this->Flash->success(__('La persona se ha guardada.'));
+					return $this->redirect(['action' => 'index']);
+				} else {
+					$this->Flash->error(__($this->Util->getError($company_people->errors()).' Por favor, intente nuevamente.'));
 				}
 			}
 			$companies = $this->People->Companies->find('list');

@@ -11,7 +11,16 @@ use Cake\I18n\Date;
  */
 class AccessRolePeopleController extends AppController
 {
+	public function isAuthorized($user)
+	{
+		$userRole_id = $user['userRole_id'];
 
+		if ($userRole_id == 2 || $userRole_id == 3) {
+			return true;
+		}
+
+		return parent::isAuthorized($user);
+	}
 	/**
 	 * Index method
 	 *
@@ -51,7 +60,8 @@ class AccessRolePeopleController extends AppController
 	{
 		$accessRolePerson = $this->AccessRolePeople->newEntity();
 		if ($this->request->is('post')) {
-				if ($this->request->data['notexpire']) {
+				
+				if ($this->request->data['notExpire']) {
 					$this->request->data['expiration'] = '';
 				}
 
@@ -83,8 +93,6 @@ class AccessRolePeopleController extends AppController
 				$accessRolePerson = $existingAccessRolePerson->first();
 			}
 			
-			// debug($existingAccessRolePerson); die;
-
 			$expirationDate = new Date();
 			$expirationDate->modify('+1 day');
 

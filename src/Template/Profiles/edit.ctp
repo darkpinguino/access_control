@@ -1,13 +1,13 @@
 <div class="box">
     <div class="box-header">
-        <h3 class="box-title">Editar perfil</h3>
+        <h3 class="box-title">Editar perfil <?= h($company_profile->profile->name)?></h3>
     </div>
-  <?= $this->Form->create($profile) ?>
+  <?= $this->Form->create($company_profile) ?>
   <div class="box-body">
       <fieldset>
         <?php
-          echo $this->Form->input('name');
-          echo $this->Form->input('company_id', ['options' => $companies]);
+          echo $this->Form->input('maxTime', ['label' => 'Tiempo maximo en horas']);
+          // echo $this->Form->input('company_id', ['options' => $companies]);
         ?>
       </fieldset>
   </div>
