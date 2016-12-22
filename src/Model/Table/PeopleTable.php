@@ -119,6 +119,12 @@ class PeopleTable extends Table
 	public function buildRules(RulesChecker $rules)
 	{
 		$rules->add($rules->existsIn(['company_id'], 'Companies'));
+		$rules->add($rules->isUnique(['rut'], 
+			'La persona ya existe.'
+		));
+		$rules->add($rules->isUnique(['rut', 'name', 'lastname'],
+			'La persona ya existe.'
+		));
 		return $rules;
 	}
 }

@@ -32,25 +32,50 @@
           <td><?= h($vehicle->modified) ?></td>
 
           <td>
-            <?= $this->Html->link(__('Ver'), 
-              ['action' => 'view', $vehicle->id], 
-              ['class' => 'btn btn-primary btn-xs']) 
-            ?>
-            <?= $this->Html->link(__('Editar'), 
-              ['action' => 'edit', $vehicle->id], 
-              ['class' => 'btn btn-success btn-xs']) 
-            ?>
-            <?= $this->Form->postLink(__('Eliminar'), 
-              ['action' => 'delete', $vehicle->id], 
-              [
-                'confirm' => __('Are you sure you want to delete # {0}?', $vehicle->id), 
-                'class' => 'btn btn-danger btn-xs'
-              ]) 
-            ?>
-            <?= $this->Html->link(__('Editar autorización'), 
-              ['action' => 'addAuthorization', 'controller' => 'vehicleAuthorizations', $vehicle->id], 
-              ['class' => 'btn btn-success btn-xs']) 
-            ?>
+            <?php if ($userRole_id == 1): ?>
+              <?= $this->Html->link(__('Ver'), 
+                ['action' => 'view', $vehicle->id], 
+                ['class' => 'btn btn-primary btn-xs']) 
+              ?>
+              <?= $this->Html->link(__('Editar'), 
+                ['action' => 'edit', $vehicle->id], 
+                ['class' => 'btn btn-success btn-xs']) 
+              ?>
+              <?= $this->Form->postLink(__('Eliminar'), 
+                ['action' => 'delete', $vehicle->id], 
+                [
+                  'confirm' => __('Are you sure you want to delete # {0}?', $vehicle->id), 
+                  'class' => 'btn btn-danger btn-xs'
+                ]) 
+              ?>
+              <?= $this->Html->link(__('Editar autorización'), 
+                ['action' => 'addAuthorization', 'controller' => 'vehicleAuthorizations', $vehicle->id], 
+                ['class' => 'btn btn-success btn-xs']) 
+              ?>
+            <?php else: ?>
+              <?= $this->Html->link(__('Ver'), 
+                ['action' => 'view', $vehicle->id], 
+                ['class' => 'btn btn-primary btn-xs']) 
+              ?>
+              <?= $this->Html->link(__('Editar'), 
+                ['action' => 'edit', $vehicle->id], 
+                ['class' => 'btn btn-success btn-xs']) 
+              ?>
+              <?= $this->Form->postLink(__('Eliminar'), 
+                [
+                  'controller' => 'CompanyVehicles',
+                  'action' => 'delete', 
+                  $vehicle->company_vehicles[0]->id], 
+                [
+                  'confirm' => __('Are you sure you want to delete # {0}?', $vehicle->id), 
+                  'class' => 'btn btn-danger btn-xs'
+                ]) 
+              ?>
+              <?= $this->Html->link(__('Editar autorización'), 
+                ['action' => 'addAuthorization', 'controller' => 'vehicleAuthorizations', $vehicle->id], 
+                ['class' => 'btn btn-success btn-xs']) 
+              ?>
+            <?php endif ?>
           </td>
         </tr>
         <?php endforeach; ?>

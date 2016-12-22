@@ -135,7 +135,9 @@ class CompaniesTable extends Table
 	 */
 	public function buildRules(RulesChecker $rules)
 	{
-		$rules->add($rules->isUnique(['email']));
+		$rules->add($rules->isUnique(['name'], 
+			'El nombre de la empresa ya está en uso.'));
+
 		return $rules;
 	}
 }

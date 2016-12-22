@@ -11,10 +11,6 @@
 						<td><?= h($vehicleProfile->name) ?></td>
 					</tr>
 					<tr>
-						<th><?= __('Empresa') ?></th>
-						<td><?= $vehicleProfile->has('company') ? $this->Html->link($vehicleProfile->company->name, ['controller' => 'Companies', 'action' => 'view', $vehicleProfile->company->id]) : '' ?></td>
-					</tr>
-					<tr>
 						<th><?= __('ID') ?></th>
 						<td><?= $this->Number->format($vehicleProfile->id) ?></td>
 					<tr>

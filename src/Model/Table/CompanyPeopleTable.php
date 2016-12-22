@@ -91,6 +91,9 @@ class CompanyPeopleTable extends Table
 		$rules->add($rules->existsIn(['people_id'], 'People'));
 		$rules->add($rules->existsIn(['company_id'], 'Companies'));
 		$rules->add($rules->existsIn(['profile_id'], 'Profiles'));
+		$rules->add($rules->isUnique(['person_id', 'company_id'],
+			'La persona ya existe.'
+		));
 		return $rules;
 	}
 }

@@ -6,7 +6,6 @@
 				<tr>
 					<th><?= $this->Paginator->sort('id', 'ID') ?></th>
 					<th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
-					<th><?= $this->Paginator->sort('company_id', 'Empresa') ?></th>
 					<th><?= $this->Paginator->sort('created', 'Agregado') ?></th>
 					<th><?= $this->Paginator->sort('modified', 'Modificado') ?></th>
 					<th><?= __('Acciones') ?></th>
@@ -17,7 +16,6 @@
 					<tr>
 							<td><?= $this->Number->format($vehicleProfile->id) ?></td>
 							<td><?= h($vehicleProfile->name) ?></td>
-							<td><?= $vehicleProfile->has('company') ? $this->Html->link($vehicleProfile->company->name, ['controller' => 'Companies', 'action' => 'view', $vehicleProfile->company->id]) : '' ?></td>
 							<td><?= h($vehicleProfile->created) ?></td>
 							<td><?= h($vehicleProfile->modified) ?></td>
 							<?= $this->element('action', ['entityId' => $vehicleProfile->id])?>

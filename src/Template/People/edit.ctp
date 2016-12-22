@@ -1,4 +1,4 @@
-<?= $this->Html->script('people/edit.js', ['block' => 'scriptView']); ?>
+
 <?php 
 	$status = $this->request->query('status');
 	$driver = $this->request->query('driver');

@@ -15,9 +15,6 @@ class AccessRolesController extends AppController
 	{
 		$userRole_id = $user['userRole_id'];
 
-		if ($this->request->action === 'add') {
-			return false;
-		}
 		if ($userRole_id == 2 || $userRole_id == 3) {
 			return true;
 		}

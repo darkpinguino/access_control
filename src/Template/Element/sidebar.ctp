@@ -52,9 +52,12 @@
         <li>
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Perfiles', '/profiles/index', ['escape' => false]) ?>
         </li>
-        <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Perfil', '/profiles/add', ['escape' => false]) ?>
-        </li>
+        <?php if ($userRole_id == 1): ?>
+          <li>
+            <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Perfil', '/profiles/add', ['escape' => false]) ?>
+          </li>
+        <?php endif ?>
+        
       </ul>
     </li>
 

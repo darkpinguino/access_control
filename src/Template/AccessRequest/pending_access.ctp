@@ -7,7 +7,6 @@
 					<th><?= $this->Paginator->sort('id', 'ID') ?></th>
 					<th><?= $this->Paginator->sort('People.rut', 'Rut') ?></th>
 					<th><?= $this->Paginator->sort('People.name', 'Nombre') ?></th>
-					<th><?= $this->Paginator->sort('People.lastname', 'Apellido') ?></th>
 					<th><?= $this->Paginator->sort('door_id', 'Puerta') ?></th>
 					<th><?= $this->Paginator->sort('created', 'Agregado') ?></th>
 					<th><?= $this->Paginator->sort('modified', 'Modificado') ?></th>
@@ -20,8 +19,7 @@
 					<td><?= h($access_request->id) ?></td>
 					<td><?= $access_request->has('person') ? $this->Html->link($access_request->person->rut, ['controller' => 'People', 'action' => 'view', $access_request->person->id]) : '' ?>
 					</td>
-					<td><?= $access_request->has('person') ? h($access_request->person->name) : '' ?></td>
-					<td><?= $access_request->has('person') ? h($access_request->person->lastname) : '' ?></td>
+					<td><?= $access_request->has('person') ? h($access_request->person->fullName) : '' ?></td>
 					<td><?= $this->Html->link($access_request->_matchingData['Doors']->name, ['controller' => 'Doors', 'action' => 'view', $access_request->_matchingData['Doors']->id])?></td>
 					<td><?= h($access_request->created) ?></td>
 					<td><?= h($access_request->modified) ?></td>

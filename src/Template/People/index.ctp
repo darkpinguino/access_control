@@ -11,6 +11,9 @@
           <th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
           <th><?= $this->Paginator->sort('lastname', 'Apellido') ?></th>
           <th><?= $this->Paginator->sort('phone', 'Telefono') ?></th>
+          <?php if ($userRole_id == 2): ?>
+            <th><?= $this->Paginator->sort('company_people.profile.id', 'Perfil')?></th>
+          <?php endif ?>
           <th><?= $this->Paginator->sort('created', 'Agregada') ?></th>
           <th><?= __('Acciones') ?></th>
         </tr>
@@ -25,8 +28,18 @@
           <td><?= h($person->name) ?></td>
           <td><?= h($person->lastname) ?></td>
           <td><?= h($person->phone) ?></td>
+          <?php if ($userRole_id == 2): ?>
+            <td><?= $this->element('action_profile', ['profileID' => $person->company_people[0]->profile->id])?></td>
+          <?php endif ?>
           <td><?= h($person->created) ?></td>
-          <?= $this->element('action', ['entityId' => $person->id])?>
+          <?php if ($userRole_id == 1): ?>
+            <?= $this->element('action', ['entityId' => $person->id])?>
+          <?php else: ?>
+            <?= $this->element('action_delete_local', [
+                'entityId' => $person->company_people[0]->id, 
+                'controller' => 'CompanyPeople'
+              ]) ?>
+          <?php endif; ?>
           </tr>
         </tr>
         <?php endforeach; ?>

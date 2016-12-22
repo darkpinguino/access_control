@@ -62,7 +62,6 @@ $(document).ready(function () {
 				type: "GET",
 				dataType: "json",
 				success: function (result, success, hrx) {
-					console.log(result['vehicleAccessRequest']['vehicle']['company_vehicles'][0]['profile_id']);
 					if (result['vehicleAccessRequest'] != null) {
 						$("#number-plate").val(result['vehicleAccessRequest']['vehicle']['number_plate']);
 						$("#vehicle-type").val(result['vehicleAccessRequest']['vehicle']['vehicle_type_id']);
@@ -71,11 +70,6 @@ $(document).ready(function () {
 						$("#number-plate").val("");
 						$("#vehicle-type").val("");
 					}
-				},
-				error: function (xhr, status, error) {
-					console.log(xhr);
-					console.log(status);
-					console.log(error);
 				}
 			})
 	})

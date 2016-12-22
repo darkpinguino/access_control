@@ -73,11 +73,9 @@ class CompaniesController extends AppController
 
 			$company->dirty('profiles', true);
 
-			$this->Companies->save($company);
-
-			$this->Companies->Profiles->link($company, $profiles);
-
-			if ($this->Companies->save($company, ['associated' => ['Profiles']])) {
+			if ($this->Companies->save($company)) {
+				$this->Companies->Profiles->link($company, $profiles);
+				$this->Companies->save($company, ['associated' => ['Profiles']]);
 				$this->Flash->success(__('La empresa ha sido guardada.'));
 				return $this->redirect(['action' => 'index']);
 			} else {

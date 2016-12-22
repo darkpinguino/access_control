@@ -130,7 +130,9 @@ class UsersTable extends Table
 	 */
 	public function buildRules(RulesChecker $rules)
 	{
-		$rules->add($rules->isUnique(['username']));
+		$rules->add($rules->isUnique(['username'],
+			'Este usuario ya existe.'
+		));
 		$rules->add($rules->existsIn(['userRole_id'], 'UserRoles'));
 		$rules->add($rules->existsIn(['person_id'], 'People'));
 		return $rules;

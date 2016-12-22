@@ -14,6 +14,14 @@ class ProfilesController extends AppController
 	{
 		$userRole_id = $user['userRole_id'];
 
+		if (in_array($this->request->action, ['add', 'delete'])) {
+			if ($userRole_id == 1) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
 		if ($userRole_id == 2) {
 			return true;
 		}
@@ -28,12 +36,21 @@ class ProfilesController extends AppController
 	 */
 	public function index()
 	{
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
+
 		$this->paginate = [
-			'contain' => ['Companies']
+			'contain' => [
+				'CompanyProfiles' => function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyProfiles.company_id' => $company_id]);
+				}
+			]
 		];
+
 		$profiles = $this->paginate($this->Profiles);
 
-		$this->set(compact('profiles'));
+		$this->set(compact('profiles', 'userRole_id'));
 		$this->set('_serialize', ['profiles']);
 	}
 
@@ -46,11 +63,18 @@ class ProfilesController extends AppController
 	 */
 	public function view($id = null)
 	{
+		$company_id = $this->Auth->user('company_id');
+		$userRole_id = $this->Auth->user('userRole_id');
+
 		$profile = $this->Profiles->get($id, [
-			'contain' => ['Companies', 'People']
+			'contain' => [
+				'CompanyProfiles' => function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyProfiles.company_id' => $company_id]);
+				}]
 		]);
 
-		$this->set('profile', $profile);
+		$this->set(compact('profile', 'userRole_id'));
 		$this->set('_serialize', ['profile']);
 	}
 
@@ -65,14 +89,13 @@ class ProfilesController extends AppController
 		if ($this->request->is('post')) {
 			$profile = $this->Profiles->patchEntity($profile, $this->request->data);
 			if ($this->Profiles->save($profile)) {
-				$this->Flash->success(__('The profile has been saved.'));
+				$this->Flash->success(__('El perfil ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error(__('The profile could not be saved. Please, try again.'));
+				$this->Flash->error(__('El perfil no ha podido ser guardado. Por favor, intente nuevamente.'));
 			}
 		}
-		$companies = $this->Profiles->Companies->find('list', ['limit' => 200]);
-		$this->set(compact('profile', 'companies'));
+		$this->set(compact('profile'));
 		$this->set('_serialize', ['profile']);
 	}
 
@@ -85,20 +108,31 @@ class ProfilesController extends AppController
 	 */
 	public function edit($id = null)
 	{
+		$company_id = $this->Auth->user('company_id');
+
 		$profile = $this->Profiles->get($id, [
 			'contain' => []
 		]);
+
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$profile = $this->Profiles->patchEntity($profile, $this->request->data);
-			if ($this->Profiles->save($profile)) {
-				$this->Flash->success(__('The profile has been saved.'));
+			$company_profile = $this->Profiles->CompanyProfile->patchEntity($profile, $this->request->data);
+			if ($this->Profiles->CompanyProfiles->save($Company_profile)) {
+				$this->Flash->success(__('El perfil ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error(__('The profile could not be saved. Please, try again.'));
+				$this->Flash->error(__('El perfil no ha podido ser guardado. Por favor, intente nuevamente.'));
 			}
 		}
-		$companies = $this->Profiles->Companies->find('list', ['limit' => 200]);
-		$this->set(compact('profile', 'companies'));
+
+		$company_profile = $this->Profiles->CompanyProfiles->find()
+			->where([
+				'profile_id' => $profile->id, 
+				'CompanyProfiles.company_id' => $company_id
+			])
+			->contain(['Profiles'])
+			->first();
+
+		$this->set(compact('company_profile'));
 		$this->set('_serialize', ['profile']);
 	}
 
@@ -114,9 +148,9 @@ class ProfilesController extends AppController
 		$this->request->allowMethod(['post', 'delete']);
 		$profile = $this->Profiles->get($id);
 		if ($this->Profiles->delete($profile)) {
-			$this->Flash->success(__('The profile has been deleted.'));
+			$this->Flash->success(__('El perfil ha sido eliminado'));
 		} else {
-			$this->Flash->error(__('The profile could not be deleted. Please, try again.'));
+			$this->Flash->error(__('El perfil no ha podido ser eliminado. Por favor, intente nuevamente'));
 		}
 		return $this->redirect(['action' => 'index']);
 	}

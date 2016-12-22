@@ -417,7 +417,6 @@ use Cake\I18n\Time;
 							$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
 							$this->saveVehicleLocation($vehicle, $door, $person, $driver);
 
-							// debug($vehicle); die;
 							if ($vehicle->company_vehicles[0]->vehicle_profile->id == 3) {
 								$this->newVehicleAutorization($vehicle, $person);
 							}

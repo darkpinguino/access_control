@@ -23,7 +23,7 @@ class AccessRequestController extends AppController
 	{
 		$userRole_id = $user['userRole_id'];
 
-		if ($this->request->action === 'add') {
+		if ($this->request->action === 'add' || $this->request->action === 'edit') {
 			return false;
 		}
 		

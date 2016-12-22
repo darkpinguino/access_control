@@ -37,7 +37,11 @@ class PeopleController extends AppController
 				->matching('Companies', function ($q) use ($company_id)
 				{
 					return $q->where(['Companies.id' => $company_id]);
-				});
+				})
+				->contain(['CompanyPeople.Profiles' => function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyPeople.company_id' => $company_id]);
+				}]);
 		}
 
 		$this->set('people', $this->paginate($people));
@@ -73,6 +77,14 @@ class PeopleController extends AppController
 		$this->set('_serialize', ['person']);
 	}
 
+	public function viewByRut($rut = null)
+	{
+		$person = $this->People->findByRut($rut)->first();
+
+		$this->set(compact('person'));
+		$this->set('_serialize', ['person']);
+	}
+
 	/**
 	 * Add method
 	 *
@@ -82,21 +94,39 @@ class PeopleController extends AppController
 	{
 		$person = $this->People->newEntity();
 		if ($this->request->is('post')) {
+			$this->loadComponent('Util');
 			$this->loadModel('CompanyPeople');
 			$company_id = $this->Auth->user()['company_id'];
 			$company_people = $this->CompanyPeople->newEntity($this->request->data);
 			
-			$person = $this->People->patchEntity($person, $this->request->data);
 
-			if ($this->People->save($person)) {
+			$person = $this->People->findByRut($this->request->data('rut'));
+
+			if ($person->isEmpty()) {
+				$person = $this->People->newEntity();
+				$person = $this->People->patchEntity($person, $this->request->data);
+				if ($this->People->save($person)) {
+					$company_people->person_id = $person->id;
+					$company_people->company_id = $company_id;
+					if ($this->CompanyPeople->save($company_people)) {
+						$this->Flash->success(__('La persona se ha guardada.'));
+						return $this->redirect(['action' => 'index']);
+					} else {
+						$this->Flash->error(__('La persona no puedo ser gurdada. Por favor, intente nuevamente.'));
+					}
+				} else {
+					$this->Flash->error(__('La persona no puedo ser gurdada. Por favor, intente nuevamente.'));
+				}
+			} else {
+				$person = $person->first();
 				$company_people->person_id = $person->id;
 				$company_people->company_id = $company_id;
 				if ($this->CompanyPeople->save($company_people)) {
 					$this->Flash->success(__('La persona se ha guardada.'));
 					return $this->redirect(['action' => 'index']);
+				} else {
+					$this->Flash->error(__($this->Util->getError($company_people->errors()).' Por favor, intente nuevamente.'));
 				}
-			} else {
-				$this->Flash->error(__('La persona no puedo ser gurdada. Por favor, intente nuevamente.'));
 			}
 		}
 		$companies = $this->People->Companies->find('list');

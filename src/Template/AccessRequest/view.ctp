@@ -8,15 +8,19 @@
 			  <table class="table">
 		      <tr>
 	          <th><?= __('Persona') ?></th>
-	          <td><?= $accessRequest->has('person') ? $this->Html->link($accessRequest->person->name, ['controller' => 'People', 'action' => 'view', $accessRequest->person->id]) : '' ?></td>
+	          <td><?= $accessRequest->has('person') ? $this->Html->link($accessRequest->person->fullName, ['controller' => 'People', 'action' => 'view', $accessRequest->person->id]) : '' ?></td>
 		      </tr>
 		      <tr>
 	          <th><?= __('Puerta') ?></th>
 	          <td><?= $accessRequest->has('door') ? $this->Html->link($accessRequest->door->name, ['controller' => 'Doors', 'action' => 'view', $accessRequest->door->id]) : '' ?></td>
 		      </tr>
 		      <tr>
-	          <th><?= __('Estado de Accesso') ?></th>
-	          <td><?= h($accessRequest->access_status->status) ?></td>
+		      	<th><?= __('Acción')?></th>
+		      	<td><?= $this->element('actionLabel', ['actionID' => $accessRequest->action]) ?></td>
+		      </tr>
+		      <tr>
+		      	<th><?= __('Estado de acceso')?></th>
+		      	<td><?= $accessRequest->has('access_status') ? $this->element('statusLabel', ['statusID' => $accessRequest->access_status->id]) : '' ?></td>
 		      </tr>
 		      <tr>
 	          <th><?= __('ID') ?></th>

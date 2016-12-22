@@ -1,34 +1,45 @@
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('Edit Vehicle Access Request'), ['action' => 'edit', $vehicleAccessRequest->id]) ?> </li>
-        <li><?= $this->Form->postLink(__('Delete Vehicle Access Request'), ['action' => 'delete', $vehicleAccessRequest->id], ['confirm' => __('Are you sure you want to delete # {0}?', $vehicleAccessRequest->id)]) ?> </li>
-        <li><?= $this->Html->link(__('List Vehicle Access Request'), ['action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Vehicle Access Request'), ['action' => 'add']) ?> </li>
-    </ul>
-</nav>
-<div class="vehicleAccessRequest view large-9 medium-8 columns content">
-    <h3><?= h($vehicleAccessRequest->id) ?></h3>
-    <table class="vertical-table">
-        <tr>
-            <th><?= __('Id') ?></th>
-            <td><?= $this->Number->format($vehicleAccessRequest->id) ?></td>
-        </tr>
-        <tr>
-            <th><?= __('Vehicle Id') ?></th>
-            <td><?= $this->Number->format($vehicleAccessRequest->vehicle_id) ?></td>
-        </tr>
-        <tr>
-            <th><?= __('Access Request Id') ?></th>
-            <td><?= $this->Number->format($vehicleAccessRequest->access_request_id) ?></td>
-        </tr>
-        <tr>
-            <th><?= __('Created') ?></th>
-            <td><?= h($vehicleAccessRequest->created) ?></td>
-        </tr>
-        <tr>
-            <th><?= __('Modified') ?></th>
-            <td><?= h($vehicleAccessRequest->modified) ?></td>
-        </tr>
-    </table>
+<div class="box">
+	<div class="row">
+		<div class="col-md-5 col-md-offset-3">
+			<div class="box-header">
+				<h3><?= h($vehicleAccessRequest->id) ?></h3>
+			</div>
+			<div class="box-body">
+			  <table class="table">
+			  	<tr>
+			  		<th><?= __('Patente') ?></th>
+			  		<td><?= $vehicleAccessRequest->has('vehicle') ? $this->Html->link($vehicleAccessRequest->vehicle->number_plate, ['controller' => 'vehicles', 'action' => 'view', $vehicleAccessRequest->vehicle->id]) : '' ?></td>
+			  	</tr>
+			  	<tr>
+			  		<th><?= __('Conductor') ?></th>
+			  		<td><?= $vehicleAccessRequest ? $this->element('driver', ['driver' => $vehicleAccessRequest->driver]) : ''?></td>
+			  	</tr>
+		      <tr>
+	          <th><?= __('Persona') ?></th>
+	          <td><?= $vehicleAccessRequest->access_request->has('person') ? $this->Html->link($vehicleAccessRequest->access_request->person->fullName, ['controller' => 'People', 'action' => 'view', $vehicleAccessRequest->access_request->person->id]) : '' ?></td>
+		      </tr>
+		      <tr>
+	          <th><?= __('Puerta') ?></th>
+	          <td><?= $vehicleAccessRequest->access_request->has('door') ? $this->Html->link($vehicleAccessRequest->access_request->door->name, ['controller' => 'Doors', 'action' => 'view', $vehicleAccessRequest->access_request->door->id]) : '' ?></td>
+		      </tr>
+		      <tr>
+		      	<th><?= __('Acción')?></th>
+		      	<td><?= $this->element('actionLabel', ['actionID' => $vehicleAccessRequest->action]) ?></td>
+		      </tr>
+		      <tr>
+		      	<th><?= __('Estado de acceso')?></th>
+		      	<td><?= $vehicleAccessRequest->access_request->has('access_status') ? $this->element('statusLabel', ['statusID' => $vehicleAccessRequest->access_request->access_status->id]) : '' ?></td>
+		      </tr>
+		      <tr>
+	          <th><?= __('ID') ?></th>
+	          <td><?= $this->Number->format($vehicleAccessRequest->id) ?></td>
+		      </tr>
+		      <tr>
+	          <th><?= __('Agregado') ?></th>
+	          <td><?= h($vehicleAccessRequest->created) ?></td>
+		      </tr>
+			  </table>
+			</div>
+		</div>
+	</div>
 </div>
