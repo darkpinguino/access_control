@@ -214,7 +214,7 @@ return [
      * See vendor\cakephp\cakephp\src\Database\Driver for complete list
      */
 
-    mysql://b6d8710f51364c:b1bac4f0@us-cdbr-iron-east-04.cleardb.net/heroku_694df273540ff7d?reconnect=true
+    // mysql://b6d8710f51364c:b1bac4f0@us-cdbr-iron-east-04.cleardb.net/heroku_694df273540ff7d?reconnect=true
     'Datasources' => [
         'default' => [
             'className' => 'Cake\Database\Connection',
