@@ -257,8 +257,8 @@ return [
              */
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
             
-            'url' => env('DATABASE_URL', null),
-            // 'url' => getenv('CLEARDB_DATABASE_URL', null),
+            // 'url' => env('DATABASE_URL', null),
+            'url' => getenv('CLEARDB_DATABASE_URL', null),
         ],
 
         /**
