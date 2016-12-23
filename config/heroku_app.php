@@ -232,11 +232,11 @@ return [
             'username' => $url["user"],
             'password' => $url["pass"],
             'database' => substr($url["path"], 1),
-            'encoding' => 'utf8',
-            'timezone' => 'UTC',
-            'flags' => [],
-            'cacheMetadata' => true,
-            'log' => false,
+            // 'encoding' => 'utf8',
+            // 'timezone' => 'UTC',
+            // 'flags' => [],
+            // 'cacheMetadata' => true,
+            // 'log' => false,
 
             /**
              * Set identifier quoting to true if you are using reserved words or
@@ -257,7 +257,8 @@ return [
              */
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
             
-            'url' => env('DATABASE_URL', null),
+            // 'url' => env('DATABASE_URL', null),
+            'url' => getenv('CLEARDB_DATABASE_URL', null),
         ],
 
         /**
