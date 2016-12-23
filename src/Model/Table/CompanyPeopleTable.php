@@ -17,55 +17,47 @@ use Cake\Validation\Validator;
 class CompanyPeopleTable extends Table
 {
 
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
-    public function initialize(array $config)
-    {
-        parent::initialize($config);
+	/**
+	 * Initialize method
+	 *
+	 * @param array $config The configuration for the Table.
+	 * @return void
+	 */
+	public function initialize(array $config)
+	{
+		parent::initialize($config);
 
-        $this->table('company_people');
-        $this->displayField('id');
-        $this->primaryKey('id');
+		$this->table('company_people');
+		$this->displayField('id');
+		$this->primaryKey('id');
 
-        $this->addBehavior('Timestamp');
+		$this->addBehavior('Timestamp');
 
-        $this->belongsTo('People', [
-            'foreignKey' => 'person_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Companies', [
-            'foreignKey' => 'company_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Profiles', [
-            'foreignKey' => 'profile_id',
-            'joinType' => 'INNER'
-        ]);
-    }
+		$this->belongsTo('People', [
+			'foreignKey' => 'person_id',
+			'joinType' => 'INNER'
+		]);
+		$this->belongsTo('Companies', [
+			'foreignKey' => 'company_id',
+			'joinType' => 'INNER'
+		]);
+		$this->belongsTo('Profiles', [
+			'foreignKey' => 'profile_id',
+			'joinType' => 'INNER'
+		]);
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator)
-    {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
+		$this->belongsToMany('Vehicle', [
+			'foreignKey' => 'company_people_id',
+			'joinTable' => 'VehicleAuthorizations',
+			'joinType' => 'INNER'
+		]);
 
-        $validator
-            ->boolean('is_visited')
-            ->requirePresence('is_visited', 'create')
-            ->notEmpty('is_visited');
+		$this->hasMany('VehicleAuthorizations', [
+			'foreignKey' => 'company_people_id',
+			'joinType' => 'INNER'
+		]);
 
-        return $validator;
-    }
+	}
 
 	/**
 	 * Default validation rules.

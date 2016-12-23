@@ -13,7 +13,7 @@
 			'action' => 'delete', 
 			$entityId], 
 		[
-			'confirm' => __('Are you sure you want to delete # {0}?', $entityId), 
+			'confirm' => __('Are you sure you want to delete # {0}?', $deleteEntityId), 
 			'class' => 'btn btn-danger btn-xs'
 		]) 
 	?>
