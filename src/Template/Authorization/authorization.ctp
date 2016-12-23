@@ -1,6 +1,8 @@
 <?= $this->Html->script('authorization/authorization.js', ['block' => 'scriptView']); ?>
 
 
+
+
 <?php if (!is_null($door)): ?>
 	<?php switch ($door->access_type):
 		case 1: ?>

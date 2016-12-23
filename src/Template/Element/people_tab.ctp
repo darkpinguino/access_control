@@ -11,7 +11,7 @@
 				<?= $this->Form->create($person) ?>
 				<div class="box-body">
 				  <?php 
-					  echo $this->Form->input('rut', ['label' => 'Rut']);
+					  echo $this->Form->input('rut', ['label' => 'Rut', 'autofocus' => 'autofocus']);
 
 						echo $this->Form->hidden('check', ['value' => 1]); 
 					?>
