@@ -222,16 +222,16 @@ return [
             'className' => 'Cake\Database\Connection',
             'driver' => 'Cake\Database\Driver\Mysql',
             'persistent' => false,
-            'host' => $url["host"],
+            'host' => env('DB_HOST', 'us-cdbr-iron-east-04.cleardb.net'),
             /**
              * CakePHP will use the default DB port based on the driver selected
              * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
              * the following line and set the port accordingly
              */
             //'port' => 'non_standard_port_number',
-            'username' => $url["user"],
-            'password' => $url["pass"],
-            'database' => substr($url["path"], 1),
+            'username' => env('DB_USERNAME', 'b6d8710f51364c'),
+            'password' => env('DB_PASSWORD', 'b1bac4f0'),
+            'database' => env('DB_DATABASE', 'heroku_694df273540ff7d'),
             // 'encoding' => 'utf8',
             // 'timezone' => 'UTC',
             // 'flags' => [],
@@ -257,8 +257,8 @@ return [
              */
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
             
-            // 'url' => env('DATABASE_URL', null),
-            'url' => getenv('CLEARDB_DATABASE_URL', null),
+            'url' => env('DATABASE_URL', null),
+            // 'url' => getenv('CLEARDB_DATABASE_URL', null),
         ],
 
         /**
@@ -278,7 +278,7 @@ return [
             'cacheMetadata' => true,
             'quoteIdentifiers' => false,
             'log' => false,
-            //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
+            // 'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
             'url' => env('DATABASE_TEST_URL', null),
         ],
     ],
