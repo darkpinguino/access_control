@@ -1,26 +1,22 @@
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $vehicleAuthorization->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $vehicleAuthorization->id)]
-            )
-        ?></li>
-        <li><?= $this->Html->link(__('List Vehicle Authorizations'), ['action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('List Vehicles'), ['controller' => 'Vehicles', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Vehicle'), ['controller' => 'Vehicles', 'action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="vehicleAuthorizations form large-9 medium-8 columns content">
-    <?= $this->Form->create($vehicleAuthorization) ?>
-    <fieldset>
-        <legend><?= __('Edit Vehicle Authorization') ?></legend>
-        <?php
-            echo $this->Form->input('vehicle_id', ['options' => $vehicles]);
-            echo $this->Form->input('company_people_id');
-        ?>
-    </fieldset>
-    <?= $this->Form->button(__('Submit')) ?>
-    <?= $this->Form->end() ?>
+<div class="box">
+		<div class="box-header">
+				<h3 class="box-title">Editar Autorización del vehiculo <?= h($vehicleAuthorization->vehicle->number_plate) ?></h3>
+		</div>
+	<?= $this->Form->create($vehicleAuthorization) ?>
+	<div class="box-body">
+			<fieldset>
+				<?php
+					
+            echo $this->Form->input('company_id', 
+            [
+              'options' => $people, 
+              'label' => 'Persona'
+            ]);
+				?>
+			</fieldset>
+	</div>
+	<div class="box-footer">
+			<?= $this->Form->button(__('Guardar')) ?>
+	</div>
+	<?= $this->Form->end() ?>
 </div>
