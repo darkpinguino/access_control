@@ -49,7 +49,7 @@ class VehicleAuthorizationsController extends AppController
 	public function view($id = null)
 	{
 		$vehicleAuthorization = $this->VehicleAuthorizations->get($id, [
-			'contain' => ['Vehicles', 'CompanyPeoples']
+			'contain' => ['Vehicles', 'CompanyPeople']
 		]);
 
 		$this->set('vehicleAuthorization', $vehicleAuthorization);
@@ -101,8 +101,8 @@ class VehicleAuthorizationsController extends AppController
 			}
 		}
 		$vehicles = $this->VehicleAuthorizations->Vehicles->find('list', ['limit' => 200]);
-		$companyPeoples = $this->VehicleAuthorizations->CompanyPeoples->find('list', ['limit' => 200]);
-		$this->set(compact('vehicleAuthorization', 'vehicles', 'companyPeoples'));
+		$companyPeople = $this->VehicleAuthorizations->CompanyPeople->find('list', ['limit' => 200]);
+		$this->set(compact('vehicleAuthorization', 'vehicles', 'companyPeople'));
 		$this->set('_serialize', ['vehicleAuthorization']);
 	}
 

@@ -36,7 +36,8 @@
             <?= $this->element('action', ['entityId' => $person->id])?>
           <?php else: ?>
             <?= $this->element('action_delete_local', [
-                'entityId' => $person->company_people[0]->id, 
+                'entityId' => $person->id,
+                'deleteEntityId' => $person->company_people[0]->id, 
                 'controller' => 'CompanyPeople'
               ]) ?>
           <?php endif; ?>

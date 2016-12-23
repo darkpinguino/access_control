@@ -47,8 +47,8 @@
 											'class' => 'btn btn-danger btn-xs'
 										]) 
 									?>
-									<?= $this->Html->link(__('Agregar puertas'), 
-										['action' => 'addDoors', $enclosure->id], 
+									<?= $this->Html->link(__('Editar puertas'), 
+										['action' => 'updateDoors', $enclosure->id], 
 										['class' => 'btn btn-success btn-xs']) 
 									?>
 							</td>

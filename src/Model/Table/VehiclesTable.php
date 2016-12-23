@@ -32,22 +32,41 @@ class VehiclesTable extends Table
 
 		$this->addBehavior('Timestamp');
 
-		$this->belongsTo('Companies', [
-			'foreignKey' => 'company_id',
-			'joinType' => 'INNER'
-		]);
-
 		$this->belongsTo('VehicleTypes', [
 			'foreignKey' => 'vehicle_type_id',
 			'joinType' => 'INNER'
 		]);
+
+		$this->belongsToMany('CompanyPeople', [
+			'foreignKey' => 'vehicle_id',
+			'joinTable' => 'VehicleAuthorizations',
+			'joinType' => 'INNER'
+		]);
+
+		$this->belongsToMany('CompanyVehicles', [
+			'foreignKey' => 'vehicle_id',
+			'joinTable' => 'CompanyVehicles',
+			'joinType' => 'INNER'
+		]);
+
+		$this->hasMany('VehicleAuthorizations', [
+			'foreignKey' => 'vehicle_id',
+			'joinType' => 'INNER'
+		]);
 		
 		$this->hasMany('VehicleAccessRequest', [
-			'foreignKey' => 'vehicle_id'
+			'foreignKey' => 'vehicle_id',
+			'joinType' => 'INNER'
 		]);
 
 		$this->hasMany('VehicleLocations', [
-			'foreignKey' => 'vehicle_id'
+			'foreignKey' => 'vehicle_id',
+			'joinType' => 'INNER'
+		]);
+
+		$this->hasMany('CompanyVehicles', [
+			'foreignKey' => 'vehicle_id',
+			'joinType' => 'INNER'
 		]);
 	}
 

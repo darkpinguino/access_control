@@ -75,7 +75,12 @@ class VehiclesController extends AppController
 		$userRole_id = $this->Auth->user('userRole_id');
 
 		$vehicle = $this->Vehicles->get($id, [
-			'contain' => ['VehicleTypes']
+			'contain' => [
+				'VehicleTypes', 
+				'CompanyVehicles.VehicleProfiles' => function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyVehicles.company_id' => $company_id]);
+				}]
 		]);
 
 		$this->paginate = [
@@ -110,6 +115,7 @@ class VehiclesController extends AppController
 	public function add()
 	{
 		$vehicle = $this->Vehicles->newEntity();
+		$company_id = $this->Auth->user()['company_id'];
 		if ($this->request->is('post')) {
 			$this->loadComponent('Util');
 
@@ -167,11 +173,25 @@ class VehiclesController extends AppController
 	 */
 	public function edit($id = null)
 	{
+		$company_id = $this->Auth->user()['company_id'];
 		$vehicle = $this->Vehicles->get($id, [
-			'contain' => ['VehicleTypes']
+			'contain' => [
+				'VehicleTypes', 
+				'CompanyVehicles.VehicleProfiles' => function ($q) use ($id, $company_id)
+				{
+					return $q->where(['vehicle_id' => $id, 'CompanyVehicles.company_id' => $company_id]);
+				}]
 		]);
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$vehicle = $this->Vehicles->patchEntity($vehicle, $this->request->data);
+
+			$vehicle->id = $id;
+			$vehicle == $this->Vehicles->patchEntity($vehicle, $this->request->data, [
+				'associated' => [
+					'VehicleTypes',
+					'CompanyVehicles'
+				]
+			]);
+
 			if ($this->Vehicles->save($vehicle)) {
 				$this->Flash->success(__('El vehículo ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
@@ -179,8 +199,13 @@ class VehiclesController extends AppController
 				$this->Flash->error(__('El vehículo no ha podido ser gurdado. Por favor, intente nuevamente.'));
 			}
 		}
-		$vehicle_types = $this->Vehicles->VehicleTypes->find('list');
-		$this->set(compact('vehicle', 'vehicle_types'));
+
+		$vehicle_types = $this->Vehicles->VehicleTypes->find('list')->toArray();
+		$vehicle_profiles = $this->Vehicles->CompanyVehicles->VehicleProfiles->find('list')
+			->where(['company_id' => $company_id])
+			->toArray();
+
+		$this->set(compact('vehicle', 'vehicle_types', 'vehicle_profiles'));
 		$this->set('_serialize', ['vehicle']);
 	}
 

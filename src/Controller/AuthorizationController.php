@@ -32,6 +32,7 @@ use Cake\I18n\Time;
 			$this->loadModel('PeopleLocations');
 			$this->loadModel('VehicleLocations');
 			$this->loadModel('VehicleTypes');
+			$this->loadModel('VehicleProfiles');
 
 			$company_id = $this->Auth->user()['company_id'];
 			$door_id = $this->Auth->user()['doorCharge_id'];
@@ -69,6 +70,7 @@ use Cake\I18n\Time;
 			$vehicles_locations = $this->getVehicleLocation($company_id);
 
 			$vehicle_types = $this->VehicleTypes->find('list');
+			$vehicle_profiles = $this->VehicleProfiles->find('list');
 
 			$person = $this->People->newEntity();
 
@@ -206,8 +208,8 @@ use Cake\I18n\Time;
 				{
 					return $q->where(['Enclosures.company_id' => $company_id]);
 				})
-				->order(['\'created\'' => 'DESC'])
-				->distinct('person_id')->toArray();
+				->order(['\'created\'' => 'DESC']);
+				// ->distinct('person_id')->toArray();
 
 			return $vehicles_locations;
 		}
