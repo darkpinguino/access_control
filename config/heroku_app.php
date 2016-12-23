@@ -1,4 +1,6 @@
 <?php
+
+$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 return [
     /**
      * Debug Level:
@@ -220,16 +222,16 @@ return [
             'className' => 'Cake\Database\Connection',
             'driver' => 'Cake\Database\Driver\Mysql',
             'persistent' => false,
-            'host' => '[us-cdbr-iron-east-04.cleardb.net]',
+            'host' => $url["host"],
             /**
              * CakePHP will use the default DB port based on the driver selected
              * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
              * the following line and set the port accordingly
              */
             //'port' => 'non_standard_port_number',
-            'username' => '[b6d8710f51364c]',
-            'password' => '[b1bac4f0]',
-            'database' => '[heroku_694df273540ff7d]',
+            'username' => $url["user"],
+            'password' => $url["pass"],
+            'database' => substr($url["path"], 1),
             'encoding' => 'utf8',
             'timezone' => 'UTC',
             'flags' => [],
