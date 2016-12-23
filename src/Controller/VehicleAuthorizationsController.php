@@ -28,12 +28,24 @@ class VehicleAuthorizationsController extends AppController
 	 */
 	public function index()
 	{
+		$company_id = $this->Auth->user('company_id');
 		$userRole_id = $this->Auth->user('userRole_id');
 
 		$this->paginate = [
 			'contain' => ['Vehicles', 'CompanyPeople.People']
 		];
-		$vehicleAuthorizations = $this->paginate($this->VehicleAuthorizations);
+
+		if ($userRole_id == 1) {
+			$vehicleAuthorizations = $this->paginate($this->VehicleAuthorizations);
+		} else {
+			$vehicleAuthorizations = $this->VehicleAuthorizations->find()
+				->matching('CompanyPeople', function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyPeople.company_id' => $company_id]);
+				});
+
+			$vehicleAuthorizations = $this->paginate($vehicleAuthorizations);
+		}
 
 		$this->set(compact('vehicleAuthorizations', 'userRole_id'));
 		$this->set('_serialize', ['vehicleAuthorizations']);
@@ -49,7 +61,7 @@ class VehicleAuthorizationsController extends AppController
 	public function view($id = null)
 	{
 		$vehicleAuthorization = $this->VehicleAuthorizations->get($id, [
-			'contain' => ['Vehicles', 'CompanyPeople']
+			'contain' => ['Vehicles', 'CompanyPeople.People']
 		]);
 
 		$this->set('vehicleAuthorization', $vehicleAuthorization);
@@ -88,8 +100,10 @@ class VehicleAuthorizationsController extends AppController
 	 */
 	public function edit($id = null)
 	{
+		$this->loadModel('CompanyPeople');
+		$company_id = $this->Auth->user('company_id');
 		$vehicleAuthorization = $this->VehicleAuthorizations->get($id, [
-			'contain' => []
+			'contain' => ['Vehicles', 'CompanyPeople.People']
 		]);
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$vehicleAuthorization = $this->VehicleAuthorizations->patchEntity($vehicleAuthorization, $this->request->data);
@@ -100,9 +114,22 @@ class VehicleAuthorizationsController extends AppController
 				$this->Flash->error(__('The vehicle authorization could not be saved. Please, try again.'));
 			}
 		}
-		$vehicles = $this->VehicleAuthorizations->Vehicles->find('list', ['limit' => 200]);
-		$companyPeople = $this->VehicleAuthorizations->CompanyPeople->find('list', ['limit' => 200]);
-		$this->set(compact('vehicleAuthorization', 'vehicles', 'companyPeople'));
+		// $vehicles = $this->VehicleAuthorizations->Vehicles->find('list', ['limit' => 200]);
+		// $companyPeople = $this->VehicleAuthorizations->CompanyPeople->find('list', ['limit' => 200]);
+
+		$people = $this->CompanyPeople->find('list', [
+			'keyField' => 'id',
+			'valueField' => function ($e) {
+        return $e->person->get('full_name');
+      }
+			])
+			->contain(['People'])
+			->where([
+				'company_id' => $company_id,
+				'CompanyPeople.profile_id !=' => 1
+			])->toArray();
+
+		$this->set(compact('vehicleAuthorization', 'people'));
 		$this->set('_serialize', ['vehicleAuthorization']);
 	}
 
@@ -174,7 +201,10 @@ class VehicleAuthorizationsController extends AppController
       }
 			])
 			->contain(['People'])
-			->where(['company_id' => $company_id])->toArray();
+			->where([
+				'company_id' => $company_id,
+				'CompanyPeople.profile_id !=' => 1
+			])->toArray();
 
 		$this->set(compact('vehicle', 'people', 'vehicle_authorizations'));
 	}

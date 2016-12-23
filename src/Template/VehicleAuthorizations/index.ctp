@@ -7,7 +7,7 @@
 					<?php if ($userRole_id == 1): ?>
 						<th><?= $this->Paginator->sort('id', 'ID') ?></th>
 					<?php endif ?>
-					<th><?= $this->Paginator->sort('Vehicle.number_plate', 'Patente') ?></th>
+					<th><?= $this->Paginator->sort('vehicle.number_plate', 'Patente') ?></th>
 					<th><?= $this->Paginator->sort('CompanyPeople.People', 'Nombre') ?></th>
 					<th><?= $this->Paginator->sort('created', 'Agregado') ?></th>
 					<th><?= $this->Paginator->sort('modified', 'Modificado') ?></th>
