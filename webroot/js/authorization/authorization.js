@@ -30,6 +30,15 @@ $(document).ready(function () {
 		});
 	});
 
+	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+  	console.log($(this.innerHTML)['selector']);
+  	if ($(this.innerHTML)['selector'] == 'Personas') {
+  		$("#rut").focus();
+  	} else {
+  		$("#vehicle-rut").focus();
+  	}
+	})
+
 	$(document).on("click", "#vehicle_alert_submit", function () {
 		$("#vehicle_alert_form").submit();
 	});
@@ -94,6 +103,12 @@ $(document).ready(function () {
 		} else {
 			$("#passenger-form").empty();
 		}
+	});
+
+	$('#vehicle-rut').keypress(function(e){
+    if ( e.which == 13 ) return false;
+    // //or...
+    // if ( e.which == 13 ) e.preventDefault();
 	});
 
 	$("#vehicle-alert-modal").modal();

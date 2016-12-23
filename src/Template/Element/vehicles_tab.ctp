@@ -16,6 +16,7 @@
 						echo $this->Form->input('rut', [
 							'id' => 'vehicle-rut',
 							'label' => 'Rut',
+							'autofocus' => 'autofocus'
 							// 'autocomplete' => 'off'
 						]);
 					?>

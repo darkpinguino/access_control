@@ -72,6 +72,7 @@ use Cake\I18n\Time;
 			$vehicle_types = $this->VehicleTypes->find('list');
 			$vehicle_profiles = $this->VehicleProfiles->find('list');
 
+
 			$person = $this->People->newEntity();
 
 			$this->set('people_locations', $people_locations);
@@ -208,8 +209,8 @@ use Cake\I18n\Time;
 				{
 					return $q->where(['Enclosures.company_id' => $company_id]);
 				})
-				->order(['\'created\'' => 'DESC']);
-				// ->distinct('person_id')->toArray();
+				->order(['\'created\'' => 'DESC'])
+				->toArray();
 
 			return $vehicles_locations;
 		}
@@ -253,11 +254,13 @@ use Cake\I18n\Time;
 
 			$rut = $this->request->data('rut');
 			$number_plate = $this->request->data('number_plate');
+			$vehicle_type = $this->request->data('vehicle_type');
+			$vehicle_profile = $this->request->data('vehicle_profile');
 			$driver =  $this->request->data('driver');
 			$door_id = $this->Auth->user()['doorCharge_id'];
 
 			if (!is_null($number_plate)) {
-				$vehicle = $this->newVehicle($number_plate);
+				$vehicle = $this->newVehicle($number_plate, $vehicle_type, $vehicle_profile, $company_id);
 			}
 
 			if (!is_null($this->request->data('passanger'))) {
@@ -299,24 +302,50 @@ use Cake\I18n\Time;
 
 				if (!is_null($this->request->data('check'))) {
 
+					$check = false;
+
 					$vehicle_location = $this->People->VehicleLocations->find()
 						->where(['enclosure_id' => $door->enclosure_id])
 						->matching('VehiclePeopleLocations', function ($q) use ($person)
 						{
 							return $q->where(['VehiclePeopleLocations.person_id' => $person->id]);
 						})
-						->contain(['Vehicles', 'VehiclePeopleLocations.People'])
+						->contain([
+							'Vehicles.CompanyVehicles' => function ($q) use ($company_id)
+								{
+									return $q->where(['CompanyVehicles.company_id' => $company_id]);
+								}, 
+							'VehiclePeopleLocations.People'])
 						->first();
 
-					if (!is_null($vehicle_location) and count($vehicle_location->vehicle_people_locations) > 1) {
+					if (!is_null($this->request->data('vehicle'))) {
+						$vehicle_authorization = $this->People->CompanyPeople->VehicleAuthorizations->find()
+							->where(['vehicle_id' => $vehicle->id])
+							->matching('CompanyPeople', function ($q) use ($person)
+							{
+								return $q->where(['CompanyPeople.person_id' => $person->id]);
+							})->first();
+					}
+
+					if (is_null($this->request->data('vehicle')) and !is_null($vehicle_location) and count($vehicle_location->vehicle_people_locations) > 1) {
+
 						$active_vehicle_alert = 'alert';
 						$this->set('person_alert', $person);
 						$this->set(compact('active_vehicle_alert', 'vehicle_location'));
-						$check =  false;
-					} elseif (!is_null($vehicle_location) and count($vehicle_location->vehicle_people_locations) == 1) {
+					} elseif (is_null($this->request->data('vehicle')) and !is_null($vehicle_location) and count($vehicle_location->vehicle_people_locations) == 1  and is_null($this->request->data('vehicle'))) {
 						$active_vehicle_alert = 'restriction';
 						$this->set(compact('active_vehicle_alert', 'vehicle_location'));
-						$check =  false;
+					} elseif (!is_null($this->request->data('vehicle')) and !is_null($vehicle_location) and is_null($vehicle_authorization)) {
+
+						if ($vehicle_location->vehicle->company_vehicles[0]->profile_id == 1) {
+							$check = true;
+						} else {
+							$active_vehicle_alert = 'unauthorized';
+							$this->set('person_alert', $person);
+							$this->set(compact('active_vehicle_alert', 'vehicle_location', 'vehicle'));
+						}
+					} else {
+						$check = true;
 					}
 				} 
 
@@ -329,9 +358,13 @@ use Cake\I18n\Time;
 					if (!is_null($this->request->data('vehicle'))) {
 						$this->deleteVehicleLocation($person, $door, $vehicle);
 						$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 0);
+						if ($vehicle->company_vehicles[0]->profile_id == 3) {
+
+							$this->deleteVehicleAuthorization($vehicle, $person);
+						}
 					}
 
-					if ($person->company_people[0]->profile_id != 2) {	//expirar roles de personas distintas a personal
+					if ($person->company_people[0]->profile_id == 1) {	//expirar roles de personas distintas a personal
 						$accessRoles = $this->People->AccessRolePeople->findByPeopleId($person->id);
 
 							foreach ($accessRoles as $role) {
@@ -432,20 +465,83 @@ use Cake\I18n\Time;
 			return $person;
 		}
 
-		private function newVehicle($number_plate)
+		private function newVehicle($number_plate, $vehicle_type, $vehicle_profile, $company_id)
 		{
-			$vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->findByNumberPlate($number_plate)->first();
+			$vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->findByNumberPlate($number_plate)
+				->contain(['VehicleTypes', 'CompanyVehicles.VehicleProfiles'])
+				->first();
 
 			if (is_null($vehicle)) {
 				$vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->newEntity();
 				$vehicle->number_plate = $number_plate;
+				$vehicle->vehicle_type_id = $vehicle_type;
 
 				if ($this->AccessRequest->VehicleAccessRequest->Vehicles->save($vehicle)) {
-					# code...
+					$this->newCompanyVehicle($vehicle->id, $vehicle_profile, $company_id);
+					$vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->findByNumberPlate($number_plate)
+				->contain(['VehicleTypes', 'CompanyVehicles.VehicleProfiles'])
+				->first();
+				}
+			} else{
+				$company_vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->CompanyVehicles
+					->findByVehicleIdAndCompanyId($vehicle->id, $company_id)
+					->first();
+				if (is_null($company_vehicle)) {
+					$this->newCompanyVehicle($vehicle->id, $vehicle_profile, $company_id);
+					$vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->findByNumberPlate($number_plate)
+						->contain(['VehicleTypes', 'CompanyVehicles.VehicleProfiles'])
+						->first();
 				}
 			}
 
 			return $vehicle;
+		}
+
+		private function newCompanyVehicle($vehicle_id, $vehicle_profile, $company_id)
+		{
+			$company_vehicle = $this->AccessRequest->VehicleAccessRequest->Vehicles->CompanyVehicles->newEntity();
+			$company_vehicle->company_id = $company_id;
+			$company_vehicle->vehicle_id = $vehicle_id;
+			$company_vehicle->profile_id = $vehicle_profile;
+
+			if ($this->AccessRequest->VehicleAccessRequest->Vehicles->CompanyVehicles->save($company_vehicle))
+			{
+			} else {
+				debug($this->validationErrors); die();
+
+			}
+
+			return $company_vehicle;
+		}
+
+		private function newVehicleAutorization($vehicle, $person)
+		{
+			$this->loadModel('VehicleAuthorizations');
+
+			$vehicle_authorization = $this->VehicleAuthorizations->find()
+				->where(['vehicle_id' => $vehicle->id, 'company_people_id' => $person->company_people[0]->id]);
+
+			if ($vehicle_authorization->isEmpty()) {
+				$vehicle_authorization = $this->VehicleAuthorizations->newEntity();
+				$vehicle_authorization->vehicle_id = $vehicle->id;
+				$vehicle_authorization->company_people_id = $person->company_people[0]->id;
+
+				$this->VehicleAuthorizations->save($vehicle_authorization);
+			}
+
+		}
+
+		private function deleteVehicleAuthorization($vehicle, $person)
+		{
+			$this->loadModel('VehicleAuthorizations');
+
+			$vehicle_authorization = $this->VehicleAuthorizations->find()
+				->where(['vehicle_id' => $vehicle->id, 'company_people_id' => $person->company_people[0]->id])
+				->first();
+
+			if (!is_null($vehicle_authorization)) {
+				$this->VehicleAuthorizations->delete($vehicle_authorization);
+			}
 		}
 
 		private function authorizationRequest($person, $door)
@@ -497,14 +593,6 @@ use Cake\I18n\Time;
 			$vehicle_people_location->person_id = $person->id;
 			$vehicle_people_location->driver = $driver;
 			$this->People->VehiclePeopleLocations->save($vehicle_people_location);
-
-			// $vehicleLocation = $this->People->VehicleLocations->newEntity();
-			// $vehicleLocation->vehicle_id = $vehicle->id;
-			// $vehicleLocation->enclosure_id = $door->enclosure_id;
-			// $vehicleLocation->person_id = $person->id;
-			// $vehicleLocation->driver = $driver;
-
-			// $this->People->VehicleLocations->save($vehicleLocation);
 		}
 
 		private function deleteVehicleLocation($person, $door, $vehicle)
@@ -513,18 +601,13 @@ use Cake\I18n\Time;
 				->where(['vehicle_id' => $vehicle->id, 'enclosure_id' => $door->enclosure_id])
 				->first();
 
-			if (is_null($vehicle_location)) {
+			if (!is_null($vehicle_location)) {
 				$this->People->VehiclePeopleLocations->deleteAll([
 					'vehicle_location_id' => $vehicle_location->id
 				]);
 
 				$this->People->VehicleLocations->delete($vehicle_location);
 			}
-
-			// $this->People->VehicleLocations->deleteAll([
-			// 		'person_id' => $person->id,
-			// 		'enclosure_id' => $door->enclosure_id
-			// ], true);
 		}
 
 		private function deleteVehiclePeopleLocations($person, $door)
