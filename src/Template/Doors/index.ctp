@@ -23,7 +23,6 @@
 			<tbody>
 					<?php foreach ($doors as $door): ?>
 					<tr>
-
 						<?php if ($userRole_id == 1): ?>
 							<td><?= $this->Number->format($door->id) ?></td>
 						<?php endif; ?>

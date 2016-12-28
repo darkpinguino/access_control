@@ -8,7 +8,7 @@
       <?php
         echo $this->Form->input('name', ['label' => 'Nombre']);
         echo $this->Form->input('description', ['label' => 'Descripción']);
-        echo $this->Form->input('user_id');
+        // echo $this->Form->input('user_id');
         if ($userRole_id == 1) {
           echo $this->Form->input('company_id', ['label' => 'Empresa', 'options' => $companies]);
         }

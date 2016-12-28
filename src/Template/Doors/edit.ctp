@@ -6,9 +6,9 @@
   <div class="box-body">
 	  <fieldset>
 		<?php
-		  echo $this->Form->input('name');
-		  echo $this->Form->input('location');
-		  echo $this->Form->input('description');
+		  echo $this->Form->input('name', ['label' => 'Nombre']);
+		  echo $this->Form->input('location', ['label' => 'Ubicación']);
+		  echo $this->Form->input('description', ['label' => 'Descripción']);
 		  echo $this->Form->input('type', [
 				'options' => [
 					1 => 'Entrada', 
@@ -25,7 +25,13 @@
 				], 
 				'label' => 'Acceso'
 		  ]);
-		  echo $this->Form->input('company_id', ['label' => 'Empresa', 'options' => $companies]);
+		  echo $this->Form->input('enclosure_id', [
+            'options' => $enclosures, 
+            'label' => 'Recinto'
+          ]);
+		  if ($userRole_id == 1) {
+			  echo $this->Form->input('company_id', ['label' => 'Empresa', 'options' => $companies]);
+		  }
 		?>
 	  </fieldset>
   </div>

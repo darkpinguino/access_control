@@ -27,7 +27,7 @@
 			]);
 			echo $this->Form->input('enclosure_id', [
             'options' => $enclosures, 
-            'label' => 'Reciento'
+            'label' => 'Recinto'
           ]);
 
 			if ($userRole_id == 1) {

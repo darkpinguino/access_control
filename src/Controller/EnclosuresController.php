@@ -34,8 +34,6 @@ class EnclosuresController extends AppController
 		$company_id = $this->Auth->user('company_id');
 		$userRole_id = $this->Auth->user('userRole_id');
 
-
-
 		if ($userRole_id == 1) {
 			$enclosures = $this->paginate($this->Enclosures);
 		} else {
