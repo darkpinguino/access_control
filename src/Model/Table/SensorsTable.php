@@ -28,7 +28,7 @@ class SensorsTable extends Table
         parent::initialize($config);
 
         $this->table('sensors');
-        $this->displayField('id');
+        $this->displayField('code');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');

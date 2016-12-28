@@ -19,7 +19,7 @@
           <td><?= h($form->name) ?></td>
           <td><?= $form->has('company') ? $this->Html->link($form->company->name, ['controller' => 'Companies', 'action' => 'view', $form->company->id]) : '' ?></td>
           <td><?= h($form->created) ?></td>
-          <?= $this->element('action', ['entityId' => $form->id])?>       
+          <?= $this->element('action', ['entityId' => $form->id, 'displayField' => $form->{$displayField}])?>  
         </tr>
         <?php endforeach; ?>
       </tbody>

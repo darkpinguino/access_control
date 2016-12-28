@@ -11,6 +11,7 @@ use App\Controller\AppController;
 class VisitProfilesController extends AppController
 {
 
+	public $controllerName = 'el Perfil de Visita';
 	/**
 	 * Index method
 	 *
@@ -22,8 +23,10 @@ class VisitProfilesController extends AppController
 			'contain' => ['People', 'ReasonVisits']
 		];
 		$visitProfiles = $this->paginate($this->VisitProfiles);
+		$displayField = $this->VisitProfiles->displayField();
 
-		$this->set(compact('visitProfiles'));
+		$this->set(compact('visitProfiles','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['visitProfiles']);
 	}
 

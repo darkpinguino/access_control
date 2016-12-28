@@ -18,7 +18,7 @@
               <td><?= h($reasonVisit->reason) ?></td>
               <td><?= h($reasonVisit->created) ?></td>
               <td><?= h($reasonVisit->modified) ?></td>
-              <?= $this->element('action', ['entityId' => $reasonVisit->id])?>
+              <?= $this->element('action', ['entityId' => $reasonVisit->id, 'displayField' => $reasonVisit->{$displayField}])?>
           </tr>
           <?php endforeach; ?>
       </tbody>

@@ -11,6 +11,7 @@ use App\Controller\AppController;
 class FormsController extends AppController
 {
 
+    public $controllerName = 'el Formulario';
     /**
      * Index method
      *
@@ -22,8 +23,11 @@ class FormsController extends AppController
             'contain' => ['Companies']
         ];
         $forms = $this->paginate($this->Forms);
+        
+        $displayField = $this->Forms->displayField();
 
-        $this->set(compact('forms'));
+        $this->set(compact('forms','displayField'));
+        $this->set('controllerName', $this->controllerName);
         $this->set('_serialize', ['forms']);
     }
 

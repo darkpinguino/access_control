@@ -11,6 +11,7 @@ use App\Controller\AppController;
 class UserRolesController extends AppController
 {
 
+    public $controllerName = 'el Rol de Usuario';
     /**
      * Index method
      *
@@ -19,8 +20,10 @@ class UserRolesController extends AppController
     public function index()
     {
         $userRoles = $this->paginate($this->UserRoles);
+        $displayField = $this->UserRoles->displayField();
 
-        $this->set(compact('userRoles'));
+        $this->set(compact('userRoles','displayField'));
+        $this->set('controllerName', $this->controllerName);
         $this->set('_serialize', ['userRoles']);
     }
 

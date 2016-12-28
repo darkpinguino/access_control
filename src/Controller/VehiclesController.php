@@ -14,7 +14,7 @@ class VehiclesController extends AppController
 	public $paginate = [
 	  'contain' => ['VehicleTypes']
 	];
-
+	public $controllerName = 'el Vehículo';
 	/**
 	 * Index method
 	 *
@@ -23,8 +23,10 @@ class VehiclesController extends AppController
 	public function index()
 	{
 		$vehicles = $this->paginate($this->Vehicles);
+		$displayField = $this->Vehicles->displayField();
 
-		$this->set(compact('vehicles'));
+		$this->set(compact('vehicles','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['vehicles']);
 	}
 

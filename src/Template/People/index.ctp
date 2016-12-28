@@ -24,7 +24,7 @@
           <td><?= h($person->phone) ?></td>
           <td><?= $person->has('company') ? $this->Html->link($person->company->name, ['controller' => 'Companies', 'action' => 'view', $person->company->id]) : '' ?></td>
           <td><?= h($person->created) ?></td>
-          <?= $this->element('action', ['entityId' => $person->id])?>
+          <?= $this->element('action', ['entityId' => $person->id, 'displayField' => $person->{$displayField}])?>
           </tr>
         </tr>
         <?php endforeach; ?>

@@ -22,7 +22,7 @@
 							<td><?= $door->has('company') ? $this->Html->link($door->company->name, ['controller' => 'Companies', 'action' => 'view', $door->company->id]) : '' ?></td>
 							<td><?= h($door->created) ?></td>
 							<td><?= h($door->modified) ?></td>
-							<?= $this->element('action', ['entityId' => $door->id])?>
+							<?= $this->element('action', ['entityId' => $door->id, 'displayField' => $door->{$displayField}])?>
 					</tr>
 					<?php endforeach; ?>
 			</tbody>

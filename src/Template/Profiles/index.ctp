@@ -16,7 +16,7 @@
 					<td><?= h($profile->id) ?></td>
 					<td><?= h($profile->name) ?></td>
 					<td><?= h($profile->maxTime)?></td>
-					<?= $this->element('action', ['entityId' => $profile->id])?>
+					<?= $this->element('action', ['entityId' => $profile->id, 'displayField' => $profile->{$displayField}])?>
 					</tr>
 				</tr>
 				<?php endforeach; ?>

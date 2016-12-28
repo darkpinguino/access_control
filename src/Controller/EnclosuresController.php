@@ -16,6 +16,8 @@ class EnclosuresController extends AppController
 	  'contain' => ['Companies']
 	];
 
+	public $controllerName = 'el Recinto';
+
 	/**
 	 * Index method
 	 *
@@ -24,8 +26,10 @@ class EnclosuresController extends AppController
 	public function index()
 	{
 		$enclosures = $this->paginate($this->Enclosures);
+		$displayField = $this->Enclosures->displayField();
 
-		$this->set(compact('enclosures'));
+		$this->set(compact('enclosures','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['enclosures']);
 	}
 

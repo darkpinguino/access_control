@@ -19,6 +19,7 @@ class AccessRequestController extends AppController
 		'id' => 'desc']
 	];
 
+	public $controllerName = 'la Petición de Acceso';
 	/**
 	 * Index method
 	 *
@@ -30,7 +31,10 @@ class AccessRequestController extends AppController
 
 		$accessRequest = $this->paginate($this->AccessRequest);
 
-		$this->set(compact('accessRequest'));
+		$displayField = $this->AccessRequest->displayField();	
+		
+		$this->set(compact('accessRequest','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['accessRequest']);
 	}
 

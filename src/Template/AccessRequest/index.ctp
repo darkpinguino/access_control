@@ -27,7 +27,7 @@
 					<td class="text-nowrap"><?= $access_request->has('access_status') ? $this->element('statusLabel', ['statusID' => $access_request->access_status->id]) : '' ?></td>
 					<td class="text-nowrap"><?= h($access_request->created) ?></td>
 					<td class="text-nowrap"><?= h($access_request->modified) ?></td>
-					<?= $this->element('action', ['entityId' => $access_request->id])?>
+					<?= $this->element('action', ['entityId' => $access_request->id, 'displayField' => $access_request->{$displayField}])?>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>

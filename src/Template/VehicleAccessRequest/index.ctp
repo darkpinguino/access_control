@@ -34,7 +34,7 @@
 					<td class="text-nowrap"><?= $vehicle_access_request->has('access_request') ? $this->element('statusLabel', ['statusID' => $vehicle_access_request->access_request->access_status->id]) : '' ?></td>
 					<td class="text-nowrap"><?= h($vehicle_access_request->created) ?></td>
 					<td class="text-nowrap"><?= h($vehicle_access_request->modified) ?></td>
-					<?= $this->element('action', ['entityId' => $vehicle_access_request->id])?>
+					<?= $this->element('action', ['entityId' => $vehicle_access_request->id, 'displayField' => $vehicle_access_request->{$displayField}])?>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>

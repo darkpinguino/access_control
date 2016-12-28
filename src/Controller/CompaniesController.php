@@ -18,6 +18,8 @@ class CompaniesController extends AppController
         // ]
     ];
 
+    public $controllerName = 'la Empresa';
+
     /**
      * Index method
      *
@@ -26,8 +28,10 @@ class CompaniesController extends AppController
     public function index()
     {
         $companies = $this->paginate($this->Companies);
-
-        $this->set(compact('companies'));
+        $displayField = $this->Companies->displayField();
+        
+        $this->set(compact('companies','displayField'));
+        $this->set('controllerName', $this->controllerName);
         $this->set('_serialize', ['companies']);
     }
 

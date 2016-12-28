@@ -20,7 +20,7 @@
           <td><?= h($vehicle->vehicle_type->type) ?></td>
           <td><?= h($vehicle->created) ?></td>
           <td><?= h($vehicle->modified) ?></td>
-          <?= $this->element('action', ['entityId' => $vehicle->id])?>
+          <?= $this->element('action', ['entityId' => $vehicle->id, 'displayField' => $vehicle->{$displayField}])?>
         </tr>
         <?php endforeach; ?>
       </tbody>

@@ -10,6 +10,7 @@ use App\Controller\AppController;
  */
 class ReasonVisitsController extends AppController
 {
+    public $controllerName = 'la Razón de Visita';
 
     /**
      * Index method
@@ -19,8 +20,10 @@ class ReasonVisitsController extends AppController
     public function index()
     {
         $reasonVisits = $this->paginate($this->ReasonVisits);
+        $displayField = $this->ReasonVisits->displayField();
 
-        $this->set(compact('reasonVisits'));
+        $this->set(compact('reasonVisits','displayField'));
+        $this->set('controllerName', $this->controllerName);
         $this->set('_serialize', ['reasonVisits']);
     }
 

@@ -8,13 +8,18 @@
 		['class' => 'btn btn-warning btn-xs']) 
 	?>
 	<?php 
-	echo $this->Html->link(__('Eliminar'),
-			[],
-	       ['class'=>'btn btn-danger btn-xs btn-confirm',
+	echo $this->Html->link(__('Eliminar'), 
+	    '#', 
+	  [
+	       'class'=>'btn btn-danger btn-xs btn-confirm',
 	       'data-toggle'=> 'modal',
-	       'data-target' => '#myModalDelete',
-	       'data-action'=> $this->request->here.'/delete/'.$entityId,
+	       'data-target' => '#myModalDelete2',
+	       'data-action'=> [$entityId],
+	       'data-displayField' =>[$displayField],
 	       'escape' => false], 
 	false);
 	?>
 </td>
+
+
+

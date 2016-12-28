@@ -15,6 +15,7 @@ class PeopleController extends AppController
 			// 'contain' => ['Companies']
 		];
 
+		public $controllerName = 'la Persona';
 		/**
 		 * Index method
 		 *
@@ -23,8 +24,10 @@ class PeopleController extends AppController
 		public function index()
 		{
 				$people = $this->paginate($this->People);
+				$displayField = $this->People->displayField();
 
-				$this->set(compact('people'));
+				$this->set(compact('people','displayField'));
+				$this->set('controllerName', $this->controllerName);
 				$this->set('_serialize', ['people']);
 		}
 

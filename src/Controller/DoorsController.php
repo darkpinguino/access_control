@@ -16,6 +16,7 @@ class DoorsController extends AppController
       'contain' => ['Companies']
     ];
     
+    public $controllerName = 'la Puerta';
     /**
      * Index method
      *
@@ -26,7 +27,10 @@ class DoorsController extends AppController
         // debug($this->request->data); die;
         $doors = $this->paginate($this->Doors);
 
-        $this->set(compact('doors'));
+        $displayField = $this->Doors->displayField();
+
+        $this->set(compact('doors', 'displayField'));
+        $this->set('controllerName', $this->controllerName);
         $this->set('_serialize', ['doors']);
     }
 

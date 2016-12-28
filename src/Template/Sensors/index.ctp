@@ -24,7 +24,7 @@
 						<td><?= $sensor->has('company') ? $this->Html->link($sensor->company->name, ['controller' => 'Companies', 'action' => 'view', $sensor->company->id]) : '' ?></td>
 						<td><?= h($sensor->created) ?></td>
 						<td><?= h($sensor->modified) ?></td>
-						<?= $this->element('action', ['entityId' => $sensor->id])?>
+						<?= $this->element('action', ['entityId' => $sensor->id,  'displayField' => $sensor->{$displayField}])?>
 					</tr>
 					<?php endforeach; ?>
 			</tbody>

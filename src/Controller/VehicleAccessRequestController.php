@@ -18,7 +18,7 @@ class VehicleAccessRequestController extends AppController
 	  'order' => [
 		'id' => 'desc']
 	];
-
+	public $controllerName = 'la Petición de Acceso del Vehículo';
 	/**
 	 * Index method
 	 *
@@ -27,9 +27,11 @@ class VehicleAccessRequestController extends AppController
 	public function index()
 	{
 		$vehicleAccessRequest = $this->paginate($this->VehicleAccessRequest);
+		$displayField = $this->VehicleAccessRequest->displayField();
 
 		// debug($vehicleAccessRequest); die;
-		$this->set(compact('vehicleAccessRequest'));
+		$this->set(compact('vehicleAccessRequest','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['vehicleAccessRequest']);
 	}
 

@@ -15,6 +15,7 @@ class SensorDataController extends AppController
 		'contain' => ['SensorTypes', 'People', 'Companies']
 	];
 
+	public $controllerName = 'el Dato del sensor';
 	/**
 	 * Index method
 	 *
@@ -23,8 +24,10 @@ class SensorDataController extends AppController
 	public function index()
 	{
 		$sensorData = $this->paginate($this->SensorData);
+		$displayField = $this->SensorData->displayField();
 
-		$this->set(compact('sensorData'));
+		$this->set(compact('sensorData','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['sensorData']);
 	}
 

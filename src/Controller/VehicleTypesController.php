@@ -10,7 +10,7 @@ use App\Controller\AppController;
  */
 class VehicleTypesController extends AppController
 {
-
+    public $controllerName = 'el Tipo de Vehículo';
     /**
      * Index method
      *
@@ -19,8 +19,10 @@ class VehicleTypesController extends AppController
     public function index()
     {
         $vehicleTypes = $this->paginate($this->VehicleTypes);
+        $displayField = $this->VehicleTypes->displayField();
 
-        $this->set(compact('vehicleTypes'));
+        $this->set(compact('vehicleTypes','displayField'));
+        $this->set('controllerName', $this->controllerName);
         $this->set('_serialize', ['vehicleTypes']);
     }
 

@@ -16,6 +16,7 @@ class AccessRolesController extends AppController
 	  'contain' => ['Companies']
 	];
 
+	public $controllerName = 'el Rol de Acceso';
 	/**
 	 * Index method
 	 *
@@ -25,8 +26,10 @@ class AccessRolesController extends AppController
 	{
 		
 		$accessRoles = $this->paginate($this->AccessRoles);
+		$displayField = $this->AccessRoles->displayField();
 
-		$this->set(compact('accessRoles'));
+		$this->set(compact('accessRoles','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['accessRoles']);
 	}
 

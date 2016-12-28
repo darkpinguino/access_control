@@ -11,6 +11,7 @@ use App\Controller\AppController;
 class ProfilesController extends AppController
 {
 
+    public $controllerName = 'el Perfil'; 
     /**
      * Index method
      *
@@ -21,9 +22,12 @@ class ProfilesController extends AppController
         $this->paginate = [
             'contain' => ['Companies']
         ];
-        $profiles = $this->paginate($this->Profiles);
 
-        $this->set(compact('profiles'));
+        $profiles = $this->paginate($this->Profiles);
+        $displayField = $this->Profiles->displayField();
+
+        $this->set(compact('profiles','displayField'));
+        $this->set('controllerName', $this->controllerName);
         $this->set('_serialize', ['profiles']);
     }
 
