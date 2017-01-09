@@ -8,6 +8,7 @@
 			break;
 		case 2:
 			$profile = "Emplaedo";
+			break;
 		case 3:
 			$profile = "Contratista";
 			break;
