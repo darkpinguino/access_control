@@ -166,14 +166,33 @@ class PeopleController extends AppController
 			$person = $this->People->patchEntity($person, $this->request->data);
 			
 			if ($this->People->save($person)) {
+				$company_people = $this->CompanyPeople->patchEntity($company_people, $this->request->data);
 				$company_people->person_id = $person->id;
 				$company_people->company_id = $company_id;
 				$company_people->is_visited = 0;
 
 				$existCompanyPeople = $this->CompanyPeople->
-					findByPersonIdAndCompanyId($company_people->person_id, $company_people->company_id);
+					findByPersonIdAndCompanyId($company_people->person_id, $company_people->company_id)
+					->first();
 
-				if ($existCompanyPeople->isEmpty()) {
+				if (is_null($existCompanyPeople)) {
+					if ($this->CompanyPeople->save($company_people)) {
+						$this->Flash->success(__('La persona se ha guardado.'));
+						if ($this->request->query('status')) {
+							if (!is_null($vehicle_access)) {
+								$this->processVehicleAccessData($vehicle_access);
+							}
+							return $this->redirect(['controller' => 'authorization', 'action' => 'authorization']);
+						} else{
+							return $this->redirect(['action' => 'index']);
+						}
+					} else {
+						$this->Flash->error(__('La persona no puedo ser guardada. Por favor, intente nuevamente.'));
+						return $this->redirect(['action' => 'index']);
+					}
+				} else {
+
+					$company_people->id = $existCompanyPeople->id;
 					if ($this->CompanyPeople->save($company_people)) {
 						$this->Flash->success(__('La persona se ha guardado.'));
 						if ($this->request->query('status')) {
@@ -187,19 +206,10 @@ class PeopleController extends AppController
 					} else {
 						$this->Flash->error(__('La persona no puedo ser guardada. Por favor, intente nuevamente.'));
 					}
-				} else {
-					$this->Flash->success(__('La persona se ha guardado.'));
-					if ($this->request->query('status')) {
-						if (!is_null($vehicle_access)) {
-							$this->processVehicleAccessData($vehicle_access);
-						}
-						return $this->redirect(['controller' => 'authorization', 'action' => 'authorization']);
-					} else{
-						return $this->redirect(['action' => 'index']);
-					}
 				}
 			} else {
 					$this->Flash->error(__('La persona no puedo ser guardada. Por favor, intente nuevamente.'));
+					return redirect(['action' => 'index']);
 			}
 		}
 		if ($this->request->query('status')) {

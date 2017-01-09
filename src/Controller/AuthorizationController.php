@@ -402,7 +402,7 @@ use Cake\I18n\Time;
 						$pending_access_request = $this->AccessRequest->find()->
 						  where(['people_id' => $person->id, 'door_id' => $door->id])->last();
 
-						if ($pending_access_request->access_status_id == 2) {
+						if (!is_null($pending_access_request) && $pending_access_request->access_status_id == 2) {
 						  $vehicle_access_request_query = $this->AccessRequest->VehicleAccessRequest->
 						  findByAccessRequestId($pending_access_request->id)->first();
 

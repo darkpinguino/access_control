@@ -13,8 +13,8 @@
 					<?php if ($userRole_id == 1): ?>
 						<th><?= $this->Paginator->sort('User.company.name', 'Empresa')?></th>
 					<?php endif; ?>
-					<th><?= $this->Paginator->sort('created') ?></th>
-					<th><?= $this->Paginator->sort('modified') ?></th>
+					<th><?= $this->Paginator->sort('created', 'Creado') ?></th>
+					<th><?= $this->Paginator->sort('modified', 'Modificado') ?></th>
 					<th><?= __('Acciones') ?></th>
 				</tr>
 			</thead>

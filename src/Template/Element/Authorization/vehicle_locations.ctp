@@ -10,8 +10,7 @@
 				  <th>Nombre</th>
 				  <th>Conductor</th>
 				  <th>Perfil</th>
-				  <th>Reciento</th>
-				  <th><?= __('Acciones') ?></th>
+				  <th>Recinto</th>
 				</tr>
 			  </thead>
 			  <tbody>
@@ -24,10 +23,6 @@
 							  <td><?= $this->element('driver', ['driver' => $vehicle_people_location->driver]) ?></td>
 							  <td><?= h($vehicle_people_location->person->company_people[0]->profile->name)?></td>
 							  <td><?= h($vehicle_location->enclosure->name)?></td>
-							  <td>
-								<button type="button" person-rut=<?= h($vehicle_people_location->person->rut)?>  door-id=<?= h($door_id)?>
-									acction="out" class="btn btn-xs btn-danger authorization">Retirar</button>
-							  </td>
 						  </tr>
 						<?php endforeach;
 				  endforeach; ?>
