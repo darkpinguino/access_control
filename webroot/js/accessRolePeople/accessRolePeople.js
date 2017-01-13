@@ -4,6 +4,8 @@ $(document).ready(function () {
 		autoclose: true
 	});
 
+	$("#expiration").attr('name', 'expiration');
+
 	$("#notexpire").change(function () {
 		if ($(this).is(":checked")) {
 			$("#expiration").prop('disabled', true);

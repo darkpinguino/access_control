@@ -63,9 +63,9 @@ class AccessRolePeopleController extends AppController
 		$accessRolePerson = $this->AccessRolePeople->newEntity();
 		if ($this->request->is('post')) {
 				
-				if ($this->request->data['notExpire']) {
-					$this->request->data['expiration'] = '';
-				}
+			if ($this->request->data['notExpire']) {
+				$this->request->data['expiration'] = '';
+			}
 
 			$accessRolePerson = $this->AccessRolePeople->patchEntity($accessRolePerson, $this->request->data);
 			if ($this->AccessRolePeople->save($accessRolePerson)) {

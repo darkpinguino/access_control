@@ -8,10 +8,14 @@
 	<div class="box-body">
 		<fieldset>
 			<?php
-				echo $this->Form->input('people_id', ['label' => 'Persona', 'option' => 'people']);
+				echo $this->Form->input('people_id', [
+					'label' => 'Persona', 
+					'option' => 'people', 
+					'class' => 'select2-selection select2-selection--single'
+				]);
 				echo $this->Form->input('access_role_id', ['label' => 'Rol de acceso', 'option' => 'accessRoles']);
 				echo $this->Form->label('Expira');
-				echo $this->Form->input('expiration', ['label' => false, 'type' => 'date']);
+				echo $this->Form->input('expiration', ['label' => false, 'type' => 'date', 'name' => 'asdads']);
 				echo $this->Form->input('notExpire', [
 					'type' => 'checkbox',
 					'label' => 'no expira',
