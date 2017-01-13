@@ -32,15 +32,44 @@
             <td><?= $this->element('action_profile', ['profileID' => $person->company_people[0]->profile->id])?></td>
           <?php endif ?>
           <td><?= h($person->created) ?></td>
-          <?php if ($userRole_id == 1): ?>
-            <?= $this->element('action', ['entityId' => $person->id])?>
-          <?php else: ?>
-            <?= $this->element('action_delete_local', [
-                'entityId' => $person->id,
-                'deleteEntityId' => $person->company_people[0]->id, 
-                'controller' => 'CompanyPeople'
-              ]) ?>
-          <?php endif; ?>
+          
+
+
+          <td nowrap class="actions">
+            <?= $this->Html->link(__('Ver'), 
+              ['action' => 'view', $person->id], 
+              ['class' => 'btn btn-primary btn-xs']) 
+            ?>
+            <?= $this->Html->link(__('Editar'), 
+              ['action' => 'edit', $person->id], 
+              ['class' => 'btn btn-warning btn-xs']) 
+            ?>
+            <?php if ($userRole_id == 1): ?>
+              <?= $this->Form->postLink(__('Eliminar'), 
+                ['action' => 'delete', $person->id], 
+                [
+                  'confirm' => __('Are you sure you want to delete # {0}?', $person->id), 
+                  'class' => 'btn btn-danger btn-xs'
+                ]) 
+              ?>
+            <?php else: ?>
+              <?= $this->Form->postLink(__('Eliminar'), 
+                [
+                  'controller' => 'CompanyPeople',
+                  'action' => 'delete', 
+                  $person->company_people[0]->id], 
+                [
+                  'confirm' => __('Are you sure you want to delete # {0}?', $person->id), 
+                  'class' => 'btn btn-danger btn-xs'
+                ]) 
+              ?>
+            <?php endif; ?>
+            <?= $this->Html->link(__('Editar roles'), 
+              ['action' => 'updateRole', $person->id], 
+              ['class' => 'btn btn-success btn-xs']) 
+            ?>
+          </td>
+
           </tr>
         </tr>
         <?php endforeach; ?>

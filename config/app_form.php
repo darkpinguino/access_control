@@ -8,7 +8,7 @@
 		'textarea' => '<textarea class="form-control" name="{{name}}"{{attrs}}>{{value}}</textarea>',
 		'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
 		'dateContainer' => 
-			'<div class="form-group" {{type}}{{required}}">
+			'<div class="form-group {{type}} {{name}}"{{required}}>
 					<div class="input-group date">
 						<div class="input-group-addon">
               <i class="fa fa-calendar"></i>
@@ -16,7 +16,7 @@
 						{{content}}
 					</div>
 			</div>',
-		'dateWidget' => '<input class="form-control" type="text" name="{{name}}"{{attrs}}>',
+		'dateWidget' => '<input class="form-control" type="text" name="{{name}}" {{attrs}}/>',
 		'error' => '<span class="help-block">{{content}}</span>',
 		'inputContainerError' => '<div class="form-group has-error" {{type}}{{required}}>{{content}}{{error}}</div>'
 	];

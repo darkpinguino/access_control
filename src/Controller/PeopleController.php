@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\I18n\Date;
 
 /**
  * People Controller
@@ -59,13 +60,14 @@ class PeopleController extends AppController
 	public function view($id = null)
 	{	
 		$this->loadModel('AccessRoles');
-		$this->loadModel('AccessRequest');
-		$this->loadModel('Doors');
 
+		$company_id = $this->Auth->user('company_id');
 		$userRole_id = $this->Auth->user('userRole_id');
 		$person = $this->People->get($id);
 
-		$accessRoles = $this->AccessRoles->find()->matching('People', 
+		$accessRoles = $this->AccessRoles->find()
+			->where(['company_id' => $company_id])
+			->matching('People', 
 			function ($q) use ($person)
 			{
 				return $q->where(['People.id' => $person->id]);
@@ -268,5 +270,86 @@ class PeopleController extends AppController
 		$this->People->AccessRoles->unlink($people, $access_roles);
 
 		return $this->redirect(['action' => 'view', $person_id]);
+	}
+
+	public function updateRole($id = null)
+	{
+		$company_id = $this->Auth->user('company_id');
+		$role = $this->People->AccessRoles->find('list')
+			->where(['company_id' => $company_id]);
+		$person = $this->People->get($id);
+		$accessRolePerson = $this->People->AccessRolePeople->newEntity();
+		if ($this->request->is('post')) {
+
+			$new_access_role = $this->passNewData($id, $this->request->data('role_id'));
+
+			if ($this->request->data['notExpire']) {
+				$this->request->data['expiration'] = 0;
+			}
+
+			$access_roles = [];
+
+			foreach ($new_access_role as $role_id) {
+				$access_role = $this->People->AccessRoles->get($role_id);
+				$access_role->_joinData = $this->People->AccessRolePeople->newEntity();
+				$access_role->_joinData->expiration = $this->request->data('expiration');
+				array_push($access_roles, $access_role);
+			}
+
+			$roles_id = [];
+
+			foreach ($role as $role_id => $value) {
+				array_push($roles_id, $role_id);
+			}
+
+			if (empty($this->request->data('role_id'))) {
+				$this->People->AccessRolePeople->deleteAll([
+					'people_id' => $id,
+					'access_role_id IN' => $roles_id
+				]);
+			} else {
+				$this->People->AccessRolePeople->deleteAll([
+					'people_id' => $id,
+					'access_role_id IN' => $roles_id,
+					'access_role_id NOT IN' => $this->request->data('role_id')
+				]);
+			}
+
+			if ($this->People->AccessRoles->link($person, $access_roles)) {
+				$this->Flash->success(__('Roles de acceso actualizados.'));
+				return $this->redirect(['action' => 'index', 'controller' => 'people']);
+			} else {
+				$this->Flash->error(__('El rol de acceso no ha podido ser asignado. Por favor, intente nuevamente.'));
+			}
+		}
+
+		$people = $this->People->find('list')
+			->matching('CompanyPeople', function ($q) use ($company_id)
+			{
+				return $q->where(['company_id' => $company_id]);
+			});
+
+		$access_role_people = $this->People->AccessRoles->find('list')
+			->matching('People')
+			->where(['AccessRolePeople.people_id' => $id]);
+
+
+		$this->set('accessRoles', $role);
+		$this->set(compact('accessRolePerson', 'person', 'role', 'access_role_people'));
+		$this->set('_serialize', ['accessRolePerson']);
+	}
+
+	private function passNewData($person_id, $data)
+	{
+		return $this->People->AccessRoles->find('list',[
+				'keyField' => 'id',
+				'valueField' => 'id'
+			])
+			->where(['AccessRoles.id IN' => $data])
+			->notMatching('People', function ($q) use ($person_id)
+			{
+				return $q->where(['People.id' => $person_id]);
+			})
+			->toArray();
 	}
 }
