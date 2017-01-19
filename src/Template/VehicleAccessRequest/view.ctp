@@ -14,8 +14,12 @@
 			  		<th><?= __('Conductor') ?></th>
 			  		<td><?= $vehicleAccessRequest ? $this->element('driver', ['driver' => $vehicleAccessRequest->driver]) : ''?></td>
 			  	</tr>
+			  	<tr>
+			  		<th><?= __('Rut')?></th>
+			  		<td><?= $vehicleAccessRequest->access_request->has('person') ? $this->Html->link($vehicleAccessRequest->access_request->person->rut, ['controller' => 'People', 'action' => 'view', $vehicleAccessRequest->access_request->person->id]) : '' ?></td>
+			  	</tr>
 		      <tr>
-	          <th><?= __('Persona') ?></th>
+	          <th><?= __('Nombre') ?></th>
 	          <td><?= $vehicleAccessRequest->access_request->has('person') ? $this->Html->link($vehicleAccessRequest->access_request->person->fullName, ['controller' => 'People', 'action' => 'view', $vehicleAccessRequest->access_request->person->id]) : '' ?></td>
 		      </tr>
 		      <tr>

@@ -1,3 +1,6 @@
+<?= $this->Html->script('people/index.js', ['block' => 'scriptView']); ?>
+
+
 <div class="box">
   <?= $this->element('tableHeader', ['title' => 'Personas'])?>
   <div class="box-body">
@@ -12,7 +15,7 @@
           <th><?= $this->Paginator->sort('lastname', 'Apellido') ?></th>
           <th><?= $this->Paginator->sort('phone', 'Telefono') ?></th>
           <?php if ($userRole_id == 2): ?>
-            <th><?= $this->Paginator->sort('company_people.profile.id', 'Perfil')?></th>
+            <th><?= $this->Paginator->sort('CompanyPeople[0].Profiles.id', 'Perfil')?></th>
           <?php endif ?>
           <th><?= $this->Paginator->sort('created', 'Agregada') ?></th>
           <th><?= __('Acciones') ?></th>

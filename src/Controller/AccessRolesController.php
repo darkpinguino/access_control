@@ -36,15 +36,22 @@ class AccessRolesController extends AppController
 	{
 		$company_id = $this->Auth->user('company_id');
 		$userRole_id = $this->Auth->user('userRole_id');
-
+		$search = $this->request->query('search');
 
 		if ($userRole_id == 1) {
-			$accessRoles = $this->paginate($this->AccessRoles);
+			$accessRoles = $this->AccessRoles->find()
+				->where(['AccessRoles.name LIKE' => '%'.$search.'%']);
+			// $accessRoles = $this->paginate($this->AccessRoles);
 		} else {
 			$accessRoles = $this->AccessRoles->find()
-				->where(['company_id' => $company_id]);
-			$accessRoles = $this->paginate($accessRoles);
+				->where([
+					'company_id' => $company_id,
+					'AccessRoles.name LIKE' => '%'.$search.'%'
+				]);
+			// $accessRoles = $this->paginate($accessRoles);
 		}
+
+		$accessRoles = $this->paginate($accessRoles);
 
 		$this->set(compact('accessRoles', 'userRole_id'));
 		$this->set('_serialize', ['accessRoles']);

@@ -240,14 +240,14 @@
     </li>
     <?= '<li class="treeview'. ((strcmp($controller, 'AccessRequest') and strcmp($controller, 'VehicleAccessRequest')) ? '' : ' active').'">' ?>
       <a href="#">
-        <i class="fa fa-share"></i> <span>Peticiones de acceso</span> <i class="fa fa-angle-left pull-right"></i>
+        <i class="fa fa-share"></i> <span>Registro de acceso</span> <i class="fa fa-angle-left pull-right"></i>
       </a>
       <ul class="treeview-menu">
         <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Peticiones de acceso', '/access-request/index', ['escape' => false]) ?>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Registro de acceso', '/access-request/index', ['escape' => false]) ?>
         </li>
          <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i>Listar Peticiones de acceso <br> vehículos', '/vehicle-access-request/index', ['escape' => false]) ?>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i>Listar Registro de acceso <br> vehículos', '/vehicle-access-request/index', ['escape' => false]) ?>
         </li>
         <li>
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Peticiones de acceso <br> pendientes', '/access-request/pending-access', ['escape' => false]) ?>

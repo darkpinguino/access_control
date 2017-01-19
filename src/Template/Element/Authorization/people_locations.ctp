@@ -7,18 +7,18 @@
 			<table class="table table-bordered table-striped table-hover">
 			  <thead>
 				<tr>
-					<th>RUT</th>
-				  <th>Nombre</th>
-				  <th>Perfil</th>
-				  <th>Recinto</th>
-				  <th>Hora Ingreso</th>
+					<th><?= $this->Paginator->sort('People.rut', 'Rut') ?></th>
+				  <th><?= $this->Paginator->sort('People.name', 'Nombre')?></th>
+				  <th><?= $this->Paginator->sort('People.company_people.Profiles.id', 'Perfil')?></th>
+				  <th><?= $this->Paginator->sort('Enclosures.name', 'Recinto') ?></th>
+				  <th><?= $this->Paginator->sort('created', 'Hora Ingreso') ?></th>
 				</tr>
 			  </thead>
 			  <tbody>
 				  <?php foreach ($people_locations as $location): ?>
 				  <tr>
 						<td><?= h($location->person->rut)?></td>
-					  <td><?= h($location->person->name)?> &nbsp; <?= h($location->person->lastname)?></td>
+					  <td><?= h($location->person->fullName)?></td>
 					  <td><?= h($location->person->company_people[0]->profile->name)?></td>
 					  <td><?= h($location->enclosure->name)?></td>
 					  <td><?= h($location->created)?></td>
@@ -31,7 +31,9 @@
 		</div>
 	</div>
 </div>
-
+<div class="box-footer clearfix">
+  <?= $this->element('paginator') ?>
+</div>
 <?php 
 	if (isset($active_vehicle_alert)) {
 		if($this->request->is('ajax')) {

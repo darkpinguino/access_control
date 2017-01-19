@@ -91,36 +91,46 @@ class AccessRolePeopleController extends AppController
 	public function addNoStaff()
 	{
 		$accessRolePerson = $this->AccessRolePeople->newEntity();
+		$company_id = $this->Auth->user('company_id');
+		$role = $this->AccessRolePeople->AccessRoles->find('list')
+			->where(['company_id' => $company_id]);
+		$id = $this->request->query('person');
+		$person = $this->AccessRolePeople->People->get($id);
 		if ($this->request->is('post')) {
-			$existingAccessRolePerson = $this->AccessRolePeople->findByPeopleIdAndAccessRoleId($this->request->query('person'), $this->request->data('access_role_id'));
 
-			if ($existingAccessRolePerson->isEmpty()) {
-				$accessRolePerson = $this->AccessRolePeople->patchEntity($accessRolePerson, $this->request->data);
-				
-				$accessRolePerson->people_id =  $this->request->query('person');
-			} else {
-				$accessRolePerson = $existingAccessRolePerson->first();
-			}
-			
+			$new_access_role = $this->passNewData($id, $this->request->data('role_id'));
+
+			$access_roles = [];
 			$expirationDate = new Date();
 			$expirationDate->modify('+1 day');
 
-			$accessRolePerson->expiration = $expirationDate;
-			
-			if ($this->AccessRolePeople->save($accessRolePerson)) {
-				$this->Flash->success(__('El rol de acceseso ha sido guradado.'));
+			foreach ($new_access_role as $access_role) {
+				$data = [
+					'people_id' => $id,
+					'access_role_id' => $access_role,
+					'expiration' => $expirationDate
+				];
+
+				array_push($access_roles, $data);
+			}
+
+			$this->AccessRolePeople->saveMany($this->AccessRolePeople->newEntities($access_roles));
+
+			$this->Flash->success(__('El rol de acceseso ha sido guradado.'));
 				return $this->redirect([
 					'action' => 'pending-access',  
 					'controller' => 'access-request'
 				]);
-			} else {
-				$this->Flash->error(__('El rol de acceseso no ha podido ser guradado. Porfavor, intente nuevamente.'));
-			}
 		}
 
+		$access_role_people = $this->AccessRolePeople->AccessRoles->find('list')
+			->matching('People')
+			->where(['AccessRolePeople.people_id' => $id]);
+
 		$person = $this->AccessRolePeople->People->get($this->request->query('person'));
-		$accessRoles = $this->AccessRolePeople->AccessRoles->find('list');
-		$this->set(compact('accessRolePerson', 'person', 'accessRoles'));
+		$this->set('accessRoles', $role);
+
+		$this->set(compact('accessRolePerson', 'person', 'role', 'access_role_people'));
 		$this->set('_serialize', ['accessRolePerson']);
 	}
 
@@ -190,5 +200,19 @@ class AccessRolePeopleController extends AppController
 		 } else {
 			return false;
 		 }
+	}
+
+	private function passNewData($person_id, $data)
+	{
+		return $this->AccessRolePeople->AccessRoles->find('list',[
+				'keyField' => 'id',
+				'valueField' => 'id'
+			])
+			->where(['AccessRoles.id IN' => $data])
+			->notMatching('People', function ($q) use ($person_id)
+			{
+				return $q->where(['People.id' => $person_id]);
+			})
+			->toArray();
 	}
 }

@@ -25,7 +25,11 @@ class CompaniesController extends AppController
 	 */
 	public function index()
 	{
-		$companies = $this->paginate($this->Companies);
+		$search = $this->request->query('search');
+		$companies = $this->Companies->find()
+			->where(['name LIKE' => '%'.$search.'%']);
+
+		$companies = $this->paginate($companies);
 
 		$this->set(compact('companies'));
 		$this->set('_serialize', ['companies']);

@@ -11,98 +11,102 @@ use App\Controller\AppController;
 class VehicleTypesController extends AppController
 {
 
-    /**
-     * Index method
-     *
-     * @return \Cake\Network\Response|null
-     */
-    public function index()
-    {
-        $vehicleTypes = $this->paginate($this->VehicleTypes);
+	/**
+	 * Index method
+	 *
+	 * @return \Cake\Network\Response|null
+	 */
+	public function index()
+	{
+		$search = $this->request->query('search');
 
-        $this->set(compact('vehicleTypes'));
-        $this->set('_serialize', ['vehicleTypes']);
-    }
+		$vehicleTypes = $this->VehicleTypes->find()
+			->where(['type LIKE' => '%'.$search.'%']);
+		$vehicleTypes = $this->paginate($vehicleTypes);
 
-    /**
-     * View method
-     *
-     * @param string|null $id Vehicle Type id.
-     * @return \Cake\Network\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $vehicleType = $this->VehicleTypes->get($id, [
-            'contain' => ['Vehicles']
-        ]);
+		$this->set(compact('vehicleTypes'));
+		$this->set('_serialize', ['vehicleTypes']);
+	}
 
-        $this->set('vehicleType', $vehicleType);
-        $this->set('_serialize', ['vehicleType']);
-    }
+	/**
+	 * View method
+	 *
+	 * @param string|null $id Vehicle Type id.
+	 * @return \Cake\Network\Response|null
+	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 */
+	public function view($id = null)
+	{
+		$vehicleType = $this->VehicleTypes->get($id, [
+			'contain' => ['Vehicles']
+		]);
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
-        $vehicleType = $this->VehicleTypes->newEntity();
-        if ($this->request->is('post')) {
-            $vehicleType = $this->VehicleTypes->patchEntity($vehicleType, $this->request->data);
-            if ($this->VehicleTypes->save($vehicleType)) {
-                $this->Flash->success(__('El tipo de vehículo ha sido guardado.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('El tipo de vehículo no ha podido ser guardado. Por favor, intente nuevamente.'));
-            }
-        }
-        $this->set(compact('vehicleType'));
-        $this->set('_serialize', ['vehicleType']);
-    }
+		$this->set('vehicleType', $vehicleType);
+		$this->set('_serialize', ['vehicleType']);
+	}
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Vehicle Type id.
-     * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $vehicleType = $this->VehicleTypes->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $vehicleType = $this->VehicleTypes->patchEntity($vehicleType, $this->request->data);
-            if ($this->VehicleTypes->save($vehicleType)) {
-                $this->Flash->success(__('El tipo de vehículo ha sido guardado.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('El tipo de vehículo no ha podido ser guardado. Por favor, intente nuevamente.'));
-            }
-        }
-        $this->set(compact('vehicleType'));
-        $this->set('_serialize', ['vehicleType']);
-    }
+	/**
+	 * Add method
+	 *
+	 * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+	 */
+	public function add()
+	{
+		$vehicleType = $this->VehicleTypes->newEntity();
+		if ($this->request->is('post')) {
+			$vehicleType = $this->VehicleTypes->patchEntity($vehicleType, $this->request->data);
+			if ($this->VehicleTypes->save($vehicleType)) {
+				$this->Flash->success(__('El tipo de vehículo ha sido guardado.'));
+				return $this->redirect(['action' => 'index']);
+			} else {
+				$this->Flash->error(__('El tipo de vehículo no ha podido ser guardado. Por favor, intente nuevamente.'));
+			}
+		}
+		$this->set(compact('vehicleType'));
+		$this->set('_serialize', ['vehicleType']);
+	}
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Vehicle Type id.
-     * @return \Cake\Network\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $vehicleType = $this->VehicleTypes->get($id);
-        if ($this->VehicleTypes->delete($vehicleType)) {
-            $this->Flash->success(__('El tipo de vehículo ha sido eliminado.'));
-        } else {
-            $this->Flash->error(__('El tipo de vehículo no ha podido ser eliminado. Por favor, intente nuvemanete.'));
-        }
-        return $this->redirect(['action' => 'index']);
-    }
+	/**
+	 * Edit method
+	 *
+	 * @param string|null $id Vehicle Type id.
+	 * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
+	 * @throws \Cake\Network\Exception\NotFoundException When record not found.
+	 */
+	public function edit($id = null)
+	{
+		$vehicleType = $this->VehicleTypes->get($id, [
+			'contain' => []
+		]);
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			$vehicleType = $this->VehicleTypes->patchEntity($vehicleType, $this->request->data);
+			if ($this->VehicleTypes->save($vehicleType)) {
+				$this->Flash->success(__('El tipo de vehículo ha sido guardado.'));
+				return $this->redirect(['action' => 'index']);
+			} else {
+				$this->Flash->error(__('El tipo de vehículo no ha podido ser guardado. Por favor, intente nuevamente.'));
+			}
+		}
+		$this->set(compact('vehicleType'));
+		$this->set('_serialize', ['vehicleType']);
+	}
+
+	/**
+	 * Delete method
+	 *
+	 * @param string|null $id Vehicle Type id.
+	 * @return \Cake\Network\Response|null Redirects to index.
+	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 */
+	public function delete($id = null)
+	{
+		$this->request->allowMethod(['post', 'delete']);
+		$vehicleType = $this->VehicleTypes->get($id);
+		if ($this->VehicleTypes->delete($vehicleType)) {
+			$this->Flash->success(__('El tipo de vehículo ha sido eliminado.'));
+		} else {
+			$this->Flash->error(__('El tipo de vehículo no ha podido ser eliminado. Por favor, intente nuvemanete.'));
+		}
+		return $this->redirect(['action' => 'index']);
+	}
 }

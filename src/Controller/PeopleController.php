@@ -29,12 +29,19 @@ class PeopleController extends AppController
 	public function index()
 	{
 		$userRole_id = $this->Auth->user('userRole_id');
+		$search = $this->request->query('search');
 
 		if ($this->Auth->user('userRole_id') == 1) {
-			$people = $this->People->find('all');
+			$people = $this->People->find('all')
+				->where(['rut LIKE' => '%'.$search.'%'])
+				->orWhere(['name LIKE' => '%'.$search.'%'])
+				->orWhere(['lastname LIKE' => '%'.$search.'%']);
 		} else {
 			$company_id = $this->Auth->user('company_id');
 			$people = $this->People->find('all')
+				// ->where(['rut LIKE' => '%'.$search.'%'])
+				// ->orWhere(['People.name LIKE' => '%'.$search.'%'])
+				// ->orWhere(['People.lastname LIKE' => '%'.$search.'%'])
 				->matching('Companies', function ($q) use ($company_id)
 				{
 					return $q->where(['Companies.id' => $company_id]);
@@ -44,6 +51,9 @@ class PeopleController extends AppController
 					return $q->where(['CompanyPeople.company_id' => $company_id]);
 				}]);
 		}
+
+		// $this->paginate = [
+		// 	]
 
 		$this->set('people', $this->paginate($people));
 		$this->set(compact('userRole_id'));
@@ -284,7 +294,7 @@ class PeopleController extends AppController
 			$new_access_role = $this->passNewData($id, $this->request->data('role_id'));
 
 			if ($this->request->data['notExpire']) {
-				$this->request->data['expiration'] = 0;
+				$this->request->data['expiration'] = '';
 			}
 
 			$access_roles = [];
@@ -292,7 +302,7 @@ class PeopleController extends AppController
 			foreach ($new_access_role as $role_id) {
 				$access_role = $this->People->AccessRoles->get($role_id);
 				$access_role->_joinData = $this->People->AccessRolePeople->newEntity();
-				$access_role->_joinData->expiration = $this->request->data('expiration');
+				$access_role->_joinData->expiration =  new Date($this->request->data('expiration'));
 				array_push($access_roles, $access_role);
 			}
 

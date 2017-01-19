@@ -2,7 +2,7 @@
 
 
 <div class="box">
-	<?= $this->element('tableHeader', ['title' => 'Peticiones de accesos vehículos'])?>
+	<?= $this->element('tableHeader', ['title' => 'Registro de accesos vehículos'])?>
 	<div class="box-body">
 		<table class="table">
 			<thead>

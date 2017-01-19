@@ -39,6 +39,8 @@ class ProfilesController extends AppController
 		$company_id = $this->Auth->user('company_id');
 		$userRole_id = $this->Auth->user('userRole_id');
 
+		$search = $this->request->query('search');
+
 		$this->paginate = [
 			'contain' => [
 				'CompanyProfiles' => function ($q) use ($company_id)
@@ -48,7 +50,10 @@ class ProfilesController extends AppController
 			]
 		];
 
-		$profiles = $this->paginate($this->Profiles);
+		$profiles = $this->Profiles->find()
+			->where(['name LIKE' => '%'.$search.'%']);
+
+		$profiles = $this->paginate($profiles);
 
 		$this->set(compact('profiles', 'userRole_id'));
 		$this->set('_serialize', ['profiles']);
@@ -115,8 +120,8 @@ class ProfilesController extends AppController
 		]);
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$company_profile = $this->Profiles->CompanyProfile->patchEntity($profile, $this->request->data);
-			if ($this->Profiles->CompanyProfiles->save($Company_profile)) {
+			$company_profile = $this->Profiles->CompanyProfiles->patchEntity($profile, $this->request->data);
+			if ($this->Profiles->CompanyProfiles->save($company_profile)) {
 				$this->Flash->success(__('El perfil ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);
 			} else {

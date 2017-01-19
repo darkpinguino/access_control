@@ -30,13 +30,16 @@ class VehiclesController extends AppController
 	{
 		$company_id = $this->Auth->user('company_id');
 		$userRole_id = $this->Auth->user('userRole_id');
+		$search = $this->request->query('search');
 
 		if ($this->Auth->user()['userRole_id'] == 1) {
 			$vehicles = $this->Vehicles->find()
+				->where(['number_plate LIKE' => '%'.$search.'%'])
 				->contain(['VehicleTypes', 'CompanyVehicles.VehicleProfiles']);
 
 		} else {
 			$vehicles = $this->Vehicles->find()
+				->where(['number_plate LIKE' => '%'.$search.'%'])
 				->matching('CompanyVehicles', function ($q) use ($company_id)
 				{
 					return $q->where(['CompanyVehicles.company_id' => $company_id]);
@@ -48,12 +51,7 @@ class VehiclesController extends AppController
 						{
 							return $q->where(['CompanyVehicles.company_id' => $company_id]);
 						}
-					]);
-				// ->contain(['CompanyVehicles', function ($q) use ($company_id)
-				// 	{
-				// 		return $q->where(['CompanyVehicles.company_id' => $company_id]);
-				// 	}
-				// ]);
+				]);
 		}	
 
 		$vehicles = $this->paginate($vehicles);

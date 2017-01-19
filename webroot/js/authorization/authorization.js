@@ -1,6 +1,13 @@
 var passengerCount = 0;
 
 $(document).ready(function () {
+	$("#search-button").on('click', function () {
+		window.location.replace('authorization?search=' + $("#search-input").val())
+	})
+
+	var search = getURLParameters('search');
+	$("#search-input").val(search);
+
 	$(document).on("click", ".authorization", function () {
 		var rut = $(this).attr("person-rut");
 		var door_id = $(this).attr("door-id");

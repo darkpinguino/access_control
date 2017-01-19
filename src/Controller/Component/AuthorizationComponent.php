@@ -101,7 +101,7 @@ class AuthorizationComponent extends Component
 	public function savePeopleLocation($person, $door, $maxTime)
 	{
 		$timeOut = new Time();
-		$timeOut->modify('+'.$maxTime.' minutes');
+		$timeOut->modify('+'.$maxTime.' hours');
 
 		$this->People = TableRegistry::get('People');
 
