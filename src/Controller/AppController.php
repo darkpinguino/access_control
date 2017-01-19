@@ -84,8 +84,9 @@ class AppController extends Controller
 		// debug($this->Auth->user()['id']); die;
 		if (!is_null($this->Auth->user())) {
 			$this->loadmodel('Users');
+			$company_id = $this->Auth->user('company_id');
 			$userAuth = $this->Users->get($this->Auth->user()['id'], [
-				'contain' => ['People']
+				'contain' => ['Companies', 'People']
 			]);
 			$this->set('userAuth', $userAuth);
 		}

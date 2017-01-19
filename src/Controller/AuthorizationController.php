@@ -65,7 +65,8 @@ use Cake\I18n\Time;
 				$people_out = null;
 			}
 
-			$people_locations = $this->getPeopleLocation($company_id);
+			$search = $this->request->query('search');
+			$people_locations = $this->getPeopleLocation($company_id, $search);
 
 			$vehicles_locations = $this->getVehicleLocation($company_id);
 
@@ -171,15 +172,21 @@ use Cake\I18n\Time;
 			}
 		}
 
-		private function getPeopleLocation($company_id)
+		private function getPeopleLocation($company_id, $search='')
 		{
 			$this->loadModel('PeopleLocations');
 
 			$people_locations = $this->PeopleLocations->find()
 				->contain([
-					'People.CompanyPeople.Profiles' => function ($q) use ($company_id)
+					'People.CompanyPeople.Profiles' => function ($q) use ($company_id, $search)
 					{
 						return $q->where(['CompanyPeople.company_id' => $company_id]);
+					},
+					'People' => function ($q) use ($search)
+					{
+						return $q->where(['rut LIKE' => '%'.$search.'%'])
+							->orWhere(['People.name LIKE' => '%'.$search.'%'])
+							->orWhere(['lastname LIKE' => '%'.$search.'%']);
 					},
 					'Enclosures'
 				])
@@ -188,9 +195,18 @@ use Cake\I18n\Time;
 					return $q->where(['Enclosures.company_id' => $company_id]);
 				})
 				->order(['\'created\'' => 'DESC'])
-				->distinct('people_id')->toArray();
+				->distinct('people_id');
 
-			return $people_locations;
+			$this->paginate = [
+			    'sortWhitelist'=> [
+			    	'Enclosures.name', 
+			    	'People.name', 
+			    	'People.rut', 
+			    	'People.CompanyPeople[0].Profiles.id'
+			    ]
+			];
+
+			return $this->Paginate($people_locations);
 		}
 
 		private function getVehicleLocation($company_id)
@@ -209,10 +225,19 @@ use Cake\I18n\Time;
 				{
 					return $q->where(['Enclosures.company_id' => $company_id]);
 				})
-				->order(['\'created\'' => 'DESC'])
-				->toArray();
+				->order(['\'created\'' => 'DESC']);
+				// ->toArray();
 
-			return $vehicles_locations;
+			$this->paginate = [
+				'sortWhitelist' => [
+					'Vehicles.number_plate',
+					'Enclosures.name',
+				]
+			];
+
+			// debug($vehicles_locations->toArray()); die;
+
+			return $this->paginate($vehicles_locations);
 		}
 
 		private function getPeopleLocationInsideAlert($company_id)

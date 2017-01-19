@@ -18,7 +18,10 @@ class VehicleProfilesController extends AppController
 	 */
 	public function index()
 	{
-		$vehicleProfiles = $this->paginate($this->VehicleProfiles);
+		$search = $this->request->query('search');
+		$vehicleProfiles = $this->VehicleProfiles->find()
+			->where(['name LIKE' => '%'.$search.'%']);
+		$vehicleProfiles = $this->paginate($vehicleProfiles);
 
 		$this->set(compact('vehicleProfiles'));
 		$this->set('_serialize', ['vehicleProfiles']);

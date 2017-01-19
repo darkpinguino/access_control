@@ -5,12 +5,12 @@
 			<table class="table table-bordered table-striped table-hover">
 			  <thead>
 				<tr>
-					<th>Patente</th>
-				  <th>Rut </th>
+					<th><?= $this->Paginator->sort('Vehicles.number_plate', 'Patente') ?></th>
+				  <th>Rut</th>
 				  <th>Nombre</th>
 				  <th>Conductor</th>
 				  <th>Perfil</th>
-				  <th>Recinto</th>
+				  <th><?= $this->Paginator->sort('Enclosures.name', 'Recinto') ?> </th>
 				</tr>
 			  </thead>
 			  <tbody>
@@ -30,4 +30,7 @@
 			</table>
 		</div>
 	</div>
+</div>
+<div class="box-footer clearfix">
+  <?= $this->element('paginator') ?>
 </div>

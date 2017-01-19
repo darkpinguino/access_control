@@ -33,14 +33,20 @@ class EnclosuresController extends AppController
 	{
 		$company_id = $this->Auth->user('company_id');
 		$userRole_id = $this->Auth->user('userRole_id');
+		$search = $this->request->query('search');
 
 		if ($userRole_id == 1) {
-			$enclosures = $this->paginate($this->Enclosures);
+			$enclosures = $this->Enclosures->find()
+				->where(['Enclosures.name LIKE' => '%'.$search.'%']);
 		} else {
 			$enclosures = $this->Enclosures->find('all')
-				->where(['company_id' => $company_id]);
-			$enclosures = $this->paginate($enclosures);
+				->where([
+					'company_id' => $company_id,
+					'Enclosures.name LIKE' => '%'.$search.'%'
+				]);
 		}
+
+		$enclosures = $this->paginate($enclosures);
 
 		$this->set(compact('enclosures', 'userRole_id'));
 		$this->set('_serialize', ['enclosures']);

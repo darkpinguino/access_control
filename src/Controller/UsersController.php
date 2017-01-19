@@ -60,16 +60,20 @@ class UsersController extends AppController
 		];
 
 		$userRole_id = $this->Auth->user('userRole_id');
+		$search = $this->request->query('search');
 
 		if ($userRole_id == 1) {
-			$users = $this->paginate($this->Users);
+			$users = $this->Users->find()
+				->where(['username LIKE' => '%'.$search.'%']);
 		} else {
 			$company_id =  $this->Auth->user('company_id');
 			$users = $this->Users->find('all')
 				->contain(['UserRoles', 'People'])
-				->where(['company_id' => $company_id, 'userRole_id !=' => 1]);
-			$users = $this->paginate($users);
+				->where(['company_id' => $company_id, 'userRole_id !=' => 1])
+				->Where(['username LIKE' => '%'.$search.'%']);
 		}
+
+		$users = $this->paginate($users);
 
 		$this->set(compact('users', 'userRole_id'));
 		$this->set('_serialize', ['users']);

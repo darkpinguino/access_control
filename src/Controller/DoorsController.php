@@ -29,19 +29,25 @@ class DoorsController extends AppController
 	{   
 		$userRole_id = $this->Auth->user('userRole_id');
 		$company_id = $this->Auth->user('company_id');
+		$search = $this->request->query('search');
 
 		if ($userRole_id == 1) {
 			$this->paginate = [
 				'contain' => ['Enclosures', 'Companies'],
 				'order' => ['Doors.id' => 'asc']
 			];
-			$doors = $this->paginate($this->Doors);
+			$doors = $this->Doors->find()
+				->where(['Doors.name LIKE' => '%'.$search.'%']);
+			$doors = $this->paginate($doors);
 		} else {
 			$this->paginate = [
 				'order' => ['Doors.id' => 'asc'],
 			];
 			$doors = $this->Doors->find()
-				->where(['Doors.company_id' => $company_id])
+				->where([
+					'Doors.company_id' => $company_id,
+					'Doors.name LIKE' => '%'.$search.'%' 
+				])
 				->contain(['Enclosures']);
 			$doors = $this->paginate($doors);
 		}

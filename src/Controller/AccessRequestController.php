@@ -14,7 +14,7 @@ class AccessRequestController extends AppController
 {
 	public $paginate = [
 	  'limit' => 10,
-	  'contain' => ['People', 'Doors.Companies', 'AccessStatus'],
+	  'contain' => ['People', 'Doors.Companies', 'AccessStatus', 'VehicleAccessRequest'],
 	  'order' => [
 		'id' => 'desc']
 	];
@@ -42,9 +42,42 @@ class AccessRequestController extends AppController
 	{
 		$company_id = $this->Auth->user('company_id');
 		$userRole_id = $this->Auth->user('userRole_id');
+		$search = $this->request->query('search');
 
 		if ($userRole_id == 1) {
-			$accessRequest = $this->paginate($this->AccessRequest);
+			$accessRequest = $this->AccessRequest->find();
+				// ->matching('People', function ($q) use ($search)
+				// {
+				// 	return $q->where([
+				// 			'rut LIKE' => '%'.$search.'%',
+				// 			'People.name LIKE' => '%'.$search.'%',
+				// 			'People.lastname LIKE' => '%'.$search.'%',
+				// 		]);
+				// })
+				// ->matching('Doors', function ($q) use ($search)
+				// {
+				// 	return $q->where(['Doors.name LIKE' => '%'.$search.'%']);
+				// });
+
+
+				// ->contain([
+				// 	'People' => function ($q) use ($search)
+				// 	{
+				// 		return $q->where([
+				// 			'rut LIKE' => '%'.$search.'%',
+				// 			'People.name LIKE' => '%'.$search.'%',
+				// 			'People.lastname LIKE' => '%'.$search.'%',
+				// 		]);
+				// 	},
+				// 	'Doors' => function ($q) use ($search)
+				// 	{
+				// 		return $q->where(['Doors.name LIKE' => '%'.$search.'%']);
+				// 	},
+				// 	'Doors.Companies' => function ($q) use ($search)
+				// 	{
+				// 		return $q->where(['Companies.name LIKE' => '%'.$search.'%']);
+				// 	}
+				// ]);
 		} else {
 			$accessRequest = $this->AccessRequest->find('all')
 				->matching('Doors', function ($q) use ($company_id)
@@ -53,6 +86,9 @@ class AccessRequestController extends AppController
 				});
 			$accessRequest = $this->paginate($accessRequest);
 		}
+
+
+		$accessRequest = $this->paginate($accessRequest);
 
 		$this->set(compact('accessRequest', 'userRole_id'));
 		$this->set('_serialize', ['accessRequest']);
@@ -68,9 +104,11 @@ class AccessRequestController extends AppController
 	public function view($id = null)
 	{
 		$accessRequest = $this->AccessRequest->get($id, [
-			// 'contain' => ['People', 'Doors', 'AccessStatus', 'VehicleAccessRequests']
-			'contain' => ['People', 'Doors', 'AccessStatus']
+			'contain' => ['People', 'Doors', 'AccessStatus', 'VehicleAccessRequest.Vehicles']
+			// 'contain' => ['People', 'Doors', 'AccessStatus']
 		]);
+
+		// debug($accessRequest); die;
 
 		$this->set('accessRequest', $accessRequest);
 		$this->set('_serialize', ['accessRequest']);

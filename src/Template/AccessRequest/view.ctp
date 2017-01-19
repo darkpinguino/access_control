@@ -15,6 +15,18 @@
 	          <td><?= $accessRequest->has('door') ? $this->Html->link($accessRequest->door->name, ['controller' => 'Doors', 'action' => 'view', $accessRequest->door->id]) : '' ?></td>
 		      </tr>
 		      <tr>
+		      	<th><?= __('Acceso')?></th>
+		      	<td><?= empty($accessRequest->vehicle_access_request) ? $this->element('access_label', ['accessID' => false]) : $this->element('access_label', ['accessID' => true]) ?></td>
+		      </tr>
+
+		      <?php if (!empty($accessRequest->vehicle_access_request)): ?>
+		      	<tr>
+		      		<th><?= __('Vehículo') ?></th>
+		      		<td><?= $this->Html->link($accessRequest->vehicle_access_request[0]->vehicle->number_plate, ['controller' => 'Vehicles', 'action' => 'view', $accessRequest->vehicle_access_request[0]->vehicle->id])?>
+		      		</td>
+		      	</tr>
+		      <?php endif ?>
+		      <tr>
 		      	<th><?= __('Acción')?></th>
 		      	<td><?= $this->element('actionLabel', ['actionID' => $accessRequest->action]) ?></td>
 		      </tr>

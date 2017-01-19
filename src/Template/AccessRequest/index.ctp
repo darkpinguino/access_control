@@ -1,5 +1,5 @@
 <div class="box">
-	<?= $this->element('tableHeader', ['title' => 'Peticiones de accesos'])?>
+	<?= $this->element('tableHeader', ['title' => 'Registro de accesos'])?>
 	<div class="box-body">
 		<table class="table">
 			<thead>
@@ -10,6 +10,7 @@
 					<th class="text-nowrap"><?= $this->Paginator->sort('People.rut', 'Rut') ?></th>
 					<th class="text-nowrap"><?= $this->Paginator->sort('people_id', 'Persona') ?></th>
 					<th class="text-nowrap"><?= $this->Paginator->sort('door_id', 'Puerta') ?></th>
+					<th class="text-nowrap">Acceso</th>
 					<?php if ($userRole_id == 1): ?>
 						<th class="text-nowrap"><?= $this->Paginator->sort('Door.company.name', 'Empresa')?></th>
 					<?php endif; ?>
@@ -29,6 +30,7 @@
 					</td>
 					<td><?= $access_request->has('person') ? $this->Html->link($access_request->person->fullName, ['controller' => 'People', 'action' => 'view', $access_request->person->id]) : '' ?></td>
 					<td><?= $access_request->has('door') ? $this->Html->link($access_request->door->name, ['controller' => 'Doors', 'action' => 'view', $access_request->door->id]) : '' ?></td>
+					<td><?= empty($access_request->vehicle_access_request) ? $this->element('access_label', ['accessID' => false]) : $this->element('access_label', ['accessID' => true]) ?></td>
 					<?php if ($userRole_id == 1): ?>
 						<td class="text-nowrap"><?= $access_request->has('door') ? $this->Html->link($access_request->door->company->name, ['controller' => 'Companies', 'action' => 'view', $access_request->door->company_id] ) : ''?></td>
 					<?php endif; ?>

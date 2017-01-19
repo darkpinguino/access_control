@@ -56,6 +56,9 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   <!-- AdminLTE App -->
   <?= $this->Html->script('app.min', ['block' => true]) ?>  
 
+  <?= $this->Html->script('utility/getURLParameters', ['block' => true]) ?>
+  <?= $this->Html->script('utility/paginatorSearch', ['block' => true]) ?>
+
   <?= $this->fetch('meta') ?>
   <?= $this->fetch('css') ?>
   <?= $this->fetch('cssView') ?>
@@ -84,7 +87,6 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   		  </a>
   		  <div class="navbar-custom-menu">
   		    <ul class="nav navbar-nav">
-
           <?php $controller = $this->request->params['controller']; 
             if (!strcmp($controller, 'Authorization')) {
             echo '<li class="dropdown notifications-menu">
@@ -114,7 +116,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   		      <li class="dropdown user-menu">
   		        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
   		          <!-- <img src="webroot/img/user2-160x160.jpg" class="user-image" alt="User Image"> -->
-  		          
+  		          <span><?= $userAuth->company->name ?>|</span>
   		          <span class="hidden-xs"><?= $userAuth->person->name." ".$userAuth->person->lastname?></span>
   		        </a>
   		        <ul class="dropdown-menu">

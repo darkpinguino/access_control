@@ -30,22 +30,34 @@ class VehicleAuthorizationsController extends AppController
 	{
 		$company_id = $this->Auth->user('company_id');
 		$userRole_id = $this->Auth->user('userRole_id');
+		$search = $this->request->query('search');
 
 		$this->paginate = [
 			'contain' => ['Vehicles', 'CompanyPeople.People']
 		];
 
 		if ($userRole_id == 1) {
-			$vehicleAuthorizations = $this->paginate($this->VehicleAuthorizations);
+			$vehicleAuthorizations = $this->VehicleAuthorizations->find()
+				->matching('Vehicles', function ($q) use ($search)
+				{
+					return $q->where(['number_plate LIKE' => '%'.$search.'%']);
+				});
+			// $vehicleAuthorizations = $this->paginate($vehicleAuthorizations);
 		} else {
 			$vehicleAuthorizations = $this->VehicleAuthorizations->find()
 				->matching('CompanyPeople', function ($q) use ($company_id)
 				{
 					return $q->where(['CompanyPeople.company_id' => $company_id]);
+				})
+				->matching('Vehicles', function ($q) use ($search)
+				{
+					return $q->where(['number_plate LIKE' => '%'.$search.'%']);
 				});
 
-			$vehicleAuthorizations = $this->paginate($vehicleAuthorizations);
+			// $vehicleAuthorizations = $this->paginate($vehicleAuthorizations);
 		}
+
+		$vehicleAuthorizations = $this->paginate($vehicleAuthorizations);
 
 		$this->set(compact('vehicleAuthorizations', 'userRole_id'));
 		$this->set('_serialize', ['vehicleAuthorizations']);
