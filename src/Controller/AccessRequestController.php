@@ -84,7 +84,6 @@ class AccessRequestController extends AppController
 				{
 					return $q->where(['company_id' => $company_id]);
 				});
-			$accessRequest = $this->paginate($accessRequest);
 		}
 
 
