@@ -39,9 +39,6 @@
         <li>
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Persona', '/people/add', ['escape' => false]) ?>
         </li>
-        <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Agregar Rol de Acceso', '/accessRolePeople/add', ['escape' => false]) ?>
-        </li>
       </ul>
     </li>
     <?= '<li class="treeview'. (strcmp($controller, 'Profiles') ? '' : ' active').'">' ?>
