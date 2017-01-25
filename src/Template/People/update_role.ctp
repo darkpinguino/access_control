@@ -7,19 +7,19 @@
 	<div class="box-header">
 		<h3 class="box-title">Asignar Roles de Acceso a <?= $person->fullName ?></h3>
 	</div>
-	<?= $this->Form->create($accessRolePerson) ?>
+	<?= $this->Form->create() ?>
 	<div class="box-body">
 		<fieldset>
 			<?php
 				echo $this->Form->label('Roles de acceso');
 				echo $this->Form->input('role_id',[
-						'options' => $role,
+						'options' => $access_roles,
 						'label' => false,
 						'multiple'=> 'multiple'
 				]);
 
 				echo $this->Form->label('Expira');
-				echo $this->Form->input('expiration', ['label' => false, 'type' => 'date']);
+				echo $this->Form->input('expiration', ['label' => false, 'type' => 'date', 'value' => "asdas"]);
 				echo $this->Form->input('notExpire', [
 					'type' => 'checkbox',
 					'label' => 'no expira',
@@ -42,5 +42,7 @@
 			echo "<li>".$key."</li>";
 		}
 		echo "</ul>";
+
+		echo $this->Form->hidden('expiration_date', ['id' => 'expiration_date', 'value' => $expiration]);
 	?>
 </div>
