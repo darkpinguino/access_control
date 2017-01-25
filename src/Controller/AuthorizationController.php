@@ -235,8 +235,6 @@ use Cake\I18n\Time;
 				]
 			];
 
-			// debug($vehicles_locations->toArray()); die;
-
 			return $this->paginate($vehicles_locations);
 		}
 
@@ -375,6 +373,8 @@ use Cake\I18n\Time;
 				} 
 
 				if ($check) {
+
+					// debug("entro"); die;
 
 					$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 1, 0);
 					$this->Authorization->deletePeopleLocation($person, $door);
