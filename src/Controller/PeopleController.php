@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\I18n\Date;
+use Cake\I18n\Time;
 
 /**
  * People Controller
@@ -285,16 +286,21 @@ class PeopleController extends AppController
 	public function updateRole($id = null)
 	{
 		$company_id = $this->Auth->user('company_id');
-		$role = $this->People->AccessRoles->find('list')
-			->where(['company_id' => $company_id]);
-		$person = $this->People->get($id);
-		$accessRolePerson = $this->People->AccessRolePeople->newEntity();
+		
+		$person = $this->People->get($id, ['contain' => ['AccessRoles' => function ($q) use ($company_id)
+		{
+			return $q->where(['company_id' => $company_id]);
+		}]]);
 		if ($this->request->is('post')) {
 
-			$new_access_role = $this->passNewData($id, $this->request->data('role_id'));
+			$access_roles_id = $this->request->data('role_id');
+			$new_access_role = $this->passNewData($id, $access_roles_id);
 
 			if ($this->request->data['notExpire']) {
-				$this->request->data['expiration'] = '';
+				$expiration = '0';
+			} else {
+				$expiration = Date::createFromFormat(
+					'd/m/Y', $this->request->data('expiration'));
 			}
 
 			$access_roles = [];
@@ -302,22 +308,28 @@ class PeopleController extends AppController
 			foreach ($new_access_role as $role_id) {
 				$access_role = $this->People->AccessRoles->get($role_id);
 				$access_role->_joinData = $this->People->AccessRolePeople->newEntity();
-				$access_role->_joinData->expiration =  new Date($this->request->data('expiration'));
+				$access_role->_joinData->expiration = $expiration;
 				array_push($access_roles, $access_role);
 			}
 
-			$roles_id = [];
-
-			foreach ($role as $role_id => $value) {
-				array_push($roles_id, $role_id);
+			foreach ($person->access_roles as $access_role) {
+				$access_role->_joinData->expiration = $expiration;
 			}
 
-			if (empty($this->request->data('role_id'))) {
+			$person->dirty('access_roles', true);
+
+			$roles_id = [];
+
+			foreach ($person->access_roles as $role_id) {
+				array_push($roles_id, $role_id->id);
+			}
+
+			if (empty($this->request->data('role_id')) && !empty($roles_id)) {
 				$this->People->AccessRolePeople->deleteAll([
 					'people_id' => $id,
 					'access_role_id IN' => $roles_id
 				]);
-			} else {
+			} else if (!empty($roles_id)){
 				$this->People->AccessRolePeople->deleteAll([
 					'people_id' => $id,
 					'access_role_id IN' => $roles_id,
@@ -325,7 +337,8 @@ class PeopleController extends AppController
 				]);
 			}
 
-			if ($this->People->AccessRoles->link($person, $access_roles)) {
+			if ($this->People->AccessRoles->link($person, $access_roles) &&
+					$this->People->save($person, ['associated' => ['AccessRoles']])) {
 				$this->Flash->success(__('Roles de acceso actualizados.'));
 				return $this->redirect(['action' => 'index', 'controller' => 'people']);
 			} else {
@@ -339,13 +352,24 @@ class PeopleController extends AppController
 				return $q->where(['company_id' => $company_id]);
 			});
 
+		$access_roles = $this->People->AccessRoles->find('list')
+			->where(['company_id' => $company_id]);
+
 		$access_role_people = $this->People->AccessRoles->find('list')
 			->matching('People')
 			->where(['AccessRolePeople.people_id' => $id]);
 
+		if (!empty($person->access_roles)) {
+			$expiration = new Date($person->access_roles[0]->_joinData->expiration);
+			$expiration = $expiration->format('Y-m-d');
+			// $expiration = $person->access_roles[0]->_joinData->expiration;
+			// debug($person->access_roles[0]);
+		} else {
+			$expiration = '';
+		}
 
-		$this->set('accessRoles', $role);
-		$this->set(compact('accessRolePerson', 'person', 'role', 'access_role_people'));
+
+		$this->set(compact('person', 'access_roles', 'access_role_people', 'expiration'));
 		$this->set('_serialize', ['accessRolePerson']);
 	}
 

@@ -1,8 +1,15 @@
 $(document).ready(function () {
 	$("#expiration").datepicker({
+		format: 'dd/mm/yyyy',
 		language: "es",
 		autoclose: true
 	});
+
+	console.log($("#expiration_date").val());
+
+	var date = new Date($("#expiration_date").val());
+
+	$("#expiration").datepicker('setUTCDate', date);
 
 	$("#expiration").attr('name', 'expiration');
 
