@@ -93,7 +93,7 @@ class AccessRolePeopleController extends AppController
 		$accessRolePerson = $this->AccessRolePeople->newEntity();
 		$company_id = $this->Auth->user('company_id');
 		$role = $this->AccessRolePeople->AccessRoles->find('list')
-			->where(['company_id' => $company_id]);
+			->where(['company_id IN' => [$company_id, -1]]);
 		$id = $this->request->query('person');
 		$person = $this->AccessRolePeople->People->get($id);
 		if ($this->request->is('post')) {
