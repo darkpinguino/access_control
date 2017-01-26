@@ -253,7 +253,7 @@ function populatePeopleCount(countPeople) {
 		if (countPeople['employees_count'] == 1) {
 			employess_message = ' Empleado';
 		} else {
-			employees_message = ' Empleados';
+			employess_message = ' Empleados';
 		}
 
 		if (countPeople['contractors_count'] == 1) {
