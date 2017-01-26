@@ -29,7 +29,7 @@
 			<fieldset>
 				<?php
 					if (strcmp($status, 'pending') or strcmp($driver, 'driver')) {
-						echo $this->Form->input('rut');
+						echo $this->Form->input('rut', ['disabled']);
 					}
 					echo $this->Form->input('name', ['label' => 'Nombre']);
 					echo $this->Form->input('lastname', ['label' => 'Apellido']);

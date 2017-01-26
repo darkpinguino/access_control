@@ -181,6 +181,7 @@ class PeopleController extends AppController
 			$person->visit_profiles = [$visitProfile];
 
 			$person = $this->People->patchEntity($person, $this->request->data);
+			unset($person->rut);				
 			
 			if ($this->People->save($person)) {
 				$company_people = $this->CompanyPeople->patchEntity($company_people, $this->request->data);
