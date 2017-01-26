@@ -260,8 +260,7 @@ class PeopleController extends AppController
 
 	public function peopleCount()
 	{
-		// if ($this->request->is('ajax'))
-		if (true)
+		if ($this->request->is('ajax'))
 		{
 			$company_id = $this->Auth->user('company_id');
 
@@ -418,7 +417,8 @@ class PeopleController extends AppController
 			// $expiration = $person->access_roles[0]->_joinData->expiration;
 			// debug($person->access_roles[0]);
 		} else {
-			$expiration = '';
+			$expiration = new Date();
+			$expiration = $expiration->format('Y-m-d');
 		}
 
 
