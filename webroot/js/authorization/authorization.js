@@ -1,6 +1,9 @@
 var passengerCount = 0;
 
 $(document).ready(function () {
+
+	peopleCount();
+
 	$("#search-button").on('click', function () {
 		window.location.replace('authorization?search=' + $("#search-input").val())
 	})
@@ -183,6 +186,20 @@ function insideAlertCount() {
 	});
 }
 
+function peopleCount() {
+	$.ajax({
+		url: "../people/peopleCount",
+		type: "GET",
+		dataType: "json", 
+		success: function (result, status, xhr) {
+			populatePeopleCount(result);
+		},
+		error: function (xhr, status, error) {
+			console.log(xhr);
+		}
+	});
+}
+
 function populeteNotification(countPeople) {
 	$("#notifications-count").remove();
 	$("#notifications-dropdown").empty();
@@ -208,5 +225,73 @@ function populeteNotification(countPeople) {
 	                </li>\
 	              </ul>\
 	            </li>');
+	}
+}
+
+function populatePeopleCount(countPeople) {
+	$("#people-count").remove();
+	$("#people-count-dropdown").empty();
+
+	var total_people = countPeople['visit_count'] + countPeople['employees_count'] + countPeople['contractors_count'];
+	console.log(total_people);
+
+	if (total_people > 0) {
+		var visit_message = '';
+		var employess_message = '';
+		var contractors_message = '';
+
+		$("#people-count-menu").append(
+			'<span id="people-count" class="label label-danger">' + total_people + '</span>'
+		);
+
+		if (countPeople['visit_count'] == 1) {
+			visit_message = ' Visita';
+		} else {
+			visit_message = ' Visitas';
+		}
+
+		if (countPeople['employees_count'] == 1) {
+			employess_message = ' Empleado';
+		} else {
+			employees_message = ' Empleados';
+		}
+
+		if (countPeople['contractors_count'] == 1) {
+			contractors_message = ' Contratista';
+		} else {
+			contractors_message = ' Contratistas';
+		}
+
+		$("#people-count-dropdown").html(
+							'<li class="header">Personas ingresadas</li>\
+	            <li>\
+	              <ul class="menu">\
+	                <li>\
+	                  <a id="employees-count-people" href="#">\
+	                    <i class="fa fa-users text-aqua"></i> <span>' + countPeople['employees_count'] + employess_message + '</span>\
+	                  </a>\
+	                </li>\
+	              </ul>\
+	            </li>\
+	            <li>\
+	              <ul class="menu">\
+	                <li>\
+	                  <a id="contractos-count-people" href="#">\
+	                    <i class="fa fa-users text-light-blue"></i> <span>' + countPeople['contractors_count'] + contractors_message + '</span>\
+	                  </a>\
+	                </li>\
+	              </ul>\
+	            </li>\
+	            <li>\
+	              <ul class="menu">\
+	                <li>\
+	                  <a id="visit-count-people" href="#">\
+	                    <i class="fa fa-users text-yellow"></i> <span>' + countPeople['visit_count'] + visit_message + '</span>\
+	                  </a>\
+	                </li>\
+	              </ul>\
+	            </li>'
+
+	            );
 	}
 }

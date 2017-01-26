@@ -14,6 +14,7 @@
 */
 
 $cakeDescription = 'CakePHP: the rapid development php framework';
+$controller = $this->request->params['controller'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -87,31 +88,29 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
   		  </a>
   		  <div class="navbar-custom-menu">
   		    <ul class="nav navbar-nav">
-          <?php $controller = $this->request->params['controller']; 
-            if (!strcmp($controller, 'Authorization')) {
-            echo '<li class="dropdown notifications-menu">
-            <a id="notifications-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-            </a>
-            <ul id="notifications-dropdown" class="dropdown-menu">
-            </ul>
-              </li>';
-            echo '<li class="dropdown notifications-person">
-            <a id="notifications-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-male"></i>
-            </a>
-            <ul id="notifications-dropdown" class="dropdown-menu">
-            </ul>
-              </li>';
-            echo '<li class="dropdown notifications-car">
-            <a id="notifications-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-car"></i>
-            </a>
-            <ul id="notifications-dropdown" class="dropdown-menu">
-            </ul>
-              </li>';
-            }
-          ?>
+          <?php if (!strcmp($controller, 'Authorization')): ?>
+            <li class="dropdown notifications-menu">
+              <a id="notifications-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-bell-o"></i>
+              </a>
+              <ul id="notifications-dropdown" class="dropdown-menu">
+              </ul>
+            </li>
+            <li class="dropdown notifications-menu">
+              <a id="people-count-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-male"></i>
+              </a>
+              <ul id="people-count-dropdown" class="dropdown-menu">
+              </ul>
+            </li>
+            <li class="dropdown notifications-car">
+              <a id="notifications-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-car"></i>
+              </a>
+              <ul id="notifications-dropdown" class="dropdown-menu">
+              </ul>
+            </li>
+          <?php endif ?>
   		      <!-- User Account: style can be found in dropdown.less -->
   		      <li class="dropdown user-menu">
   		        <a href="#" class="dropdown-toggle" data-toggle="dropdown">

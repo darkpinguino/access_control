@@ -258,6 +258,55 @@ class PeopleController extends AppController
 		return $this->redirect(['action' => 'index']);
 	}
 
+	public function peopleCount()
+	{
+		// if ($this->request->is('ajax'))
+		if (true)
+		{
+			$company_id = $this->Auth->user('company_id');
+
+			$visit_count = $this->People->PeopleLocations->find()
+				->matching('Enclosures', function ($q) use ($company_id)
+				{
+					return $q->where(['company_id' => $company_id]);
+				})
+				->matching('People.CompanyPeople', function ($q)
+				{
+					return $q->where(['CompanyPeople.profile_id' => 1]);
+				})
+				->distinct(['people_id'])
+				->count();
+
+			$employees_count = $this->People->PeopleLocations->find()
+				->matching('Enclosures', function ($q) use ($company_id)
+				{
+					return $q->where(['company_id' => $company_id]);
+				})
+				->matching('People.CompanyPeople', function ($q)
+				{
+					return $q->where(['CompanyPeople.profile_id' => 2]);
+				})
+				->distinct(['people_id'])
+				->count();
+
+			$contractors_count = $this->People->PeopleLocations->find()
+				->matching('Enclosures', function ($q) use ($company_id)
+				{
+					return $q->where(['company_id' => $company_id]);
+				})
+				->matching('People.CompanyPeople', function ($q)
+				{
+					return $q->where(['CompanyPeople.profile_id' => 3]);
+				})
+				->distinct(['people_id'])
+				->count();
+
+			$this->set(compact('visit_count', 'employees_count', 'contractors_count'));
+			$this->set('_serialize', ['visit_count', 'employees_count', 'contractors_count']);
+			
+		} 
+	}
+
 	private function processVehicleAccessData($vehicle_access)
 	{
 		if (!empty($vehicle_access['passanger-rut'])) {

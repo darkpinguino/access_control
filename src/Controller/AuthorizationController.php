@@ -153,23 +153,19 @@ use Cake\I18n\Time;
 
 		public function insideAlertCount()
 		{
-			if (1) {
-				$this->loadModel('PeopleLocations');
+			$this->loadModel('PeopleLocations');
 
-				$company_id = $this->Auth->user()['company_id'];
+			$company_id = $this->Auth->user()['company_id'];
 
-				$people_locations = $this->getPeopleLocationInsideAlert($company_id);
+			$people_locations = $this->getPeopleLocationInsideAlert($company_id);
 
-				$countPeople = count($people_locations);
+			$countPeople = count($people_locations);
 
-				$test = ['dato' => 0];
+			$test = ['dato' => 0];
 
-				$this->set(compact('countPeople'));
-				$this->set('_serialize', ['countPeople']);
+			$this->set(compact('countPeople'));
+			$this->set('_serialize', ['countPeople']);
 
-			} else {
-				$this->render(false);
-			}
 		}
 
 		private function getPeopleLocation($company_id, $search='')
