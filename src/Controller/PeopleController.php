@@ -16,7 +16,7 @@ class PeopleController extends AppController
 	{
 		$userRole_id = $user['userRole_id'];
 
-		if ($this->request->action === 'edit') {
+		if ($this->request->action === 'edit' || $this->request->action === 'peopleCount') {
 			return true;
 		}
 

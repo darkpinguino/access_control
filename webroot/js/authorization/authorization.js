@@ -41,7 +41,6 @@ $(document).ready(function () {
 	});
 
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-  	console.log($(this.innerHTML)['selector']);
   	if ($(this.innerHTML)['selector'] == 'Personas') {
   		$("#rut").focus();
   	} else {
@@ -139,6 +138,10 @@ $(document).ready(function () {
 		insideAlertCount();
 	});
 
+	$(document).on('click', '#people-count-menu', function () {
+		peopleCount();
+	});
+
 	$(document).on('click', "#notification-people", function () {
 		insideAlert();
 	});
@@ -193,9 +196,6 @@ function peopleCount() {
 		dataType: "json", 
 		success: function (result, status, xhr) {
 			populatePeopleCount(result);
-		},
-		error: function (xhr, status, error) {
-			console.log(xhr);
 		}
 	});
 }
@@ -233,7 +233,6 @@ function populatePeopleCount(countPeople) {
 	$("#people-count-dropdown").empty();
 
 	var total_people = countPeople['visit_count'] + countPeople['employees_count'] + countPeople['contractors_count'];
-	console.log(total_people);
 
 	if (total_people > 0) {
 		var visit_message = '';
