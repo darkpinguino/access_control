@@ -17,6 +17,13 @@
 						'options' => $profiles, 
 						'label' => 'Perfil'
 				]);
+				echo $this->Form->label('contractor_company_id', 'Empresa contratista', [
+					'id' => 'contractor-company-id-label',
+					'style' => 'display:none;'
+				]);
+
+				echo $this->element('People/contractor_company', ['contractor_companies' => $contractor_companies]); 
+				
 				echo $this->Form->input('is_visited', [
 					'type' => 'checkbox',
 					'label' => '¿Es visitada?',

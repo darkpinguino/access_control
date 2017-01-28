@@ -1,3 +1,5 @@
+<?= $this->Html->script('people/edit', ['block' => 'scriptView']); ?>
+
 
 <?php 
 	$status = $this->request->query('status');
@@ -35,6 +37,14 @@
 					echo $this->Form->input('lastname', ['label' => 'Apellido']);
 					echo $this->Form->input('phone', ['label' => 'Telefono']);
 					echo $this->Form->input('profile_id', ['label' => 'Perfil', 'options' => $profiles]);
+
+					echo $this->Form->label('contractor_company_id', 'Empresa contratista', [
+						'id' => 'contractor-company-id-label',
+						'style' => 'display:none;'
+					]);
+
+					echo $this->element('People/contractor_company', ['contractor_companies' => $contractor_companies]); 
+
 					// strcmp($status, 'pending') ? '' : print('<div id="form-container"></div>');
 
 					if (strcmp($status, 'pending') == 0) {
@@ -48,6 +58,8 @@
 							]
 						]);
 					}
+
+					echo $this->Form->hidden('person_contractor_company', ['id' => 'person_contractor_company', 'value' => $person->company_people[0]->contractor_company_id]);
 				?>
 			</fieldset>
 	</div>

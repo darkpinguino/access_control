@@ -29,6 +29,16 @@
 				  <td><?= h($person->phone) ?></td>
 				</tr>
 				<tr>
+					<th><?= __('Perfil') ?></th>
+					<td><?= $this->element('action_profile', ['profileID' => $person->company_people[0]->profile_id]) ?></td>
+				</tr>
+				<?php if ($person->company_people[0]->profile_id == 3): ?>
+					<tr>
+						<th><?= __('Empresa cotratista') ?></th>
+						<td><?= h($person->company_people[0]->contractor_company->name)?></td>
+					</tr>
+				<?php endif ?>
+				<tr>
 				  <th><?= __('Agregado') ?></th>
 				  <td><?= h($person->created) ?></td>
 				</tr>
