@@ -22,7 +22,14 @@
 					'style' => 'display:none;'
 				]);
 
-				echo $this->element('People/contractor_company', ['contractor_companies' => $contractor_companies]); 
+				echo $this->element('People/contractor_company', ['contractor_companies' => $contractor_companies]);
+
+				echo $this->Form->label('work_area_id', 'Área de trabajo', [
+					'id' => 'work-area-id-label',
+					'style' => 'display:none;'
+				]);
+
+				echo $this->element('People/work_area', ['work_areas' => $work_areas]); 
 				
 				echo $this->Form->input('is_visited', [
 					'type' => 'checkbox',

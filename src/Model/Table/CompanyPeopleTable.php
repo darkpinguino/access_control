@@ -49,6 +49,10 @@ class CompanyPeopleTable extends Table
 			'foreignKey' => 'contractor_company_id',
 			'joinType' => 'INNER'
 		]);
+		$this->belongsTo('WorkAreas', [
+			'foreignKey' => 'work_area_id',
+			'joinType' => 'INNER'
+		]);
 
 		$this->belongsToMany('Vehicle', [
 			'foreignKey' => 'company_people_id',
