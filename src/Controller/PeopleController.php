@@ -78,12 +78,31 @@ class PeopleController extends AppController
 
 		$company_id = $this->Auth->user('company_id');
 		$userRole_id = $this->Auth->user('userRole_id');
+
 		$person = $this->People->get($id, [
-			'contain' => ['CompanyPeople.ContractorCompanies' => function ($q) use ($company_id)
-			{
-				return $q->where(['CompanyPeople.company_id' => $company_id]);		
-			}]
+			'contain' => 'CompanyPeople'
 		]);
+
+		if ($person->company_people[0]->profile_id == 3) {
+			$person = $person = $this->People->get($id, [
+				'contain' => [
+					'CompanyPeople.ContractorCompanies' => function ($q) use ($company_id)
+					{
+						return $q->where(['CompanyPeople.company_id' => $company_id]);		
+					}
+				]
+			]);
+		} else if($person->company_people[0]->profile_id == 2)
+		{
+			$person = $this->People->get($id, [
+				'contain' => [
+					'CompanyPeople.WorkAreas' => function ($q) use ($company_id)
+					{
+						return $q->where(['CompanyPeople.company_id' => $company_id]);		
+					}
+				]
+			]);
+		}
 
 		$accessRoles = $this->AccessRoles->find()
 			->where(['company_id' => $company_id])
@@ -133,6 +152,16 @@ class PeopleController extends AppController
 				}
 			}
 
+			if (!empty($this->request->data('new_work_area'))) {
+				$work_area = $this->CompanyPeople->ContractorCompanies->newEntity();
+				$work_area->company_id = $company_id;
+				$work_area->name = $this->request->data('new_work_area');
+				if (!$this->CompanyPeople->WorkAreas->save($work_area)) {
+					$this->Flash->error(__('La persona no puedo ser gurdada. Por favor, intente nuevamente.'));
+					return $this->redirect(['action' => 'index']);
+				}
+			}
+
 			if ($person->isEmpty()) {
 				$person = $this->People->newEntity();
 				$person = $this->People->patchEntity($person, $this->request->data);
@@ -144,8 +173,16 @@ class PeopleController extends AppController
 						$company_people->contractor_company_id = $contractor_company->id;
 					}
 
+					if (isset($work_area)) {
+						$company_people->work_area_id = $work_area->id;
+					}
+
 					if ($company_people->profile_id != 3) {
 						unset($company_people->contractor_company_id);
+					}
+
+					if ($company_people->profile_id == 1) {
+						unset($company_people->work_area_id);
 					}
 
 					if ($this->CompanyPeople->save($company_people)) {
@@ -172,8 +209,10 @@ class PeopleController extends AppController
 		$companies = $this->People->Companies->find('list');
 		$contractor_companies = $this->People->CompanyPeople->ContractorCompanies->find('list')
 			->where(['company_id' => $company_id]);
+		$work_areas = $this->People->CompanyPeople->WorkAreas->find('list')
+			->where(['company_id' => $company_id]);
 		$profiles = $this->People->Profiles->find('list');
-		$this->set(compact('person', 'companies', 'profiles', 'contractor_companies'));
+		$this->set(compact('person', 'companies', 'profiles', 'contractor_companies', 'work_areas'));
 		$this->set('_serialize', ['person']);
 	}
 
@@ -220,6 +259,16 @@ class PeopleController extends AppController
 					return $this->redirect(['action' => 'index']);
 				}
 			}
+
+			if (!empty($this->request->data('new_work_area'))) {
+				$work_area = $this->CompanyPeople->ContractorCompanies->newEntity();
+				$work_area->company_id = $company_id;
+				$work_area->name = $this->request->data('new_work_area');
+				if (!$this->CompanyPeople->WorkAreas->save($work_area)) {
+					$this->Flash->error(__('La persona no puedo ser gurdada. Por favor, intente nuevamente.'));
+					return $this->redirect(['action' => 'index']);
+				}
+			}
 			
 			if ($this->People->save($person)) {
 				$company_people = $this->CompanyPeople->patchEntity($company_people, $this->request->data);
@@ -229,6 +278,18 @@ class PeopleController extends AppController
 
 				if (isset($contractor_company)) {
 					$company_people->contractor_company_id = $contractor_company->id;
+				}
+
+				if (isset($work_area)) {
+					$company_people->work_area_id = $work_area->id;
+				}
+
+				if ($company_people->profile_id != 3) {
+					unset($company_people->contractor_company_id);
+				}
+
+				if ($company_people->profile_id == 1) {
+					unset($company_people->work_area_id);
 				}
 
 				$existCompanyPeople = $this->CompanyPeople->
@@ -274,15 +335,15 @@ class PeopleController extends AppController
 		}
 		$contractor_companies = $this->People->CompanyPeople->ContractorCompanies->find('list')
 			->where(['company_id' => $company_id]);
+		$work_areas = $this->People->CompanyPeople->WorkAreas->find('list')
+			->where(['company_id' => $company_id]);
 		if ($this->request->query('status')) {
 			$profiles = $this->People->Profiles->find('list')->where(['id !=' => 2]);
 		} else {
 			$profiles = $this->People->Profiles->find('list');
 		}
 
-		// debug($person); die;
-
-		$this->set(compact('person', 'profiles', 'contractor_companies'));
+		$this->set(compact('person', 'profiles', 'contractor_companies', 'work_areas'));
 		$this->set('_serialize', ['person']);
 	}
 

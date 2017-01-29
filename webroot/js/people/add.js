@@ -20,16 +20,27 @@ $(document).ready(function () {
 
 	$("#profile-id").on('change', function () {
 		if ($(this).val() == 3) {
-			var contractor_company_id = $("#person_contractor_company").val();
 			$("#contractor-company-id-label").attr('style', '');
-			$("#contractor-company-id").attr('style', '');
-			$("#new-contractor-company").attr('style', '');
-			$("#contractor-company-id").val(contractor_company_id);
+			$("#work-area-id-label").attr('style', '');
+
+		
+			$(".contractor-companies-select").attr('style', '');
+			$(".work-areas-select").attr('style', '');
+		} else if ($(this).val() == 2) {
+			$("#contractor-company-id-label").attr('style', 'display:none;');
+			$(".contractor-companies-select").attr('style', 'display:none;');
+			$("#new-contractor-company").val('');
+
+			$("#work-area-id-label").attr('style', '');
+			$(".work-areas-select").attr('style', '');
 		} else {
 			$("#contractor-company-id-label").attr('style', 'display:none;');
-			$("#contractor-company-id").attr('style', 'display:none;');
-			$("#new-contractor-company").attr('style', 'display:none');
-			
+			$("#work-area-id-label").attr('style', 'display:none;');
+			$("#new-contractor-company").val('');
+
+			$(".contractor-companies-select").attr('style', 'display:none;');
+			$(".work-areas-select").attr('style', 'display:none;');
+			$("#new-work-area").val('');
 		}
 	});
 });

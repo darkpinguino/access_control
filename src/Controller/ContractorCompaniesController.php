@@ -62,7 +62,6 @@ class ContractorCompaniesController extends AppController
 			->where(['contractor_company_id' => $id])
 			->contain(['People']);
 
-		// debug($company_people->toArray()); die;
 		$company_people = $this->paginate($company_people);
 
 		$this->set(compact('contractorCompany', 'userRole_id', 'company_people'));

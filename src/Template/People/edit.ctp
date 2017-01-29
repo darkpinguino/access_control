@@ -45,6 +45,13 @@
 
 					echo $this->element('People/contractor_company', ['contractor_companies' => $contractor_companies]); 
 
+					echo $this->Form->label('work_area_id', 'Área de trabajo', [
+						'id' => 'work-area-id-label',
+						'style' => 'display:none;'
+					]);
+
+					echo $this->element('People/work_area', ['work_areas' => $work_areas]); 
+
 					// strcmp($status, 'pending') ? '' : print('<div id="form-container"></div>');
 
 					if (strcmp($status, 'pending') == 0) {
@@ -60,6 +67,8 @@
 					}
 
 					echo $this->Form->hidden('person_contractor_company', ['id' => 'person_contractor_company', 'value' => $person->company_people[0]->contractor_company_id]);
+
+					echo $this->Form->hidden('person_work_area', ['id' => 'person_work_area', 'value' => $person->company_people[0]->work_area_id]);
 				?>
 			</fieldset>
 	</div>

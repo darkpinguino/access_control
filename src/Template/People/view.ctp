@@ -32,10 +32,16 @@
 					<th><?= __('Perfil') ?></th>
 					<td><?= $this->element('action_profile', ['profileID' => $person->company_people[0]->profile_id]) ?></td>
 				</tr>
-				<?php if ($person->company_people[0]->profile_id == 3): ?>
+				<?php if (isset($person->company_people[0]->contractor_company)): ?>
 					<tr>
 						<th><?= __('Empresa cotratista') ?></th>
 						<td><?= h($person->company_people[0]->contractor_company->name)?></td>
+					</tr>
+				<?php endif ?>
+				<?php if (isset($person->company_people[0]->work_area)): ?>
+					<tr>
+						<th><?= __('Área de trabajo') ?></th>
+						<td><?= h($person->company_people[0]->work_area->name)?></td>
 					</tr>
 				<?php endif ?>
 				<tr>
