@@ -28,36 +28,40 @@
         </ul>
       </li>
     <?php endif; ?>
-    <?= '<li class="treeview'. (strcmp($controller, 'ContractorCompanies') ? '' : ' active').'">' ?> 
-      <a href="#">
-        <i class="fa fa-industry"></i> <span>Empresas Contratistas</span> <i class="fa fa-angle-left pull-right"></i>
-      </a>
-      <ul class="treeview-menu">
-        <li>
-          <!-- <a href="index.html"><i class="fa fa-circle-o"></i> Listar Empresas</a></li> -->
+    <?php if ($userRole_id == 1 || $userRole_id == 2 || $userRole_id == 3): ?>
+      <?= '<li class="treeview'. (strcmp($controller, 'ContractorCompanies') ? '' : ' active').'">' ?> 
+        <a href="#">
+          <i class="fa fa-industry"></i> <span>Empresas Contratistas</span> <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <!-- <a href="index.html"><i class="fa fa-circle-o"></i> Listar Empresas</a></li> -->
 
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Empresas', '/contractorCompanies/index', ['escape' => false]) ?>
-        </li>
-        <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Nueva Empresa', '/contractorCompanies/add', ['escape' => false]) ?>
-        </li>
-      </ul>
-    </li>
-    <?= '<li class="treeview'. (strcmp($controller, 'WorkAreas') ? '' : ' active').'">' ?> 
-      <a href="#">
-        <i class="fa fa-briefcase"></i> <span>Áreas de Trabajo</span> <i class="fa fa-angle-left pull-right"></i>
-      </a>
-      <ul class="treeview-menu">
-        <li>
-          <!-- <a href="index.html"><i class="fa fa-circle-o"></i> Listar Empresas</a></li> -->
+            <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Empresas', '/contractorCompanies/index', ['escape' => false]) ?>
+          </li>
+          <li>
+            <?= $this->Html->link('<i class="fa fa-circle-o"></i> Nueva Empresa', '/contractorCompanies/add', ['escape' => false]) ?>
+          </li>
+        </ul>
+      </li>
+    <?php endif ?>
+    <?php if ($userRole_id == 1 || $userRole_id == 2 || $userRole_id == 3): ?>
+      <?= '<li class="treeview'. (strcmp($controller, 'WorkAreas') ? '' : ' active').'">' ?> 
+        <a href="#">
+          <i class="fa fa-briefcase"></i> <span>Áreas de Trabajo</span> <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li>
+            <!-- <a href="index.html"><i class="fa fa-circle-o"></i> Listar Empresas</a></li> -->
 
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Áreas de trabajo', '/workAreas/index', ['escape' => false]) ?>
-        </li>
-        <li>
-          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Nueva Área de trabajo', '/workAreas/add', ['escape' => false]) ?>
-        </li>
-      </ul>
-    </li>
+            <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Áreas de trabajo', '/workAreas/index', ['escape' => false]) ?>
+          </li>
+          <li>
+            <?= $this->Html->link('<i class="fa fa-circle-o"></i> Nueva Área de trabajo', '/workAreas/add', ['escape' => false]) ?>
+          </li>
+        </ul>
+      </li>
+    <?php endif ?>
     <?= '<li class="treeview'. ((strcmp($controller, 'People') and strcmp($controller, 'AccessRolePeople')) ? '' : ' active').'">' ?>
       <a href="#">
         <i class="fa fa-users"></i> <span>Personas</span> <i class="fa fa-angle-left pull-right"></i>

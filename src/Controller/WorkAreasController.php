@@ -12,8 +12,11 @@ class WorkAreasController extends AppController
 {
 	public function isAuthorized($user)
 	{
+		$userRole_id = $user['userRole_id'];
 		
-		return true;
+		if ($userRole_id == 1 || $userRole_id == 2 || $userRole_id == 3) {
+			return true;
+		}
 		
 		return parent::isAuthorized($user);
 	}
