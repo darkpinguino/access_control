@@ -1,5 +1,3 @@
-<?php //debug($door_id); die; ?>
-
 <?= $this->element('tableHeader', ['title' => 'Personas Ingresadas'])?>
 <div class="box-body">
 	<div class="row">
