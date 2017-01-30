@@ -176,9 +176,17 @@ use Cake\I18n\Time;
 
 			$people_locations = $this->PeopleLocations->find()
 				->contain([
-					'People.CompanyPeople.Profiles' => function ($q) use ($company_id, $search)
+					'People.CompanyPeople.Profiles' => function ($q) use ($company_id)
 					{
 						return $q->where(['CompanyPeople.company_id' => $company_id]);
+					},
+					'People.CompanyPeople.ContractorCompanies' => function ($q) use ($company_id)
+					{
+						return $q->where(['ContractorCompanies.company_id IN' => [$company_id, -1]]);
+					},
+					'People.CompanyPeople.WorkAreas' => function ($q) use ($company_id)
+					{
+						return $q->where(['WorkAreas.company_id IN' => [$company_id, -1]]);
 					},
 					'People' => function ($q) use ($search)
 					{
@@ -195,6 +203,7 @@ use Cake\I18n\Time;
 				->order(['\'created\'' => 'DESC'])
 				->distinct('people_id');
 
+			// debug($people_locations->toArray()); die;
 			$this->paginate = [
 			    'sortWhitelist'=> [
 			    	'Enclosures.name', 

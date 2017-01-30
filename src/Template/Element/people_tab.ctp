@@ -6,7 +6,7 @@
 		<div class="row">
 			<div class="col-md-5 col-md-offset-3">
 				<div class="box-header">
-					<h3>Autorización Personas</h3>
+					<h3>Autorización Personas: <?= $door->name ?></h3>
 				</div>
 				<?= $this->Form->create($person) ?>
 				<div class="box-body">

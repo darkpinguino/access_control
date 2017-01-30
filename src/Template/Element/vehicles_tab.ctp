@@ -8,7 +8,7 @@
 		<div class="row">
 			<div class="col-md-5 col-md-offset-3">
 				<div class="box-header">
-					<h3>Autorización Vehículos</h3>
+					<h3>Autorización Vehículos: <?= $door->name ?></h3>
 				</div>
 				<?= $this->Form->create()?>
 				<div class="box-body">

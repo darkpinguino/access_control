@@ -57,9 +57,6 @@ class PeopleController extends AppController
 				}]);
 		}
 
-		// $this->paginate = [
-		// 	]
-
 		$this->set('people', $this->paginate($people));
 		$this->set(compact('userRole_id'));
 		$this->set('_serialize', ['people']);
@@ -178,11 +175,11 @@ class PeopleController extends AppController
 					}
 
 					if ($company_people->profile_id != 3) {
-						unset($company_people->contractor_company_id);
+						$company_people->contractor_company_id = -1;
 					}
 
 					if ($company_people->profile_id == 1) {
-						unset($company_people->work_area_id);
+						$company_people->work_area_id = -1;
 					}
 
 					if ($this->CompanyPeople->save($company_people)) {
@@ -285,11 +282,11 @@ class PeopleController extends AppController
 				}
 
 				if ($company_people->profile_id != 3) {
-					unset($company_people->contractor_company_id);
+					$company_people->contractor_company_id = -1;
 				}
 
 				if ($company_people->profile_id == 1) {
-					unset($company_people->work_area_id);
+					$company_people->work_area_id = -1;
 				}
 
 				$existCompanyPeople = $this->CompanyPeople->
