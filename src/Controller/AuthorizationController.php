@@ -68,6 +68,8 @@ use Cake\I18n\Time;
 			$search = $this->request->query('search');
 			$people_locations = $this->getPeopleLocation($company_id, $search);
 
+			$check_out = $this->getCheckOut($company_id, $door->id);
+
 			$vehicles_locations = $this->getVehicleLocation($company_id);
 
 			$vehicle_types = $this->VehicleTypes->find('list');
@@ -79,7 +81,7 @@ use Cake\I18n\Time;
 			$this->set('people_locations', $people_locations);
 			$this->set('people_out', $people_out);
 			$this->set('vehicles_locations', $vehicles_locations);
-			$this->set(compact('person', 'door', 'vehicle_types', 'vehicle_profiles'));  
+			$this->set(compact('person', 'door', 'vehicle_types', 'vehicle_profiles', 'check_out'));  
 
 			if ($this->request->is('ajax')) 
 			{
@@ -203,6 +205,26 @@ use Cake\I18n\Time;
 			];
 
 			return $this->Paginate($people_locations);
+		}
+
+		private function getCheckOut($company_id, $door_id)
+		{
+			$this->loadModel('AccessRequest');
+
+			$check_out = $this->AccessRequest->find()
+				->matching('Doors', function ($q) use ($company_id, $door_id)
+				{
+					return $q->where([
+						'Doors.company_id' => $company_id,
+						'Doors.id' => $door_id
+					]);
+				})
+				->where(['action' => 0])
+				->contain(['People'])
+				->order(['\'creates\'' => 'DESC'])
+				->limit(10);
+
+			return $check_out->toArray();
 		}
 
 		private function getVehicleLocation($company_id)

@@ -8,14 +8,14 @@
 		case 1: ?>
 			<div class="panel panel-defautl">
 					<div class="panel-body"> 
-						<?= $this->element('people_tab', ['people_locations' => $people_locations, 'people_out' => $people_out, 'door_id' => $door->id, 'tab' => false]) ?>
+						<?= $this->element('people_tab', ['people_locations' => $people_locations, 'people_out' => $people_out, 'door_id' => $door->id, 'check_out' => $check_out, 'tab' => false]) ?>
 				</div>
 			</div>
 		<?php break; ?>
 		<?php case 2: ?>
 			<div class="panel panel-defautl">
 				<div class="panel-body">
-					<?= $this->element('vehicles_tab', ['vehicle_types' => $vehicle_types, 'vehicle_profile' => $vehicle_profiles, 'door_id' => $door->id, 'people_out' => $people_out, 'tab' => false]) ?>
+					<?= $this->element('vehicles_tab', ['vehicle_types' => $vehicle_types, 'vehicle_profile' => $vehicle_profiles, 'door_id' => $door->id, 'people_out' => $people_out,  'tab' => false]) ?>
 				</div>
 			</div>
 		<?php break; ?>
@@ -27,7 +27,7 @@
 				</ul>
 				<div class="tab-content">
 
-			<?= $this->element('people_tab', ['people_locations' => $people_locations, 'people_out' => $people_out, 'door_id' => $door->id, 'tab' => true]) ?>
+			<?= $this->element('people_tab', ['people_locations' => $people_locations, 'people_out' => $people_out, 'door_id' => $door->id, 'check_out' => $check_out, 'tab' => true]) ?>
 			<?= $this->element('vehicles_tab', ['vehicle_types' => $vehicle_types, 'vehicle_profile' => $vehicle_profiles, 'door_id' => $door->id, 'people_out' => $people_out, 'tab' => true]) ?>
 
 				</div>

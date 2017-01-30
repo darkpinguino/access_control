@@ -35,6 +35,11 @@
 	  <div class="box-footer clearfix">
 	  </div>
 	</div>
+	<div id="check_out" class="box">
+	  <?= $this->element('Authorization/check_out', ['check_out' => $check_out])?>
+	  <div class="box-footer clearfix">
+	  </div>
+	</div>
 <?php 
 	if ($tab)
 		echo '</div>';
