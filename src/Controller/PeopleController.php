@@ -109,9 +109,17 @@ class PeopleController extends AppController
 				return $q->where(['People.id' => $person->id]);
 			}
 		);
+
+		$visitProfiles = $this->People->VisitProfiles->find()
+			->where(['person_id' => $id, 'company_id' => $company_id])
+			->contain(['PersonToVisits'])
+			->order(['VisitProfile.created' => 'DESC']);
+
+		// debug($visitProfiles->toArray()); die;
 		
 		$this->set(compact('person', 'userRole_id'));
-		$this->set('accessRoles', $this->paginate($accessRoles));
+		$this->set('accessRoles', $this->paginate($accessRoles, ['scpope' => 'accessRoles']));
+		$this->set('visitProfiles', $this->paginate($visitProfiles, ['scope' => 'visitProfiles']));
 		$this->set('_serialize', ['person']);
 	}
 
@@ -222,8 +230,6 @@ class PeopleController extends AppController
 	 */
 	public function edit($id = null)
 	{
-		// debug($this->request->session()->read('vehicle_access')); die;
-
 		$vehicle_access = $this->request->session()->read('vehicle_access');
 
 		$company_id = $this->Auth->user()['company_id'];
@@ -241,6 +247,7 @@ class PeopleController extends AppController
 			
 			$visitProfile = $this->VisitProfiles->newEntity($this->request->data);
 			$visitProfile->company_id = $company_id;
+			$visitProfile->access_request_id = $this->request->data('access_request_id');
 			
 			$person->visit_profiles = [$visitProfile];
 
@@ -271,7 +278,10 @@ class PeopleController extends AppController
 				$company_people = $this->CompanyPeople->patchEntity($company_people, $this->request->data);
 				$company_people->person_id = $person->id;
 				$company_people->company_id = $company_id;
-				$company_people->is_visited = 0;
+
+				if (!strcmp($this->request->data('status'), 'pending')) {
+					$company_people->pending = 1;
+				}
 
 				if (isset($contractor_company)) {
 					$company_people->contractor_company_id = $contractor_company->id;

@@ -63,7 +63,7 @@
 	  <table class="table table-bordered table-striped table-hover">
 	  <thead>
 		<tr>
-		  <th><?= $this->Paginator->sort('id', 'ID') ?></th>
+		  <th><?= $this->Paginator->sort('id', 'ID', ['model' => 'accessRoles']) ?></th>
 		  <th><?= $this->Paginator->sort('name', 'Nombre') ?></th>
 		</tr>
 	  </thead>
@@ -72,6 +72,34 @@
 		<tr>
 		  <td><?= h($accesRole->id) ?></td>
 		  <td><?= h($accesRole->name) ?></td>
+		  </tr>
+		</tr>
+		<?php endforeach; ?>
+	  </tbody>
+	  </table>
+  </div>
+  <div class="box-footer clearfix">
+	<?= $this->element('paginator') ?>
+  </div>
+</div>
+
+<div class="box">
+  <?= $this->element('tableHeader', ['title' => 'Perfiles de Visita'])?>
+  <div class="box-body">
+	  <table class="table table-bordered table-striped table-hover">
+	  <thead>
+		<tr>
+		  <th>Persona que visita</th>
+		  <th>Motivo de visita</th>
+		  <th>Fecha</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		<?php foreach ($visitProfiles as $visit_profile): ?>
+		<tr>
+		  <td><?= h($visit_profile->person_to_visit->fullName) ?></td>
+		  <td><?= h($visit_profile->note) ?></td>
+		  <td><?= h($visit_profile->created) ?></td>
 		  </tr>
 		</tr>
 		<?php endforeach; ?>

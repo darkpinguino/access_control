@@ -6,6 +6,8 @@
         <li><?= $this->Html->link(__('New Person'), ['controller' => 'People', 'action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('List Reason Visits'), ['controller' => 'ReasonVisits', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New Reason Visit'), ['controller' => 'ReasonVisits', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('List Companies'), ['controller' => 'Companies', 'action' => 'index']) ?></li>
+        <li><?= $this->Html->link(__('New Company'), ['controller' => 'Companies', 'action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="visitProfiles index large-9 medium-8 columns content">
@@ -13,18 +15,26 @@
     <table cellpadding="0" cellspacing="0">
         <thead>
             <tr>
-                <th><?= $this->Paginator->sort('id') ?></th>
-                <th><?= $this->Paginator->sort('person_id') ?></th>
-                <th><?= $this->Paginator->sort('reason_visit_id') ?></th>
-                <th class="actions"><?= __('Actions') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('id') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('reason_visit_id') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('person_to_visit_id') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('access_request_id') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('person_id') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('company_id') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('maxTime') ?></th>
+                <th scope="col" class="actions"><?= __('Actions') ?></th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($visitProfiles as $visitProfile): ?>
             <tr>
                 <td><?= $this->Number->format($visitProfile->id) ?></td>
-                <td><?= $visitProfile->has('person') ? $this->Html->link($visitProfile->person->name, ['controller' => 'People', 'action' => 'view', $visitProfile->person->id]) : '' ?></td>
                 <td><?= $visitProfile->has('reason_visit') ? $this->Html->link($visitProfile->reason_visit->id, ['controller' => 'ReasonVisits', 'action' => 'view', $visitProfile->reason_visit->id]) : '' ?></td>
+                <td><?= $visitProfile->has('person') ? $this->Html->link($visitProfile->person->name, ['controller' => 'People', 'action' => 'view', $visitProfile->person->id]) : '' ?></td>
+                <td><?= $this->Number->format($visitProfile->access_request_id) ?></td>
+                <td><?= $this->Number->format($visitProfile->person_id) ?></td>
+                <td><?= $visitProfile->has('company') ? $this->Html->link($visitProfile->company->name, ['controller' => 'Companies', 'action' => 'view', $visitProfile->company->id]) : '' ?></td>
+                <td><?= $this->Number->format($visitProfile->maxTime) ?></td>
                 <td class="actions">
                     <?= $this->Html->link(__('View'), ['action' => 'view', $visitProfile->id]) ?>
                     <?= $this->Html->link(__('Edit'), ['action' => 'edit', $visitProfile->id]) ?>
@@ -36,10 +46,12 @@
     </table>
     <div class="paginator">
         <ul class="pagination">
+            <?= $this->Paginator->first('<< ' . __('first')) ?>
             <?= $this->Paginator->prev('< ' . __('previous')) ?>
             <?= $this->Paginator->numbers() ?>
             <?= $this->Paginator->next(__('next') . ' >') ?>
+            <?= $this->Paginator->last(__('last') . ' >>') ?>
         </ul>
-        <p><?= $this->Paginator->counter() ?></p>
+        <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
     </div>
 </div>

@@ -10,7 +10,14 @@ use App\Controller\AppController;
  */
 class VisitProfilesController extends AppController
 {
+	public function isAuthorized($user)
+	{
+		if ($this->request->action === 'add') {
+			return true;
+		}
 
+		return parent::isAuthorized($user);
+	}
 	/**
 	 * Index method
 	 *
@@ -19,9 +26,13 @@ class VisitProfilesController extends AppController
 	public function index()
 	{
 		$this->paginate = [
-			'contain' => ['People', 'ReasonVisits']
+			// 'contain' => ['People', 'ReasonVisits', 'Companies']
 		];
 		$visitProfiles = $this->paginate($this->VisitProfiles);
+
+		// $visitProfiles = $this->VisitProfiles->find();
+
+		// debug($visitProfiles->toArray()); die;
 
 		$this->set(compact('visitProfiles'));
 		$this->set('_serialize', ['visitProfiles']);
@@ -37,7 +48,7 @@ class VisitProfilesController extends AppController
 	public function view($id = null)
 	{
 		$visitProfile = $this->VisitProfiles->get($id, [
-			'contain' => ['People', 'ReasonVisits']
+			// 'contain' => ['People', 'ReasonVisits', 'Companies']
 		]);
 
 		$this->set('visitProfile', $visitProfile);
@@ -51,44 +62,37 @@ class VisitProfilesController extends AppController
 	 */
 	public function add()
 	{
+		$company_id = $this->Auth->user('company_id');
 		$visitProfile = $this->VisitProfiles->newEntity();
+		$this->loadmodel('Profiles');
 		if ($this->request->is('post')) {
 			$visitProfile = $this->VisitProfiles->patchEntity($visitProfile, $this->request->data);
 			if ($this->VisitProfiles->save($visitProfile)) {
 				$this->Flash->success(__('The visit profile has been saved.'));
+
 				return $this->redirect(['action' => 'index']);
 			} else {
 				$this->Flash->error(__('The visit profile could not be saved. Please, try again.'));
 			}
 		}
-		$this->viewBuilder()->layout('ajax');
-		$this->loadModel('Profiles');
 		// $people = $this->VisitProfiles->People->find('list', ['limit' => 200]);
-		$company_id = $this->Auth->user()['company_id'];
+		// $reasonVisits = $this->VisitProfiles->ReasonVisits->find('list', ['limit' => 200]);
+		// $companies = $this->VisitProfiles->Companies->find('list', ['limit' => 200]);
 
-		$reasonVisits = $this->VisitProfiles->ReasonVisits->find('list', [
-			'keyField' => 'id',
-			'valueField' => 'reason'
-		])->toArray();
-
-		$personToVisit = $this->VisitProfiles->People
-			->find('list', [
-				'keyField' => 'id',
-				'valueField' => function ($e)
-				{
-					return $e->name . ' ' . $e->lastname;
-				}
-			])
+		$personToVisit = $this->VisitProfiles->People->find('list')
 			->matching('CompanyPeople', function ($q) use ($company_id)
 			{
-				return $q->where(['CompanyPeople.is_visited' => 1, 'CompanyPeople.company_id' => $company_id]);
+				return $q->where(['company_id' => $company_id, 'CompanyPeople.is_visited' => 1]);
 			});
 
-		$visitProfile->maxTime = $this->Profiles->findByNameAndCompany_id('visita', $company_id)->first()->maxTime;
+		// $visitProfile->maxTime = $this->Profiles->findByNameAndCompany_id('visita', $company_id)->first()->maxTime; 
 
-		// debug($personToVisit); die;
+		$visitProfile->maxTime = $this->Profiles->CompanyProfiles->find()
+			->where(['company_id' => $company_id, 'profile_id' => 1])->first()->maxTime;
 
-		$this->set(compact('visitProfile', 'reasonVisits', 'personToVisit'));
+		// debug($visitProfile);
+
+		$this->set(compact('visitProfile', 'personToVisit'));
 		$this->set('_serialize', ['visitProfile']);
 	}
 
@@ -108,6 +112,7 @@ class VisitProfilesController extends AppController
 			$visitProfile = $this->VisitProfiles->patchEntity($visitProfile, $this->request->data);
 			if ($this->VisitProfiles->save($visitProfile)) {
 				$this->Flash->success(__('The visit profile has been saved.'));
+
 				return $this->redirect(['action' => 'index']);
 			} else {
 				$this->Flash->error(__('The visit profile could not be saved. Please, try again.'));
@@ -115,7 +120,8 @@ class VisitProfilesController extends AppController
 		}
 		$people = $this->VisitProfiles->People->find('list', ['limit' => 200]);
 		$reasonVisits = $this->VisitProfiles->ReasonVisits->find('list', ['limit' => 200]);
-		$this->set(compact('visitProfile', 'people', 'reasonVisits'));
+		$companies = $this->VisitProfiles->Companies->find('list', ['limit' => 200]);
+		$this->set(compact('visitProfile', 'people', 'reasonVisits', 'companies'));
 		$this->set('_serialize', ['visitProfile']);
 	}
 
@@ -135,6 +141,7 @@ class VisitProfilesController extends AppController
 		} else {
 			$this->Flash->error(__('The visit profile could not be deleted. Please, try again.'));
 		}
+
 		return $this->redirect(['action' => 'index']);
 	}
 }

@@ -12,6 +12,8 @@
         <li><?= $this->Html->link(__('New Person'), ['controller' => 'People', 'action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('List Reason Visits'), ['controller' => 'ReasonVisits', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New Reason Visit'), ['controller' => 'ReasonVisits', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('List Companies'), ['controller' => 'Companies', 'action' => 'index']) ?></li>
+        <li><?= $this->Html->link(__('New Company'), ['controller' => 'Companies', 'action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="visitProfiles form large-9 medium-8 columns content">
@@ -19,8 +21,13 @@
     <fieldset>
         <legend><?= __('Edit Visit Profile') ?></legend>
         <?php
-            echo $this->Form->input('person_id', ['options' => $people]);
             echo $this->Form->input('reason_visit_id', ['options' => $reasonVisits]);
+            echo $this->Form->input('person_to_visit_id', ['options' => $people]);
+            echo $this->Form->input('note');
+            echo $this->Form->input('access_request_id');
+            echo $this->Form->input('person_id');
+            echo $this->Form->input('company_id', ['options' => $companies]);
+            echo $this->Form->input('maxTime');
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>

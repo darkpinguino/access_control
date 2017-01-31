@@ -200,7 +200,7 @@ use Cake\I18n\Time;
 				{
 					return $q->where(['Enclosures.company_id' => $company_id]);
 				})
-				->order(['\'created\'' => 'DESC'])
+				->order(['PeopleLocations.created' => 'DESC'])
 				->distinct('people_id');
 
 			// debug($people_locations->toArray()); die;
@@ -230,7 +230,7 @@ use Cake\I18n\Time;
 				})
 				->where(['action' => 0])
 				->contain(['People'])
-				->order(['\'creates\'' => 'DESC'])
+				->order(['AccessRequest.created' => 'DESC'])
 				->limit(10);
 
 			return $check_out->toArray();
@@ -400,9 +400,6 @@ use Cake\I18n\Time;
 				} 
 
 				if ($check) {
-
-					// debug("entro"); die;
-
 					$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 1, 0);
 					$this->Authorization->deletePeopleLocation($person, $door);
 					$this->deleteVehiclePeopleLocations($person, $door);
@@ -417,12 +414,30 @@ use Cake\I18n\Time;
 					}
 
 					if ($person->company_people[0]->profile_id == 1) {	//expirar roles de personas distintas a personal
-						$accessRoles = $this->People->AccessRolePeople->findByPeopleId($person->id);
+						// $accessRoles = $this->People->AccessRolePeople->findByPeopleId($person->id);
 
-							foreach ($accessRoles as $role) {
-								$role->expiration = new Date();
-								$this->People->AccessRolePeople->save($role);
-							}
+						// debug($this->People->AccessRoles); die;
+
+						$accessRoles = $this->People->AccessRolePeople->find()
+							->where(['people_id' => $person->id])
+							->matching('AccessRoles', function ($q) use ($company_id)
+							{
+								return $q->where(['company_id' => $company_id]);
+							});
+
+						$roles_id = [];
+						
+						foreach ($accessRoles as $accessRole) {
+							array_push($roles_id, $accessRole->id);
+						}		
+
+						if (!empty($roles_id)) {
+							$this->People->AccessRolePeople->deleteAll([
+								'people_id' => $person->id,
+								'id IN' => $roles_id
+							]);
+						} 
+
 					}
 					if (!$this->request->is('ajax')) 
 						$this->Flash->success("Salida registrada con éxito");
@@ -454,7 +469,16 @@ use Cake\I18n\Time;
 						$pending_access_request = $this->AccessRequest->find()->
 						  where(['people_id' => $person->id, 'door_id' => $door->id])->last();
 
+						$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 1, 1);
+
 						if (!is_null($pending_access_request) && $pending_access_request->access_status_id == 2) {
+							$visit_profile = $this->AccessRequest->VisitProfiles->find()
+								->where(['access_request_id' => $pending_access_request->id])
+								->last();
+
+							$visit_profile->access_request_id = $access_request->id;
+							$this->AccessRequest->VisitProfiles->save($visit_profile);
+
 						  $vehicle_access_request_query = $this->AccessRequest->VehicleAccessRequest->
 						  findByAccessRequestId($pending_access_request->id)->first();
 
@@ -463,7 +487,6 @@ use Cake\I18n\Time;
 						  }
 						}
 
-						$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 1, 1);
 
 						if (!is_null($this->request->data('vehicle'))) {
 							$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
@@ -598,13 +621,16 @@ use Cake\I18n\Time;
 
 		private function authorizationRequest($person, $door)
 		{
-			$this->Authorization->saveAccessRequest($person->id, $door->id, 2, 1);
+			$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 2, 1);
 
 			return $this->redirect([
 				'controller' => 'people',
 				'action' => 'edit',
 				$person->id,
-				'?' => ['status' => 'pending']
+				'?' => [
+					'status' => 'pending',
+					'access_request' => $access_request->id
+				]
 			]);
 		}
 

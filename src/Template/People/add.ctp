@@ -33,7 +33,7 @@
 				
 				echo $this->Form->input('is_visited', [
 					'type' => 'checkbox',
-					'label' => '¿Es visitada?',
+					'label' => 'Visitada',
 					'templates' => [
 						'inputContainer' => '<div class="checkbox">{{content}}</div>'
 					]

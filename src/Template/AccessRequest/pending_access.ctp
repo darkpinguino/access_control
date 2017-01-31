@@ -20,7 +20,7 @@
 					<td><?= $access_request->has('person') ? $this->Html->link($access_request->person->rut, ['controller' => 'People', 'action' => 'view', $access_request->person->id]) : '' ?>
 					</td>
 					<td><?= $access_request->has('person') ? h($access_request->person->fullName) : '' ?></td>
-					<td><?= $this->Html->link($access_request->_matchingData['Doors']->name, ['controller' => 'Doors', 'action' => 'view', $access_request->_matchingData['Doors']->id])?></td>
+					<td><?= $this->Html->link($access_request->door->name, ['controller' => 'Doors', 'action' => 'view', $access_request->door->id])?></td>
 					<td><?= h($access_request->created) ?></td>
 					<td><?= h($access_request->modified) ?></td>
 					<td>

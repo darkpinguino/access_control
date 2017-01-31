@@ -95,7 +95,12 @@ class AccessRolePeopleController extends AppController
 		$role = $this->AccessRolePeople->AccessRoles->find('list')
 			->where(['company_id IN' => [$company_id, -1]]);
 		$id = $this->request->query('person');
-		$person = $this->AccessRolePeople->People->get($id);
+		$person = $this->AccessRolePeople->People->get($id, ['contain' => [
+			'CompanyPeople' => function ($q) use ($company_id)
+			{
+				return $q->where(['company_id' => $company_id]);
+			}
+		]]);
 		if ($this->request->is('post')) {
 
 			$new_access_role = $this->passNewData($id, $this->request->data('role_id'));
@@ -115,8 +120,15 @@ class AccessRolePeopleController extends AppController
 			}
 
 			$this->AccessRolePeople->saveMany($this->AccessRolePeople->newEntities($access_roles));
+			$company_people = $this->AccessRolePeople->People->CompanyPeople->newEntity($person->company_people[0]->toArray());
+			$company_people = $person->company_people[0];
+			$company_people->pending = 0;
 
-			$this->Flash->success(__('El rol de acceseso ha sido guradado.'));
+			$this->AccessRolePeople->People->CompanyPeople->save($company_people);
+
+			// debug($company_people); die;
+
+			$this->Flash->success(__('El rol de acceso ha sido guardado.'));
 				return $this->redirect([
 					'action' => 'pending-access',  
 					'controller' => 'access-request'

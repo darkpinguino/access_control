@@ -4,13 +4,20 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * VisitProfile Entity.
+ * VisitProfile Entity
  *
  * @property int $id
- * @property int $person_id
- * @property \App\Model\Entity\Person $person
  * @property int $reason_visit_id
+ * @property int $person_to_visit_id
+ * @property string $note
+ * @property int $access_request_id
+ * @property int $person_id
+ * @property int $company_id
+ * @property int $maxTime
+ *
+ * @property \App\Model\Entity\Person $person
  * @property \App\Model\Entity\ReasonVisit $reason_visit
+ * @property \App\Model\Entity\Company $company
  */
 class VisitProfile extends Entity
 {
@@ -26,6 +33,6 @@ class VisitProfile extends Entity
      */
     protected $_accessible = [
         '*' => true,
-        'id' => false,
+        'id' => false
     ];
 }

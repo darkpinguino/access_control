@@ -14,7 +14,7 @@ class AccessRequestController extends AppController
 {
 	public $paginate = [
 	  'limit' => 10,
-	  'contain' => ['People', 'Doors.Companies', 'AccessStatus', 'VehicleAccessRequest'],
+	  'contain' => ['Doors.Companies', 'AccessStatus', 'VehicleAccessRequest'],
 	  'order' => [
 		'id' => 'desc']
 	];
@@ -45,7 +45,8 @@ class AccessRequestController extends AppController
 		$search = $this->request->query('search');
 
 		if ($userRole_id == 1) {
-			$accessRequest = $this->AccessRequest->find();
+			$accessRequest = $this->AccessRequest->find()
+				->contain(['People.CompanyPeople.Profiles']);
 				// ->matching('People', function ($q) use ($search)
 				// {
 				// 	return $q->where([
@@ -83,7 +84,11 @@ class AccessRequestController extends AppController
 				->matching('Doors', function ($q) use ($company_id)
 				{
 					return $q->where(['company_id' => $company_id]);
-				});
+				})
+				->contain(['People.CompanyPeople.Profiles' => function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyPeople.company_id' => $company_id]);
+				}]);
 		}
 
 
@@ -102,12 +107,26 @@ class AccessRequestController extends AppController
 	 */
 	public function view($id = null)
 	{
+		$company_id = $this->Auth->user('company_id');
 		$accessRequest = $this->AccessRequest->get($id, [
-			'contain' => ['People', 'Doors', 'AccessStatus', 'VehicleAccessRequest.Vehicles']
-			// 'contain' => ['People', 'Doors', 'AccessStatus']
+			'contain' => [
+				'People.CompanyPeople.Profiles' => function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyPeople.company_id' => $company_id]);
+				}, 'Doors', 'AccessStatus', 'VehicleAccessRequest.Vehicles', 'VisitProfiles.PersonToVisits']
 		]);
 
-		// debug($accessRequest); die;
+		// $accessRequest = $this->AccessRequest->find()
+		// 	->where(['AccessRequest.id' => $id])
+		// 	->contain(['People.CompanyPeople.Profiles' => function ($q) use ($company_id)
+		// 		{
+		// 			return $q->where(['CompanyPeople.company_id' => $company_id]);
+		// 		}, 'Doors', 'AccessStatus', 'VehicleAccessRequest.Vehicles', 'VisitProfiles.PersonToVisits'])
+		// 	->first();
+
+		// debug($accessRequest);
+
+		// debug(isset($accessRequest->visit_profiles)); die;
 
 		$this->set('accessRequest', $accessRequest);
 		$this->set('_serialize', ['accessRequest']);
@@ -186,8 +205,10 @@ class AccessRequestController extends AppController
 
 	public function pendingAccess()
 	{
+		$company_id = $this->Auth->user('company_id');
+
 		$this->paginate = [
-		  'contain' => ['People.AccessRolePeople']
+		  'contain' => ['People.AccessRolePeople', 'Doors']
 		];
 
 		$query = $this->AccessRequest->find()
@@ -204,10 +225,16 @@ class AccessRequestController extends AppController
 				'access_status_id' => 2
 		]);
 
-		// foreach ($this->paginate($query) as $asd) {
-		// 	debug($asd->_matchingData['Doors']->name);
-		// }
-		// die;
+		$query = $this->AccessRequest->find()
+			->distinct('AccessRequest.people_id')
+			->matching('People.CompanyPeople', function ($q) use ($company_id)
+			{
+				return $q->where([
+					'CompanyPeople.company_id' => $company_id,
+					'CompanyPeople.pending' => 1
+				]);
+			});
+
 		$this->set('accessRequest', $this->paginate($query));
 	}
 

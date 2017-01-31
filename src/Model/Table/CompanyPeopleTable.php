@@ -81,7 +81,7 @@ class CompanyPeopleTable extends Table
 
 		$validator
 			->boolean('is_visited')
-			->requirePresence('is_visited', 'create')
+			// ->requirePresence('is_visited', 'create')
 			->notEmpty('is_visited');
 
 		return $validator;

@@ -4,6 +4,7 @@
 <?php 
 	$status = $this->request->query('status');
 	$driver = $this->request->query('driver');
+	$access_request_id = $this->request->query('access_request');
 ?>
 
 <div class="box">
@@ -56,10 +57,13 @@
 
 					if (strcmp($status, 'pending') == 0) {
 						echo '<div id="form-container"></div>';
+						echo $this->Form->hidden('access_request_id', ['id' => 'access_request_id',
+							'value' => $access_request_id]);
+						echo $this->Form->hidden('status', ['value' => 'pending']);
 					} else {
 						echo $this->Form->input('is_visited', [
 							'type' => 'checkbox',
-							'label' => 'es visitada',
+							'label' => 'Visitada',
 							'templates' => [
 								'inputContainer' => '<div class="checkbox">{{content}}</div>'
 							]

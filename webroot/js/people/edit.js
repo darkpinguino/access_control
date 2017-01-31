@@ -7,6 +7,7 @@ $(document).ready(function () {
 	$("#profile-id").change(function () {
 		option = $("option:selected", this).text();
 		controller = parseController(option);
+		getForm(controller);
 	});
 
 	if ($("#profile-id").val() == 3) {
@@ -53,20 +54,24 @@ $(document).ready(function () {
 });
 
 function getForm(controller) {
-	var url = "../../" + controller + "/add";
-	$.ajax({
-			url: url,
-			type: "GET",
-			success: function (result, status, xhr) {
-				$("#form-container").empty();
-				$("#form-container").html(result);
-			},
-			error: function (xhr,status,error){
-				console.log(status);
-				$("#form-container").empty();
-				$("#form-container").html(error);
-			}
-		});
+	if (controller) {
+		var url = "../../" + controller + "/add";
+		$.ajax({
+				url: url,
+				type: "GET",
+				success: function (result, status, xhr) {
+					$("#form-container").empty();
+					$("#form-container").html(result);
+				},
+				error: function (xhr,status,error){
+					console.log(status);
+					$("#form-container").empty();
+					$("#form-container").html(error);
+				}
+			});
+	} else {
+		$("#form-container").empty();
+	}
 }
 
 function parseController(option) {
@@ -75,6 +80,6 @@ function parseController(option) {
 			return "visitProfiles";
 			break;
 		default:
-			return "visitProfiles";
+			return null;
 	}
 }
