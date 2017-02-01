@@ -1,4 +1,4 @@
-var valid_rut;
+var valid_rut = false;
 
 $(document).ready(function () {
 
@@ -16,8 +16,13 @@ $(document).ready(function () {
 	});
 
 	$("#rut").on('change', function () {
+		var rut  = $(this).val()
+		$.validateRut(rut, function(r, dv) {
+		$("#rut").parent('.form-group').removeClass('has-error');
+    $("#rut").nextAll('span').remove();
+    
 		$.ajax({
-			url: "viewByRut/" + $(this).val(),
+			url: "viewByRut/" + r,
 			type: "GET",
 			dataType: "json",
 			success: function (result, seccess, hrx) {
@@ -32,6 +37,8 @@ $(document).ready(function () {
 				}
 			}
 		});
+	});
+		
 	});
 
 	$("#profile-id").on('change', function () {
