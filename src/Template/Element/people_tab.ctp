@@ -8,7 +8,7 @@
 				<div class="box-header">
 					<h3>Autorización Personas: <?= $door->name ?></h3>
 				</div>
-				<?= $this->Form->create($person) ?>
+				<?= $this->Form->create($person, ['id' => 'authorization-form']) ?>
 				<div class="box-body">
 				  <?php 
 					  echo $this->Form->input('rut', ['label' => 'Rut', 'autofocus' => 'autofocus']);

@@ -1,4 +1,20 @@
+var valid_rut;
+
 $(document).ready(function () {
+
+	$("#person-form").submit(function (event) {
+		if (!valid_rut) {
+			valid_rut = validateRut();
+			if (valid_rut) {
+				$("#person-form").submit();
+			} else {
+				event.preventDefault();
+			}
+		} else {
+			$("#person-form").submit();
+		}
+	});
+
 	$("#rut").on('change', function () {
 		$.ajax({
 			url: "viewByRut/" + $(this).val(),
@@ -44,3 +60,21 @@ $(document).ready(function () {
 		}
 	});
 });
+
+function validateRut() {
+	var rut = $("#rut").val();
+
+	valid_rut = $.validateRut(rut, function(r, dv) {
+		$("#rut").parent('.form-group').removeClass('has-error');
+    $("#rut").nextAll('span').remove();
+    $("#rut").val(r);
+	});
+
+	if (!valid_rut) {
+		$("#rut").parent('.form-group').addClass('has-error');
+    $("#rut").nextAll('span').remove();
+		$("#rut").after('<span class="help-block">Rut invalido</span>');
+	}
+
+	return valid_rut;
+}

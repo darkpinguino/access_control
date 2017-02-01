@@ -249,7 +249,9 @@ class PeopleController extends AppController
 			$visitProfile->company_id = $company_id;
 			$visitProfile->access_request_id = $this->request->data('access_request_id');
 			
-			$person->visit_profiles = [$visitProfile];
+			if ($person->company_people[0]->profile_id == 1) {
+				$person->visit_profiles = [$visitProfile];
+			}
 
 			$person = $this->People->patchEntity($person, $this->request->data);
 			unset($person->rut);				
@@ -336,8 +338,9 @@ class PeopleController extends AppController
 					}
 				}
 			} else {
+					debug($person); die;
 					$this->Flash->error(__('La persona no puedo ser guardada. Por favor, intente nuevamente.'));
-					return redirect(['action' => 'index']);
+					return $this->redirect(['action' => 'index']);
 			}
 		}
 		$contractor_companies = $this->People->CompanyPeople->ContractorCompanies->find('list')

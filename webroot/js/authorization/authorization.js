@@ -1,5 +1,5 @@
 var passengerCount = 0;
-
+var valid_rut = false;
 $(document).ready(function () {
 
 	peopleCount();
@@ -10,6 +10,19 @@ $(document).ready(function () {
 
 	var search = getURLParameters('search');
 	$("#search-input").val(search);
+
+	$("#authorization-form").submit(function (event) {
+		if (!valid_rut) {
+			valid_rut = validateRut();
+			if (valid_rut) {
+				$("#authorization-form").submit();
+			} else {
+				event.preventDefault();
+			}
+		} else {
+			$("#authorization-form").submit();
+		}
+	});
 
 	$(document).on("click", ".authorization", function () {
 		var rut = $(this).attr("person-rut");
@@ -114,6 +127,8 @@ $(document).ready(function () {
 		}
 	});
 
+
+
 	$('#vehicle-rut').keypress(function(e){
     if ( e.which == 13 ) return false;
     // //or...
@@ -152,6 +167,24 @@ $(document).ready(function () {
 	setInterval(insideAlert, 1000*60);
 	setInterval(insideAlertCount, 1000*60);
 });
+
+function validateRut() {
+	var rut = $("#rut").val();
+
+	valid_rut = $.validateRut(rut, function(r, dv) {
+		$("#rut").parent('.form-group').removeClass('has-error');
+    $("#rut").nextAll('span').remove();
+    $("#rut").val(r);
+	});
+
+	if (!valid_rut) {
+		$("#rut").parent('.form-group').addClass('has-error');
+    $("#rut").nextAll('span').remove();
+		$("#rut").after('<span class="help-block">Rut invalido</span>');
+	}
+
+	return valid_rut;
+}
 
 function passengerRut(count) {
 	return '\

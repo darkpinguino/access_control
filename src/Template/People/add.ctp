@@ -1,10 +1,11 @@
 <?= $this->Html->script('people/add.js', ['block' => 'scriptView']); ?>
+<?= $this->Html->script('plugins/rut/jquery.rut.min', ['block' => 'scriptView']) ?>
 
 <div class="box">
 	<div class="box-header">
 		<h3 class="box-title">Agregar Persona</h3>
 	</div>
-	<?= $this->Form->create($person) ?>
+	<?= $this->Form->create($person, ['id' => 'person-form']) ?>
 	<div class="box-body">
 		<fieldset>
 			<?php
