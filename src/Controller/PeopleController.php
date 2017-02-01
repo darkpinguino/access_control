@@ -113,9 +113,7 @@ class PeopleController extends AppController
 		$visitProfiles = $this->People->VisitProfiles->find()
 			->where(['person_id' => $id, 'company_id' => $company_id])
 			->contain(['PersonToVisits'])
-			->order(['VisitProfile.created' => 'DESC']);
-
-		// debug($visitProfiles->toArray()); die;
+			->order(['VisitProfiles.created' => 'DESC']);
 		
 		$this->set(compact('person', 'userRole_id'));
 		$this->set('accessRoles', $this->paginate($accessRoles, ['scpope' => 'accessRoles']));
