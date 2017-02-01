@@ -1,8 +1,11 @@
 var passengerCount = 0;
+var  user_id;
 
 $(document).ready(function () {
 
 	peopleCount();
+
+	user_id = $("#user-id").val();
 
 	$("#search-button").on('click', function () {
 		window.location.replace('authorization?search=' + $("#search-input").val())
@@ -146,6 +149,14 @@ $(document).ready(function () {
 		insideAlert();
 	});
 
+	$(document).on('click', "#notifications-menu2", function () {
+		getNotificacions();
+	})
+
+	$(document).on('click', ".notifications", function () {
+		markSeen($(this).attr('notification-id'));
+	})
+
 	insideAlert();
 	insideAlertCount();
 
@@ -198,6 +209,103 @@ function peopleCount() {
 			populatePeopleCount(result);
 		}
 	});
+}
+
+function getNotificacions() {
+	$.ajax({
+		url: "../notifications/getNotifications",
+		type: "GET",
+		dataType: "json",
+		success: function (result, status, xhr) {
+			viewNotificacions(result['notifications']);
+		},
+		error: function (xhr, status, error) {
+			console.log(error);
+		}
+	});
+}
+
+function markSeen(notification_id) {
+	console.log("Entro");
+	$.ajax({
+		url: "../notifications/markSeen/"+user_id+"/"+notification_id,
+		type: "GET",
+		success: function (result, status, xhr) {
+			getNotificacions();
+		}, error: function (xhr, status, error) {
+			console.log(error);
+		}
+	});
+}
+
+function viewNotificacions(notifications) {
+	// $("#notifications-dropdown2").empty();
+
+	console.log(notifications);
+	console.log(notifications[0].users.length);
+	console.log(notifications[1].users.length);
+
+	$("#notifications-dropdown2").html(
+		makeNotifications(notifications)
+	);
+
+	// $("#notifications-dropdown2").html(
+	// 	'<li>\
+	// 		<ul class="menu">\
+	//       <li>\
+	//         <a>\
+	//           <i class="ion ion-ios-people info"></i> Notification title\
+	//         </a>\
+	//       </li>\
+	//     </ul>\
+	//   </li>'
+ //    );
+}
+
+function makeNotifications(notifications) {
+	var notifications_view = "";
+	var color_text;
+	var background_color;
+
+	notifications_view = notifications_view + '<li class="header">' + countNotifications(notifications) + '</li>';
+
+	for (var i = 0; i < notifications.length; i++) {
+		if (notifications[i].users.length == 0) {
+			color_text = "text-red";
+			background_color = 'bg-gray disabled color-palette';
+		} else {
+			color_text = "text-black";
+			background_color = '';
+		}
+
+		notifications_view = notifications_view + '<li>\
+	 		<ul class="menu">\
+	       <li>\
+	        <a class="notifications ' + background_color + '" notification-id="' + notifications[i]['id'] + '" href="#"' + '>\
+	         <i class="fa fa-warning '+ color_text + '"></i>' + notifications[i]['notification'] +
+	        '</a>\
+	      </li>\
+	    </ul>\
+	  </li>'
+	}
+
+	return notifications_view;
+}
+
+function countNotifications(notifications) {
+	var count = 0;
+
+	for (var i = 0; i < notifications.length; i++) {
+		if (notifications[i].users.length == 0) {
+			count++;
+		}
+	}
+
+	if (count == 1) {
+		return " 1 Notificación nueva"
+	} else {
+		return " " + count + " Notificaciones nuevas"
+	}
 }
 
 function populeteNotification(countPeople) {

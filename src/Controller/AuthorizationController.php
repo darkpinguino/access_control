@@ -35,6 +35,7 @@ use Cake\I18n\Time;
 			$this->loadModel('VehicleProfiles');
 
 			$company_id = $this->Auth->user()['company_id'];
+			$user_id = $this->Auth->user('id');
 			$door_id = $this->Auth->user()['doorCharge_id'];
 			$vehicle_access = $this->request->session()->read('vehicle_access');
 
@@ -81,7 +82,7 @@ use Cake\I18n\Time;
 			$this->set('people_locations', $people_locations);
 			$this->set('people_out', $people_out);
 			$this->set('vehicles_locations', $vehicles_locations);
-			$this->set(compact('person', 'door', 'vehicle_types', 'vehicle_profiles', 'check_out'));  
+			$this->set(compact('person', 'door', 'vehicle_types', 'vehicle_profiles', 'check_out', 'user_id'));  
 
 			if ($this->request->is('ajax')) 
 			{

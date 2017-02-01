@@ -62,6 +62,8 @@
 	
 </div>
 
+<?= $this->Form->hidden('asd', ['id' => 'user-id', 'value' => $user_id])?>
+
 <?= $this->element('Modal/actualState') ?>  
 <?= $this->element('Modal/vehicleActualState') ?>  
 
