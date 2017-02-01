@@ -2,13 +2,13 @@
 	<div class="row">
 		<div class="col-md-5 col-md-offset-3">
 			<div class="box-header">
-				<h3><?= h($person->name).' '.h($person->lastname) ?></h3>
+				<h3><?= h($person->fullName)?></h3>
 			</div>
 			<div class="box-body">
 			  <table class="table">
 				<tr>
 				  <th><?= __('Rut') ?></th>
-				  <td><?= h($person->rut) ?></td>
+				  <td><?= h($person->fullRut) ?></td>
 				</tr>
 				<tr>
 				  <th><?= __('Nombre') ?></th>

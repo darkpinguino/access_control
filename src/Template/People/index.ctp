@@ -27,7 +27,7 @@
           <?php if ($userRole_id == 1): ?>
             <td><?= h($person->id) ?></td>
           <?php endif ?>
-          <td><?= h($person->rut) ?></td>
+          <td><?= h($person->fullRut) ?></td>
           <td><?= h($person->name) ?></td>
           <td><?= h($person->lastname) ?></td>
           <td><?= h($person->phone) ?></td>

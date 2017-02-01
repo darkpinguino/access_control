@@ -16,7 +16,7 @@
 			  <tbody>
 				  <?php foreach ($check_out as $out): ?>
 				  <tr>
-						<td><?= h($out->person->rut)?></td>
+						<td><?= h($out->person->fullRut)?></td>
 					  <td><?= h($out->person->fullName)?></td>
 					  <td><?= h($out->created)?></td>
 					  <td>

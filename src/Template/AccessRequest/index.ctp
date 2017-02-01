@@ -27,7 +27,7 @@
 					<?php if ($userRole_id == 1): ?>
 						<td class="text-nowrap"><?= h($access_request->id) ?></td>
 					<?php endif ?>
-					<td class="text-nowrap"><?= $access_request->has('person') ? $this->Html->link($access_request->person->rut, ['controller' => 'People', 'action' => 'view', $access_request->person->id]) : '' ?>
+					<td class="text-nowrap"><?= $access_request->has('person') ? $this->Html->link($access_request->person->fullRut, ['controller' => 'People', 'action' => 'view', $access_request->person->id]) : '' ?>
 					</td>
 					<td><?= $access_request->has('person') ? $this->Html->link($access_request->person->fullName, ['controller' => 'People', 'action' => 'view', $access_request->person->id]) : '' ?></td>
 					<td><?= $this->element('action_profile', ['profileID' => $access_request->person->company_people[0]->profile->id])?></td>

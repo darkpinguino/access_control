@@ -17,7 +17,7 @@
 			  <tbody>
 				  <?php foreach ($people_locations as $location): ?>
 				  <tr>
-						<td><?= h($location->person->rut)?></td>
+						<td><?= h($location->person->fullRut)?></td>
 					  <td><?= h($location->person->fullName)?></td>
 					  <td><?= h($location->person->company_people[0]->profile->name)?></td>
 					  <td><?= h($location->person->company_people[0]->contractor_company->name)?></td>

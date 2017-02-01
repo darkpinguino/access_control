@@ -32,7 +32,7 @@
 					<?php endif ?>
 					<td><?= $vehicle_access_request->has('vehicle') ? $this->Html->link($vehicle_access_request->vehicle->number_plate, ['controller' => 'Vehicles', 'action' => 'view', $vehicle_access_request->vehicle->id]) : '' ?></td>
 					<td><?= $vehicle_access_request ? $this->element('driver', ['driver' => $vehicle_access_request->driver]) : ''?></td>
-					<td><?= $vehicle_access_request->has('access_request') ? $this->Html->link($vehicle_access_request->access_request->person->rut, ['controller' => 'People', 'action' => 'view', $vehicle_access_request->access_request->person->id]) : '' ?>
+					<td><?= $vehicle_access_request->has('access_request') ? $this->Html->link($vehicle_access_request->access_request->person->fullRut, ['controller' => 'People', 'action' => 'view', $vehicle_access_request->access_request->person->id]) : '' ?>
 					</td>
 					<td><?= $vehicle_access_request->has('access_request') ? $this->Html->link($vehicle_access_request->access_request->person->fullName, ['controller' => 'People', 'action' => 'view', $vehicle_access_request->access_request->person->id]) : '' ?></td>
 					<td><?= $vehicle_access_request->has('access_request') ? $this->Html->link($vehicle_access_request->access_request->door->name, ['controller' => 'Doors', 'action' => 'view', $vehicle_access_request->access_request->door->id]) : '' ?></td>

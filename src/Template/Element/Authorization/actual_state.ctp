@@ -13,8 +13,8 @@
 	<tbody>
 		<?php foreach ($people_locations as $people_location): ?>
 			<tr>
-				<td><?= h($people_location->person->rut)?></td>
-				<td><?= h($people_location->person->name)?> &nbsp; <?= h($people_location->person->lastname)?></td>
+				<td><?= h($people_location->person->fullRut)?></td>
+				<td><?= h($people_location->person->fullName)?></td>
 				<td><?= h($people_location->person->company_people[0]->profile->name)?></td>
 				<td><?= h($people_location->enclosure->name)?></td>
 				<td><?= h($people_location->created)?></td>
