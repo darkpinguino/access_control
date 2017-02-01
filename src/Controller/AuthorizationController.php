@@ -68,7 +68,12 @@ use Cake\I18n\Time;
 			$search = $this->request->query('search');
 			$people_locations = $this->getPeopleLocation($company_id, $search);
 
-			$check_out = $this->getCheckOut($company_id, $door->id);
+			if (!is_null($door)) {
+				$check_out = $this->getCheckOut($company_id, $door->id);
+			} else {
+				$check_out = [];
+			}
+			
 
 			$vehicles_locations = $this->getVehicleLocation($company_id);
 
