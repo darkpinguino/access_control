@@ -461,7 +461,7 @@ use Cake\I18n\Time;
 					}
 
 					if (!$this->request->is('ajax')) 
-						$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->rut.", la fecha de ingreso expiro");
+						$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->rut);
 				} else { //verificar atorizacion para la entrada
 					$authorizedPerson = $this->Authorization->isAuthorizedPerson($person, $door);
 
@@ -507,13 +507,13 @@ use Cake\I18n\Time;
 					} else {
 						$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 3, 1);
 						if (!$this->request->is('ajax'))
-							$this->Flash->error("No se autoriza el ingreso");
+							$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->rut);
 					}
 				}
 			} else {
 				$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 3, 1);
 				if (!$this->request->is('ajax'))
-							$this->Flash->error("No se autoriza el ingreso, ya se registro un ingreso");
+							$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->rut." ya se registro un ingreso");
 			}
 		}
 
@@ -536,6 +536,12 @@ use Cake\I18n\Time;
 			$person->rut = $rut;
 			$person->company_id = $this->Auth->user()['company_id']; 
 			$this->People->save($person);
+
+			$company_people = $this->People->newEntity();
+			$company_people->person_id = $person->id;
+			$company_people->company_id = $this->Auth->user()['company_id'];
+
+			$this->People->CompanyPeople->save($company_people);
 
 			return $person;
 		}

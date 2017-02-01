@@ -143,14 +143,14 @@ class AuthorizationComponent extends Component
 
 		$maxTime = $companyPeople->profile->company_profiles[0]->maxTime;
 
-		// if (!strcmp($companyPeople->profile->name, 'Visita')) {
-		// 	$this->VisitProfiles = TableRegistry::get('VisitProfiles');
-		// 	$maxTime = $this->VisitProfiles->find()->
-		// 		where([
-		// 			'person_id' => $person->id,
-		// 			'company_id' => $company_id
-		// 		])->last()->maxTime;
-		// }
+		if (!strcmp($companyPeople->profile->name, 'Visita')) {
+			$this->VisitProfiles = TableRegistry::get('VisitProfiles');
+			$maxTime = $this->VisitProfiles->find()->
+				where([
+					'person_id' => $person->id,
+					'company_id' => $company_id
+				])->last()->maxTime;
+		}
 
 		return $maxTime;
 	}
