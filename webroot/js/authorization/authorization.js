@@ -22,6 +22,9 @@ $(document).ready(function () {
 		} else {
 			$("#authorization-form").submit();
 		}
+
+		// event.preventDefault();
+
 	});
 
 	$(document).on("click", ".authorization", function () {
@@ -167,24 +170,6 @@ $(document).ready(function () {
 	setInterval(insideAlert, 1000*60);
 	setInterval(insideAlertCount, 1000*60);
 });
-
-function validateRut() {
-	var rut = $("#rut").val();
-
-	valid_rut = $.validateRut(rut, function(r, dv) {
-		$("#rut").parent('.form-group').removeClass('has-error');
-    $("#rut").nextAll('span').remove();
-    $("#rut").val(r);
-	});
-
-	if (!valid_rut) {
-		$("#rut").parent('.form-group').addClass('has-error');
-    $("#rut").nextAll('span').remove();
-		$("#rut").after('<span class="help-block">Rut invalido</span>');
-	}
-
-	return valid_rut;
-}
 
 function passengerRut(count) {
 	return '\

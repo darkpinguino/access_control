@@ -307,7 +307,7 @@ use Cake\I18n\Time;
 				$this->request->session()->delete('vehicle_access');
 			}
 
-			$rut = $this->request->data('rut');
+			$rut = explode('-', $this->request->data('rut'))[0];
 			$number_plate = $this->request->data('number_plate');
 			$vehicle_type = $this->request->data('vehicle_type');
 			$vehicle_profile = $this->request->data('vehicle_profile');
@@ -466,7 +466,7 @@ use Cake\I18n\Time;
 					}
 
 					if (!$this->request->is('ajax')) 
-						$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->rut);
+						$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->fullRut);
 				} else { //verificar atorizacion para la entrada
 					$authorizedPerson = $this->Authorization->isAuthorizedPerson($person, $door);
 
@@ -505,7 +505,7 @@ use Cake\I18n\Time;
 						$maxTime = $this->Authorization->getMaxTime($person, $company_id);
 						$this->Authorization->savePeopleLocation($person, $door, $maxTime);
 						if (!$this->request->is('ajax'))
-							$this->Flash->success("Se autoriza el ingreso de la persona con RUT: ".$person->rut);  //ingreso con exito
+							$this->Flash->success("Se autoriza el ingreso de la persona con RUT: ".$person->fullRut);  //ingreso con exito
 
 						$this->passangerRedirect();
 
@@ -518,7 +518,7 @@ use Cake\I18n\Time;
 			} else {
 				$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 3, 1);
 				if (!$this->request->is('ajax'))
-							$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->rut." ya se registro un ingreso");
+							$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->fullRut." ya se registro un ingreso");
 			}
 		}
 

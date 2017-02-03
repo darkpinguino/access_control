@@ -123,6 +123,7 @@ class PeopleController extends AppController
 
 	public function viewByRut($rut = null)
 	{
+		$rut = explode('-', $rut)[0];
 		$person = $this->People->findByRut($rut)->first();
 
 		$this->set(compact('person'));
@@ -142,8 +143,10 @@ class PeopleController extends AppController
 			$this->loadComponent('Util');
 			$this->loadModel('CompanyPeople');
 			$company_people = $this->CompanyPeople->newEntity($this->request->data);
-			
-			$person = $this->People->findByRut($this->request->data('rut'));
+
+			$rut = explode('-', $this->request->data('rut'))[0];
+
+			$person = $this->People->findByRut($rut);
 
 			if (!empty($this->request->data('new_contractor_company'))) {
 				$contractor_company = $this->CompanyPeople->ContractorCompanies->newEntity();
@@ -168,6 +171,7 @@ class PeopleController extends AppController
 			if ($person->isEmpty()) {
 				$person = $this->People->newEntity();
 				$person = $this->People->patchEntity($person, $this->request->data);
+				$person->rut = $rut;
 				if ($this->People->save($person)) {
 					$company_people->person_id = $person->id;
 					$company_people->company_id = $company_id;
@@ -340,6 +344,8 @@ class PeopleController extends AppController
 					return $this->redirect(['action' => 'index']);
 			}
 		}
+		$person->rut = $person->fullRut;
+
 		$contractor_companies = $this->People->CompanyPeople->ContractorCompanies->find('list')
 			->where(['company_id' => $company_id]);
 		$work_areas = $this->People->CompanyPeople->WorkAreas->find('list')

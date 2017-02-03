@@ -1,5 +1,6 @@
 <?= $this->Html->script('authorization/authorization.js', ['block' => 'scriptView']) ?>
 <?= $this->Html->script('plugins/rut/jquery.rut.min', ['block' => 'scriptView']) ?>
+<?= $this->Html->script('utility/validateRut', ['block' => 'scriptView']) ?>
 
 
 

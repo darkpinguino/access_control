@@ -17,28 +17,26 @@ $(document).ready(function () {
 
 	$("#rut").on('change', function () {
 		var rut  = $(this).val()
-		$.validateRut(rut, function(r, dv) {
-		$("#rut").parent('.form-group').removeClass('has-error');
-    $("#rut").nextAll('span').remove();
-    
-		$.ajax({
-			url: "viewByRut/" + r,
-			type: "GET",
-			dataType: "json",
-			success: function (result, seccess, hrx) {
-				if (result["person"] != null) {
-					$("#name").val(result["person"]["name"]);
-					$("#lastname").val(result["person"]["lastname"]);
-					$("#phone").val(result["person"]["phone"]);
-				} else {
-					$("#name").val("");
-					$("#lastname").val("");
-					$("#phone").val("");
+		valid_rut = validateRut(rut);
+
+		if (valid_rut) {
+			$.ajax({
+				url: "viewByRut/" + $(this).val(),
+				type: "GET",
+				dataType: "json",
+				success: function (result, success, hrx) {
+					if (result["person"] != null) {
+						$("#name").val(result["person"]["name"]);
+						$("#lastname").val(result["person"]["lastname"]);
+						$("#phone").val(result["person"]["phone"]);
+					} else {
+						$("#name").val("");
+						$("#lastname").val("");
+						$("#phone").val("");
+					}
 				}
-			}
-		});
-	});
-		
+			});
+		}		
 	});
 
 	$("#profile-id").on('change', function () {
@@ -67,21 +65,3 @@ $(document).ready(function () {
 		}
 	});
 });
-
-function validateRut() {
-	var rut = $("#rut").val();
-
-	valid_rut = $.validateRut(rut, function(r, dv) {
-		$("#rut").parent('.form-group').removeClass('has-error');
-    $("#rut").nextAll('span').remove();
-    $("#rut").val(r);
-	});
-
-	if (!valid_rut) {
-		$("#rut").parent('.form-group').addClass('has-error');
-    $("#rut").nextAll('span').remove();
-		$("#rut").after('<span class="help-block">Rut invalido</span>');
-	}
-
-	return valid_rut;
-}

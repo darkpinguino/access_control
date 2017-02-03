@@ -1,5 +1,6 @@
-<?= $this->Html->script('people/add.js', ['block' => 'scriptView']); ?>
 <?= $this->Html->script('plugins/rut/jquery.rut.min', ['block' => 'scriptView']) ?>
+<?= $this->Html->script('utility/validateRut', ['block' => 'scriptView']) ?>
+<?= $this->Html->script('people/add.js', ['block' => 'scriptView']); ?>
 
 <div class="box">
 	<div class="box-header">
