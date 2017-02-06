@@ -79,7 +79,11 @@ class VisitProfilesController extends AppController
 		// $reasonVisits = $this->VisitProfiles->ReasonVisits->find('list', ['limit' => 200]);
 		// $companies = $this->VisitProfiles->Companies->find('list', ['limit' => 200]);
 
-		$personToVisit = $this->VisitProfiles->People->find('list')
+		$personToVisit = $this->VisitProfiles->People->find('list', [
+			'keyField' => 'id',
+    	'valueField' => function ($personToVisit) {
+        return $personToVisit->get('fullName');
+    	}])
 			->matching('CompanyPeople', function ($q) use ($company_id)
 			{
 				return $q->where(['company_id' => $company_id, 'CompanyPeople.is_visited' => 1]);
