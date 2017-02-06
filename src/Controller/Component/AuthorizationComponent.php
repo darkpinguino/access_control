@@ -122,7 +122,10 @@ class AuthorizationComponent extends Component
 			'enclosure_id' => $door->enclosure_id
 		])->first();
 
-		$this->People->PeopleLocations->delete($peopleLocation);
+		$this->People->PeopleLocations->deleteAll([
+			'people_id' => $person->id,
+			'created >=' => $peopleLocation->created
+		]);
 	}
 
 	public function getMaxTime($person, $company_id)

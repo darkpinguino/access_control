@@ -208,7 +208,6 @@ use Cake\I18n\Time;
 				->order(['PeopleLocations.created' => 'DESC'])
 				->distinct('people_id');
 
-			// debug($people_locations->toArray()); die;
 			$this->paginate = [
 			    'sortWhitelist'=> [
 			    	'Enclosures.name', 
@@ -331,12 +330,6 @@ use Cake\I18n\Time;
 					"contain" => ["Enclosures"]
 				]);
 
-			// $person = $this->People->findByRut($rut)->
-			// 	contain(['CompanyPeople' => function ($q) use ($company_id)
-			// 	{
-			// 		return $q->where(['CompanyPeople.company_id' => $company_id]);
-			// 	}])->first();
-
 			$person = $this->People->findByRut($rut)
 				->matching('CompanyPeople', function ($q) use ($company_id)
 				{
@@ -346,8 +339,6 @@ use Cake\I18n\Time;
 				{
 					return $q->where(['CompanyPeople.company_id' => $company_id]);
 				}])->first();
-
-			// debug($person); die;
 
 			$access_request = '';
 
