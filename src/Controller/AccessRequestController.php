@@ -88,9 +88,9 @@ class AccessRequestController extends AppController
 				->contain(['People.CompanyPeople.Profiles' => function ($q) use ($company_id)
 				{
 					return $q->where(['CompanyPeople.company_id' => $company_id]);
-				}]);
+				}])
+				->order(['AccessRequest.created' => 'DESC']);
 		}
-
 
 		$accessRequest = $this->paginate($accessRequest);
 
@@ -233,7 +233,8 @@ class AccessRequestController extends AppController
 					'CompanyPeople.company_id' => $company_id,
 					'CompanyPeople.pending' => 1
 				]);
-			});
+			})
+			->order(['AccessRequest.created' => 'DESC']);
 
 		$this->set('accessRequest', $this->paginate($query));
 	}

@@ -20,6 +20,12 @@ class ProfilesSeed extends AbstractSeed
 	{
 		$data = [
 			[
+				'id' => '-1',
+				'name' => '',
+				'created' => date('Y-m-d H:i:s'),
+				'modified' => date('Y-m-d H:i:s')
+			],
+			[
 				'id' => '1',
 				'name' => 'Visita',
 				'created' => date('Y-m-d H:i:s'),

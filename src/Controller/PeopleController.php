@@ -251,7 +251,7 @@ class PeopleController extends AppController
 			$visitProfile->company_id = $company_id;
 			$visitProfile->access_request_id = $this->request->data('access_request_id');
 			
-			if ($person->company_people[0]->profile_id == 1 && !strcmp($this->request->data('status'), 'pending')) {
+			if ($company_people->profile_id == 1 && !strcmp($this->request->data('status'), 'pending')) {
 				$person->visit_profiles = [$visitProfile];
 			}
 
@@ -351,7 +351,7 @@ class PeopleController extends AppController
 		$work_areas = $this->People->CompanyPeople->WorkAreas->find('list')
 			->where(['company_id' => $company_id]);
 		if ($this->request->query('status')) {
-			$profiles = $this->People->Profiles->find('list')->where(['id !=' => 2]);
+			$profiles = $this->People->Profiles->find('list')->where(['id NOT IN' => [-1, 2]]);
 		} else {
 			$profiles = $this->People->Profiles->find('list');
 		}

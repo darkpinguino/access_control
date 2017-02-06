@@ -331,11 +331,23 @@ use Cake\I18n\Time;
 					"contain" => ["Enclosures"]
 				]);
 
-			$person = $this->People->findByRut($rut)->
-				contain(['CompanyPeople' => function ($q) use ($company_id)
+			// $person = $this->People->findByRut($rut)->
+			// 	contain(['CompanyPeople' => function ($q) use ($company_id)
+			// 	{
+			// 		return $q->where(['CompanyPeople.company_id' => $company_id]);
+			// 	}])->first();
+
+			$person = $this->People->findByRut($rut)
+				->matching('CompanyPeople', function ($q) use ($company_id)
+				{
+					return $q->where(['CompanyPeople.company_id' => $company_id]);
+				})
+				->contain(['CompanyPeople' => function ($q) use ($company_id)
 				{
 					return $q->where(['CompanyPeople.company_id' => $company_id]);
 				}])->first();
+
+			// debug($person); die;
 
 			$access_request = '';
 
@@ -421,8 +433,6 @@ use Cake\I18n\Time;
 					if ($person->company_people[0]->profile_id == 1) {	//expirar roles de personas distintas a personal
 						// $accessRoles = $this->People->AccessRolePeople->findByPeopleId($person->id);
 
-						// debug($this->People->AccessRoles); die;
-
 						$accessRoles = $this->People->AccessRolePeople->find()
 							->where(['people_id' => $person->id])
 							->matching('AccessRoles', function ($q) use ($company_id)
@@ -450,6 +460,7 @@ use Cake\I18n\Time;
 					$this->passangerRedirect();
 				}
 			} elseif (!$isInside) {
+
 				$expiredRole = $this->Authorization->isExpiredRole($person, $door);
 
 				if ($expiredRole) { // expiracion del rol para entrada
@@ -481,8 +492,10 @@ use Cake\I18n\Time;
 								->where(['access_request_id' => $pending_access_request->id])
 								->last();
 
-							$visit_profile->access_request_id = $access_request->id;
-							$this->AccessRequest->VisitProfiles->save($visit_profile);
+							if (!is_null($visit_profile)) {
+								$visit_profile->access_request_id = $access_request->id;
+								$this->AccessRequest->VisitProfiles->save($visit_profile);
+							}
 
 						  $vehicle_access_request_query = $this->AccessRequest->VehicleAccessRequest->
 						  findByAccessRequestId($pending_access_request->id)->first();
@@ -537,16 +550,27 @@ use Cake\I18n\Time;
 
 		private function newPerson($person, $rut, $door)
 		{
-			$person = $this->People->newEntity();
-			$person->rut = $rut;
-			$person->company_id = $this->Auth->user()['company_id']; 
-			$this->People->save($person);
+			$company_id = $this->Auth->user('company_id');
+			$person = $this->People->findByRut($rut)->first();
 
-			$company_people = $this->People->newEntity();
-			$company_people->person_id = $person->id;
-			$company_people->company_id = $this->Auth->user()['company_id'];
+			if (is_null($person)) {
+				$person = $this->People->newEntity();
+				$person->rut = $rut;
+				$person->company_id = $company_id; 
+				$this->People->save($person);
+			}
 
-			$this->People->CompanyPeople->save($company_people);
+
+			$company = $this->People->Companies->get($company_id);
+			$company->_joinData = $this->People->CompanyPeople->newEntity();
+			$company->_joinData->person_id = $person->id;
+			$company->_joinData->profile_id = -1;
+			$company->_joinData->contractor_company_id = -1;
+			$company->_joinData->work_area_id = -1;
+			// $$company->_joinData->company_id = $this->Auth->user()['company_id'];
+
+			$this->People->Companies->link($person, [$company]);
+			// $this->People->link($company, [$person]);
 
 			return $person;
 		}
