@@ -228,12 +228,12 @@ use Cake\I18n\Time;
 				->matching('Doors', function ($q) use ($company_id, $door_id)
 				{
 					return $q->where([
-						'Doors.company_id' => $company_id,
-						'Doors.id' => $door_id
+						'Doors.company_id' => $company_id
+						// 'Doors.id' => $door_id
 					]);
 				})
 				->where(['action' => 0])
-				->contain(['People'])
+				->contain(['People', 'Doors'])
 				->order(['AccessRequest.created' => 'DESC'])
 				->limit(10);
 

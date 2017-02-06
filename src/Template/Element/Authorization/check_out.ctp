@@ -10,6 +10,7 @@
 				<tr>
 					<th>Rut</th>
 				  <th>Nombre</th>
+				  <th>Puerta</th>
 				  <th>Hora Salida</th>
 				</tr>
 			  </thead>
@@ -18,6 +19,7 @@
 				  <tr>
 						<td><?= h($out->person->fullRut)?></td>
 					  <td><?= h($out->person->fullName)?></td>
+					  <td><?= h($out->door->name)?></td>
 					  <td><?= h($out->created)?></td>
 					  <td>
 					  </td>
