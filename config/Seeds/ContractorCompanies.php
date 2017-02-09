@@ -21,7 +21,8 @@ class ContractorCompanies extends AbstractSeed
 		$data = [
 			[
 				'id' => '-1',
-				'company_id' => '-1';
+				'name' => '',
+				'company_id' => '-1',
 				'created' => date('Y-m-d H:i:s'),
 				'modified' => date('Y-m-d H:i:s')
 			]

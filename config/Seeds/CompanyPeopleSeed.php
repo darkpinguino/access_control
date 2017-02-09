@@ -26,7 +26,10 @@ class CompanyPeopleSeed extends AbstractSeed
 				'profile_id' => '2',
 				'is_visited' => '1',
 				'created' => date('Y-m-d H:i:s'),
-				'modified' => date('Y-m-d H:i:s')
+				'modified' => date('Y-m-d H:i:s'),
+				'contractor_company_id' => -1,
+				'work_area_id' => -1,
+				'pending' => 0
 			]
 		];
 

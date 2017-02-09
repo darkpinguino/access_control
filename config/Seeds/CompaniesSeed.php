@@ -22,6 +22,11 @@ class CompaniesSeed extends AbstractSeed
 			[
 				'id' => '1',
 				'name' => 'empresa 1',
+				'email' => '',
+				'phone' => 0,
+				'address' => '',
+				'contact' => '',
+				'description' => '',
 				'created' => date('Y-m-d H:i:s'),
 				'modified' => date('Y-m-d H:i:s')
 			]

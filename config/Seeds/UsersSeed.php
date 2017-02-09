@@ -26,6 +26,7 @@ class UsersSeed extends AbstractSeed
 				'userRole_id' => '1',
 				'person_id' => '1',
 				'company_id' => '1',
+				'doorCharge_id' => 0,
 				'created' => date('Y-m-d H:i:s'),
 				'modified' => date('Y-m-d H:i:s')
 			]
