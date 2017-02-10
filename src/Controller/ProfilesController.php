@@ -51,7 +51,11 @@ class ProfilesController extends AppController
 		];
 
 		$profiles = $this->Profiles->find()
-			->where(['name LIKE' => '%'.$search.'%']);
+			->where(['name LIKE' => '%'.$search.'%', 'Profiles.id !=' => -1])
+			->matching('CompanyProfiles', function ($q) use ($company_id)
+			{
+				return $q->where(['CompanyProfiles.company_id' => $company_id]);
+			});
 
 		$profiles = $this->paginate($profiles);
 
