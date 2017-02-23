@@ -107,6 +107,7 @@ class CompaniesController extends AppController
      */
     public function delete($id = null)
     {
+        
         $this->request->allowMethod(['post', 'delete']);
         $company = $this->Companies->get($id);
         if ($this->Companies->delete($company)) {

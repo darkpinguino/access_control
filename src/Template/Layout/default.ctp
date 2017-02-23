@@ -162,37 +162,37 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 	    </section>
 
       <!-- Modal -->
-<div id="myModalDelete2" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+    <div id="myModalDelete2" class="modal fade" role="dialog">
+      <div class="modal-dialog">
 
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Eliminar</h4>
-      </div>
-      <div class="modal-body">
-        ¿Está seguro que desea eliminar permanentemente <?php echo $controllerName?>: <b><span id=displayFieldText></span></b>?
-        </br>
-        <?php
-            echo $this->Form->postLink(
-                 'Confirm',
-                    array('action' => 'delete'),
-                    array('class' => 'btn btn-danger btn-sm active'),
-                    false);
-            echo $this->Html->link(__('Hidden-Action'),
-              ['action'=> 'delete'],
-              ['class'=>'hidden',
-              'id'=>'hidden-delete-action'])
-                ?>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Eliminar</h4>
+          </div>
+          <div class="modal-body">
+            ¿Está seguro que desea eliminar permanentemente <?php echo $controllerName?>: <b><span id=displayFieldText></span></b>?
+            </br>
+            <?php
+                echo $this->Form->postLink(
+                     'Confirm',
+                        array('action' => 'delete'),
+                        array('class' => 'btn btn-danger btn-sm active'),
+                        false);
+                echo $this->Html->link(__('Hidden-Action'),
+                  ['action'=> 'delete'],
+                  ['class'=>'hidden',
+                  'id'=>'hidden-delete-action'])
+                    ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
       </div>
     </div>
-
-  </div>
-</div>
 
 	    <!-- Main content -->
 	    <section class="content">

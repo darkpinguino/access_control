@@ -1,18 +1,20 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\Form;
+use App\Model\Entity\Question;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Forms Model
+ * Questions Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Companies
+ * @property \Cake\ORM\Association\BelongsTo $Forms
+ * @property \Cake\ORM\Association\HasMany $AnswersSets
+ * @property \Cake\ORM\Association\HasMany $Options
  */
-class FormsTable extends Table
+class QuestionsTable extends Table
 {
 
     /**
@@ -25,18 +27,21 @@ class FormsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('forms');
-        $this->displayField('name');
+        $this->table('questions');
+        $this->displayField('id');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Companies', [
-            'foreignKey' => 'company_id',
+        $this->belongsTo('Forms', [
+            'foreignKey' => 'form_id',
             'joinType' => 'INNER'
         ]);
-        $this->hasMany('Questions', [
-            'foreignKey' => 'form_id'
+        $this->hasMany('AnswersSets', [
+            'foreignKey' => 'question_id'
+        ]);
+        $this->hasMany('Options', [
+            'foreignKey' => 'question_id'
         ]);
     }
 
@@ -53,19 +58,15 @@ class FormsTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->requirePresence('name', 'create')
-            ->notEmpty('name');
+            ->requirePresence('question_text', 'create')
+            ->notEmpty('question_text');
 
         $validator
-            ->requirePresence('description', 'create')
-            ->notEmpty('description');
+            ->requirePresence('type', 'create')
+            ->notEmpty('type');
 
         return $validator;
     }
-
-    
-
-
 
     /**
      * Returns a rules checker object that will be used for validating
@@ -76,7 +77,7 @@ class FormsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['company_id'], 'Companies'));
+        $rules->add($rules->existsIn(['form_id'], 'Forms'));
         return $rules;
     }
 }

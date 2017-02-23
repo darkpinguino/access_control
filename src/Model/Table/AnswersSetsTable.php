@@ -1,18 +1,19 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\Form;
+use App\Model\Entity\AnswersSet;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Forms Model
+ * AnswersSets Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Companies
+ * @property \Cake\ORM\Association\BelongsTo $Answers
+ * @property \Cake\ORM\Association\BelongsTo $Questions
  */
-class FormsTable extends Table
+class AnswersSetsTable extends Table
 {
 
     /**
@@ -25,18 +26,19 @@ class FormsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('forms');
-        $this->displayField('name');
+        $this->table('answers_sets');
+        $this->displayField('id');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Companies', [
-            'foreignKey' => 'company_id',
+        $this->belongsTo('Answers', [
+            'foreignKey' => 'answer_id',
             'joinType' => 'INNER'
         ]);
-        $this->hasMany('Questions', [
-            'foreignKey' => 'form_id'
+        $this->belongsTo('Questions', [
+            'foreignKey' => 'question_id',
+            'joinType' => 'INNER'
         ]);
     }
 
@@ -52,20 +54,8 @@ class FormsTable extends Table
             ->integer('id')
             ->allowEmpty('id', 'create');
 
-        $validator
-            ->requirePresence('name', 'create')
-            ->notEmpty('name');
-
-        $validator
-            ->requirePresence('description', 'create')
-            ->notEmpty('description');
-
         return $validator;
     }
-
-    
-
-
 
     /**
      * Returns a rules checker object that will be used for validating
@@ -76,7 +66,8 @@ class FormsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['company_id'], 'Companies'));
+        $rules->add($rules->existsIn(['answer_id'], 'Answers'));
+        $rules->add($rules->existsIn(['question_id'], 'Questions'));
         return $rules;
     }
 }

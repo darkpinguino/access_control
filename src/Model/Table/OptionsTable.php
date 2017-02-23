@@ -1,18 +1,18 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\Form;
+use App\Model\Entity\Option;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Forms Model
+ * Options Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Companies
+ * @property \Cake\ORM\Association\BelongsTo $Questions
  */
-class FormsTable extends Table
+class OptionsTable extends Table
 {
 
     /**
@@ -25,18 +25,15 @@ class FormsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('forms');
-        $this->displayField('name');
+        $this->table('options');
+        $this->displayField('id');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Companies', [
-            'foreignKey' => 'company_id',
+        $this->belongsTo('Questions', [
+            'foreignKey' => 'question_id',
             'joinType' => 'INNER'
-        ]);
-        $this->hasMany('Questions', [
-            'foreignKey' => 'form_id'
         ]);
     }
 
@@ -53,19 +50,11 @@ class FormsTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->requirePresence('name', 'create')
-            ->notEmpty('name');
-
-        $validator
-            ->requirePresence('description', 'create')
-            ->notEmpty('description');
+            ->requirePresence('option_text', 'create')
+            ->notEmpty('option_text');
 
         return $validator;
     }
-
-    
-
-
 
     /**
      * Returns a rules checker object that will be used for validating
@@ -76,7 +65,7 @@ class FormsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['company_id'], 'Companies'));
+        $rules->add($rules->existsIn(['question_id'], 'Questions'));
         return $rules;
     }
 }

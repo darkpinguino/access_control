@@ -63,7 +63,8 @@ class CompaniesTable extends Table
             'foreignKey' => 'company_id'
         ]);
         $this->hasMany('Sensors', [
-            'foreignKey' => 'company_id'
+            'foreignKey' => 'company_id',
+            'dependent' => false
         ]);
         $this->hasMany('Vehicles', [
             'foreignKey' => 'company_id'
@@ -114,6 +115,8 @@ class CompaniesTable extends Table
         return $validator;
     }
 
+
+
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.
@@ -126,4 +129,38 @@ class CompaniesTable extends Table
         $rules->add($rules->isUnique(['email']));
         return $rules;
     }
+
+    // public function beforeDelete ($cascade = false)
+    // {
+    //     debug($this->id);die;
+    //     $count = $this->Forms->find("count", array(
+    //         "conditions" => array("company_id" => $this->id)
+    //     ));
+    //     if ($count == 0) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
+    public function beforeDelete($event, $entity)
+    {
+        debug($entity); die;
+
+        // $count = $this->Forms->find("count", array(
+        //     "conditions" => array("company_id" => $entity->id)
+        // ));
+
+        $count = $this->Forms->find()
+            ->where(['company_id' => $entity->id])
+            ->count();
+
+        if ($count == 0) {
+            //debug("count = 0"); die;
+            return true;
+        }
+
+        //debug("conunt != 0"); die;
+        return false;
+    }
+
 }
