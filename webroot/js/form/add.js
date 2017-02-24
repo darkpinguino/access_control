@@ -10,17 +10,13 @@ function addQuestions() {
 function pregunta(count) {
 	return '\
 		<div class="input-group">'+
-			'<input type="text" class="form-control col-md-9" name="question['+count+']" id="question'+count+'-id" >'+
+			'<input type="text" class="form-control col-md-9" name="questions['+count+'][question_text]" id="question'+count+'-id" >'+
 			'<span class="input-group-addon"></span>'+
-			'<select id="searchbygenerals_currency"  name="searchbygenerals[currency]" class="form-control col-md-3">'+
+			'<select id="question_type"  name="questions['+count+'][type]" class="form-control col-md-3">'+
         		'<option selected value="1">Respuesta Corta</option>'+
         		'<option value="2">Párrafo</option>'+
         		'<option value="3">Selección Múltiple</option>'+
     		'</select>'+
-		'</div>'+
-		'<br>'+
-		'<div id="answer'+count+'">'+
-			'<input type="text" class="form-control" id="answer'+count+'-id">'+
 		'</div>'+
 		'<br>'
 };

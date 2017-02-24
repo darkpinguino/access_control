@@ -37,8 +37,8 @@ class QuestionsTable extends Table
             'foreignKey' => 'form_id',
             'joinType' => 'INNER'
         ]);
-        $this->hasMany('AnswersSets', [
-            'foreignKey' => 'question_id'
+        $this->belongsToMany('Answers', [
+            'through' => 'AnswersSets',
         ]);
         $this->hasMany('Options', [
             'foreignKey' => 'question_id'

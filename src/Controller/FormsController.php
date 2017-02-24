@@ -59,7 +59,9 @@ class FormsController extends AppController
         if ($this->request->is('post')) {
             $company_id = $this->Auth->user()['company_id'];
             $form = $this->Forms->patchEntity($form, $this->request->data);
+            //debug($this->request->data);die;
             $form->company_id=$company_id;
+
             if ($this->Forms->save($form)) {
                 $this->Flash->success(__('Este formulario ha sido creado exitosamente.'));
                 return $this->redirect(['action' => 'index']);
@@ -116,4 +118,21 @@ class FormsController extends AppController
         }
         return $this->redirect(['action' => 'index']);
     }
+
+    public function respondForm($id = null)
+    {
+        $this->loadmodel('AnswersSets');
+        $answer_set = $this->AnswersSets->newEntity();
+        $form = $this->Forms->get($id, ['contain' => 'Questions']);
+
+/*
+        if ($this->AnswersSets->save($answer_set)) {
+            $this->Flash->success(__('Las respuestas han sido guardadas.'));
+            return $this->redirect(['action' => 'index']);
+        } else {
+            $this->Flash->error(__('Las respuestas no han podido ser guardadas. Por favor, intente nuevamente.'));
+        }*/
+        $this->set(compact('form','answer_set'));
+    }
+
 }

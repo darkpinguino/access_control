@@ -24,6 +24,7 @@
 
       
   </div>
+
   <div class="box-footer">
     <?= $this->Form->button(__('Guardar')) ?>
   </div>

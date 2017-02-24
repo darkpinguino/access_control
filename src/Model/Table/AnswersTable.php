@@ -31,9 +31,10 @@ class AnswersTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->hasMany('AnswersSets', [
-            'foreignKey' => 'answer_id'
+        $this->belongsToMany('Questions', [
+            'through' => 'AnswersSets',
         ]);
+
     }
 
     /**
