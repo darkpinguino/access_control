@@ -1,20 +1,20 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\Question;
+use App\Model\Entity\QuestionsAnswer;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Questions Model
+ * QuestionsAnswers Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Forms
- * @property \Cake\ORM\Association\HasMany $AnswersSets
- * @property \Cake\ORM\Association\HasMany $Options
+ * @property \Cake\ORM\Association\BelongsTo $Answers
+ * @property \Cake\ORM\Association\BelongsTo $Questions
+ * @property \Cake\ORM\Association\BelongsTo $AnswerSets
  */
-class QuestionsTable extends Table
+class QuestionsAnswersTable extends Table
 {
 
     /**
@@ -27,21 +27,23 @@ class QuestionsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('questions');
+        $this->table('questions_answers');
         $this->displayField('id');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Forms', [
-            'foreignKey' => 'form_id',
+        $this->belongsTo('Answers', [
+            'foreignKey' => 'answer_id',
             'joinType' => 'INNER'
         ]);
-        $this->hasMany('QuestionsAnswers', [
+        $this->belongsTo('Questions', [
             'foreignKey' => 'question_id',
+            'joinType' => 'INNER'
         ]);
-        $this->hasMany('Options', [
-            'foreignKey' => 'question_id'
+        $this->belongsTo('AnswerSets', [
+            'foreignKey' => 'answer_set_id',
+            'joinType' => 'INNER'
         ]);
     }
 
@@ -57,14 +59,6 @@ class QuestionsTable extends Table
             ->integer('id')
             ->allowEmpty('id', 'create');
 
-        $validator
-            ->requirePresence('question_text', 'create')
-            ->notEmpty('question_text');
-
-        $validator
-            ->requirePresence('type', 'create')
-            ->notEmpty('type');
-
         return $validator;
     }
 
@@ -77,7 +71,9 @@ class QuestionsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['form_id'], 'Forms'));
+        $rules->add($rules->existsIn(['answer_id'], 'Answers'));
+        $rules->add($rules->existsIn(['question_id'], 'Questions'));
+        $rules->add($rules->existsIn(['answer_set_id'], 'AnswerSets'));
         return $rules;
     }
 }

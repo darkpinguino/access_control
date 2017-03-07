@@ -4,14 +4,17 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * AnswersSet Entity.
+ * QuestionsAnswer Entity.
  *
  * @property int $id
+ * @property int $answer_id
+ * @property \App\Model\Entity\Answer $answer
+ * @property int $question_id
+ * @property \App\Model\Entity\Question $question
  * @property \Cake\I18n\Time $created
- * @property \Cake\I18n\Time $modified
- * @property \App\Model\Entity\QuestionsAnswer[] $questions_answers
+ * @property int $answer_set_id
  */
-class AnswersSet extends Entity
+class QuestionsAnswer extends Entity
 {
 
     /**

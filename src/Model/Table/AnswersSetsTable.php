@@ -10,8 +10,6 @@ use Cake\Validation\Validator;
 /**
  * AnswersSets Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Answers
- * @property \Cake\ORM\Association\BelongsTo $Questions
  */
 class AnswersSetsTable extends Table
 {
@@ -31,15 +29,6 @@ class AnswersSetsTable extends Table
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
-
-        $this->belongsTo('Answers', [
-            'foreignKey' => 'answer_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Questions', [
-            'foreignKey' => 'question_id',
-            'joinType' => 'INNER'
-        ]);
     }
 
     /**
@@ -55,19 +44,5 @@ class AnswersSetsTable extends Table
             ->allowEmpty('id', 'create');
 
         return $validator;
-    }
-
-    /**
-     * Returns a rules checker object that will be used for validating
-     * application integrity.
-     *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function buildRules(RulesChecker $rules)
-    {
-        $rules->add($rules->existsIn(['answer_id'], 'Answers'));
-        $rules->add($rules->existsIn(['question_id'], 'Questions'));
-        return $rules;
     }
 }

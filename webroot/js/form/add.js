@@ -15,7 +15,9 @@ function pregunta(count) {
 			'<select id="question_type"  name="questions['+count+'][type]" class="form-control col-md-3">'+
         		'<option selected value="1">Respuesta Corta</option>'+
         		'<option value="2">Párrafo</option>'+
-        		'<option value="3">Selección Múltiple</option>'+
+        		'<option value="3">Cantidad</option>'+
+        		'<option value="4">Fecha</option>'+
+        		'<option value="5">Selección Múltiple</option>'+
     		'</select>'+
 		'</div>'+
 		'<br>'

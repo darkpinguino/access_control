@@ -1,7 +1,7 @@
 <?php
 use Migrations\AbstractMigration;
 
-class CreateAnswersSet extends AbstractMigration
+class CreateQuestionsAnswers extends AbstractMigration
 {
     /**
      * Change Method.
@@ -12,7 +12,7 @@ class CreateAnswersSet extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('answers_sets');
+        $table = $this->table('questions_answers');
         $table->addColumn('answer_id', 'integer', [
             'default' => null,
             'limit' => 11,
@@ -27,8 +27,9 @@ class CreateAnswersSet extends AbstractMigration
             'default' => null,
             'null' => false,
         ]);
-        $table->addColumn('modified', 'datetime', [
+        $table->addColumn('mofified', 'string', [
             'default' => null,
+            'limit' => 255,
             'null' => false,
         ]);
         $table->create();

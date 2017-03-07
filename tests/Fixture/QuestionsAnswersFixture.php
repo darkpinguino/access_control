@@ -4,10 +4,10 @@ namespace App\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * AnswersSetsFixture
+ * QuestionsAnswersFixture
  *
  */
-class AnswersSetsFixture extends TestFixture
+class QuestionsAnswersFixture extends TestFixture
 {
 
     /**
@@ -18,8 +18,10 @@ class AnswersSetsFixture extends TestFixture
     // @codingStandardsIgnoreStart
     public $fields = [
         'id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
+        'answer_id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
+        'question_id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
         'created' => ['type' => 'datetime', 'length' => null, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null],
-        'modified' => ['type' => 'datetime', 'length' => null, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null],
+        'answer_set_id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
         ],
@@ -38,8 +40,10 @@ class AnswersSetsFixture extends TestFixture
     public $records = [
         [
             'id' => 1,
-            'created' => '2017-03-02 19:13:16',
-            'modified' => '2017-03-02 19:13:16'
+            'answer_id' => 1,
+            'question_id' => 1,
+            'created' => '2017-03-02 19:11:52',
+            'answer_set_id' => 1
         ],
     ];
 }
