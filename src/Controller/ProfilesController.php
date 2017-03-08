@@ -51,7 +51,10 @@ class ProfilesController extends AppController
 		];
 
 		$profiles = $this->Profiles->find()
-			->where(['name LIKE' => '%'.$search.'%']);
+			->where([
+				'id !=' => -1,
+				'name LIKE' => '%'.$search.'%'
+			]);
 
 		$profiles = $this->paginate($profiles);
 
@@ -119,16 +122,6 @@ class ProfilesController extends AppController
 			'contain' => []
 		]);
 
-		if ($this->request->is(['patch', 'post', 'put'])) {
-			$company_profile = $this->Profiles->CompanyProfiles->patchEntity($profile, $this->request->data);
-			if ($this->Profiles->CompanyProfiles->save($company_profile)) {
-				$this->Flash->success(__('El perfil ha sido guardado.'));
-				return $this->redirect(['action' => 'index']);
-			} else {
-				$this->Flash->error(__('El perfil no ha podido ser guardado. Por favor, intente nuevamente.'));
-			}
-		}
-
 		$company_profile = $this->Profiles->CompanyProfiles->find()
 			->where([
 				'profile_id' => $profile->id, 
@@ -136,6 +129,16 @@ class ProfilesController extends AppController
 			])
 			->contain(['Profiles'])
 			->first();
+			
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			$company_profile = $this->Profiles->CompanyProfiles->patchEntity($company_profile, $this->request->data);
+			if ($this->Profiles->CompanyProfiles->save($company_profile)) {
+				$this->Flash->success(__('El perfil ha sido guardado.'));
+				return $this->redirect(['action' => 'index']);
+			} else {
+				$this->Flash->error(__('El perfil no ha podido ser guardado. Por favor, intente nuevamente.'));
+			}
+		}
 
 		$this->set(compact('company_profile'));
 		$this->set('_serialize', ['profile']);
