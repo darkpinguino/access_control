@@ -470,7 +470,7 @@ class PeopleController extends AppController
 			$new_access_role = $this->passNewData($id, $access_roles_id);
 
 			if ($this->request->data['notExpire']) {
-				$expiration = '0';
+				$expiration = '0000-00-00';
 			} else {
 				$expiration = Date::createFromFormat(
 					'd/m/Y', $this->request->data('expiration'));
