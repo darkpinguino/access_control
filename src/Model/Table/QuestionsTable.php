@@ -37,7 +37,12 @@ class QuestionsTable extends Table
             'foreignKey' => 'form_id',
             'joinType' => 'INNER'
         ]);
-        $this->hasMany('QuestionsAnswers', [
+        $this->belongsTo('Measures', [
+            'foreignKey' => 'measure_id',
+            'joinType' => 'INNER'
+        ]);
+
+        $this->hasMany('Answers', [
             'foreignKey' => 'question_id',
         ]);
         $this->hasMany('Options', [

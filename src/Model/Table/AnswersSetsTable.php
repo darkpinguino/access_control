@@ -29,6 +29,10 @@ class AnswersSetsTable extends Table
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->hasMany('Answers', [
+            'foreignKey' => 'answer_set_id',
+        ]);
     }
 
     /**

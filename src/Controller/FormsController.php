@@ -121,39 +121,26 @@ class FormsController extends AppController
 
     public function respondForm($id = null)
     {
-        $this->loadmodel('QuestionsAnswers');
-        $question_answer = $this->QuestionsAnswers->newEntity();
+        $this->loadmodel('AnswersSets');
+        $answer_set = $this->AnswersSets->newEntity();
         $form = $this->Forms->get($id, ['contain' => 'Questions']);
         //Hasta acá es para cargar las preguntas del formulario.
 
-        $this->loadmodel('Answers');
-        $answer = $this->Answers->newEntity();
         if ($this->request->is('post')) {
-            $answer = $this->Answers->patchEntity($answer, $this->request->data);
-            debug($this->request->getData());die;
+            $answer_set = $this->AnswersSets->patchEntity($answer_set, $this->request->data);
+            //debug($answer_set); die;
 
-            $form->company_id=$company_id;
-
-            if ($this->Forms->save($form)) {
-                $this->Flash->success(__('Este formulario ha sido creado exitosamente.'));
-                return $this->redirect(['action' => 'index']);
+            if($this->AnswersSets->save($answer_set)){
+                $this->Flash->success(__('Este formulario ha respondido creado exitosamente.'));
             } else {
-                $this->Flash->error(__('El formulario no ha podido ser creado. Por favor intente nuevamente.'));
+                $this->Flash->error(__('El formulario no ha podido ser respondido.
+                 Por favor intente nuevamente.'));
             }
+
         }
-        $companies = $this->Forms->Companies->find('list', ['limit' => 200]);
-        $this->set(compact('form', 'companies'));
-        $this->set('_serialize', ['form']);
 
-
-
-        // if ($this->AnswersSets->save($answer)) {
-        //     $this->Flash->success(__('Las respuestas han sido guardadas.'));
-        //     return $this->redirect(['action' => 'index']);
-        // } else {
-        //     $this->Flash->error(__('Las respuestas no han podido ser guardadas. Por favor, intente nuevamente.'));
-        // }
-        $this->set(compact('form','question_answer'));
+        //debug($form); die;
+        $this->set(compact('form','answer_set'));
     }
 
 }
