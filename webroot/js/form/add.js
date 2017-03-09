@@ -7,6 +7,11 @@ $(document).ready(function() {
 		modifyQuestion(option, id_group);
 		$("#select-question-"+id_group).val(option);
 	});	
+
+	$(document).on('click', '#delete_button', function () {
+		$("#input-container"+question_count).remove();
+		question_count -=1;
+	})
 });
 
 function addQuestions() {
@@ -19,22 +24,25 @@ function addQuestions() {
 function modifyQuestion(option, id_group) {
 	var question = '';
 	if (option == 3) {
-		question = question + fill(id_group);
-		question = question + paint(id_group)
+		//question = question + fill(id_group);
+		paint(id_group);
 	} else {
 		question = question + fill(id_group);
+		$("#question-group-"+id_group).empty();
+		$("#question-group-"+id_group).append(question);
 	}
 
-	$("#question-group-"+id_group).empty();
-	$("#question-group-"+id_group).append(question);
 }
 
 function pregunta(question_count) {
 	return '\
-		<label>Pregunta</label>'+
+		<div id="input-container-'+question_count+'">' +
+		'<label>Pregunta</label>'+
 		'<div class="input-group" id="question-group-'+question_count+'">'+
 		'</div>'+
-		'<br>';
+		'<br>' +
+		'</div>'
+		;
 }
 
 function fill(question_count){
@@ -42,22 +50,20 @@ function fill(question_count){
 		<input type="text" class="form-control col-md-9" name="questions['+question_count+'][question_text]">'+
 			'<span class="input-group-addon"></span>'+
 			'<select id="select-question-'+question_count+'" name="questions['+question_count+'][type]" class="question_type form-control col-md-3" question-group-id="'+question_count+'">'+
-        		'<option value="1">Respuesta Corta</option>'+
-        		'<option value="2">Párrafo</option>'+
-        		'<option value="3">Cantidad</option>'+
-        		'<option value="4">Fecha</option>'+
-        		'<option value="5">Selección Múltiple</option>'+
-    		'</select>';
+				'<option value="1">Respuesta Corta</option>'+
+				'<option value="2">Párrafo</option>'+
+				'<option value="3">Cantidad</option>'+
+				'<option value="4">Fecha</option>'+
+			'</select>';
 }
 
 function paint(question_count){
-	return '\
-	<span class="input-group-addon"></span>'+
-	'<select  class="question_type form-control col-md-3">'+
-	    '<option value="1">Respuesta Corta</option>'+
-	    '<option value="2">Párrafo</option>'+
-	    '<option value="3">Cantidad</option>'+
-	    '<option value="4">Fecha</option>'+
-	    '<option value="5">Selección Múltiple</option>'+
-	'</select>';;
+	$.ajax({
+		url: "ajaxMeasures/"+question_count,
+		type: "GET",
+		success: function (result, status, xhr) {
+			$("#question-group-"+question_count).append(result);
+		}
+	});
 }
+
