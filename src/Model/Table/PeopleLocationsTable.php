@@ -16,58 +16,65 @@ use Cake\Validation\Validator;
 class PeopleLocationsTable extends Table
 {
 
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
-    public function initialize(array $config)
-    {
-        parent::initialize($config);
+	/**
+	 * Initialize method
+	 *
+	 * @param array $config The configuration for the Table.
+	 * @return void
+	 */
+	public function initialize(array $config)
+	{
+		parent::initialize($config);
 
-        $this->table('people_locations');
-        $this->displayField('id');
-        $this->primaryKey('id');
+		$this->table('people_locations');
+		$this->displayField('id');
+		$this->primaryKey('id');
 
-        $this->addBehavior('Timestamp');
+		$this->addBehavior('Timestamp');
 
-        $this->belongsTo('People', [
-            'foreignKey' => 'people_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Enclosures', [
-            'foreignKey' => 'enclosure_id',
-            'joinType' => 'INNER'
-        ]);
-    }
+		$this->belongsTo('People', [
+			'foreignKey' => 'people_id',
+			'joinType' => 'INNER'
+		]);
+		$this->belongsTo('Enclosures', [
+			'foreignKey' => 'enclosure_id',
+			'joinType' => 'INNER'
+		]);
+		$this->belongsTo('AccessRequest', [
+			'foreignKey' => 'access_request_id',
+			'joinType' => 'INNER'
+		]);
+		$this->hasMany('InsideAlerts', [
+			'foreignKey' => 'people_locations_id'
+		]);
+	}
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator)
-    {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
+	/**
+	 * Default validation rules.
+	 *
+	 * @param \Cake\Validation\Validator $validator Validator instance.
+	 * @return \Cake\Validation\Validator
+	 */
+	public function validationDefault(Validator $validator)
+	{
+		$validator
+			->integer('id')
+			->allowEmpty('id', 'create');
 
-        return $validator;
-    }
+		return $validator;
+	}
 
-    /**
-     * Returns a rules checker object that will be used for validating
-     * application integrity.
-     *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function buildRules(RulesChecker $rules)
-    {
-        $rules->add($rules->existsIn(['people_id'], 'People'));
-        $rules->add($rules->existsIn(['enclosure_id'], 'Enclosures'));
-        return $rules;
-    }
+	/**
+	 * Returns a rules checker object that will be used for validating
+	 * application integrity.
+	 *
+	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Cake\ORM\RulesChecker
+	 */
+	public function buildRules(RulesChecker $rules)
+	{
+		$rules->add($rules->existsIn(['people_id'], 'People'));
+		$rules->add($rules->existsIn(['enclosure_id'], 'Enclosures'));
+		return $rules;
+	}
 }

@@ -42,7 +42,7 @@
 			echo '----';
 		}
 		if (!strcmp($active_vehicle_alert, 'alert')) {
-		 	echo $this->element('Modal/vehicleAlert', ['person_alert' => $person_alert, 'vehicle_location' => $vehicle_location]);
+			echo $this->element('Modal/vehicleAlert', ['person_alert' => $person_alert, 'vehicle_location' => $vehicle_location]);
 		} else {
 			echo $this->element('Modal/vehicleRestriction', ['vehicle_location' => $vehicle_location]);
 		}

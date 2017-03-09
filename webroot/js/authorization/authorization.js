@@ -44,11 +44,11 @@ $(document).ready(function () {
 	});
 
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-  	if ($(this.innerHTML)['selector'] == 'Personas') {
-  		$("#rut").focus();
-  	} else {
-  		$("#vehicle-rut").focus();
-  	}
+	if ($(this.innerHTML)['selector'] == 'Personas') {
+		$("#rut").focus();
+	} else {
+		$("#vehicle-rut").focus();
+	}
 	})
 
 	$(document).on("click", "#vehicle_alert_submit", function () {
@@ -118,9 +118,9 @@ $(document).ready(function () {
 	});
 
 	$('#vehicle-rut').keypress(function(e){
-    if ( e.which == 13 ) return false;
-    // //or...
-    // if ( e.which == 13 ) e.preventDefault();
+	if ( e.which == 13 ) return false;
+	// //or...
+	// if ( e.which == 13 ) e.preventDefault();
 	});
 
 	$("#vehicle-alert-modal").modal();
@@ -151,11 +151,13 @@ $(document).ready(function () {
 
 	$(document).on('click', "#notifications-menu2", function () {
 		getNotificacions();
-	})
+	});
 
 	$(document).on('click', ".notifications", function () {
 		markSeen($(this).attr('notification-id'));
-	})
+		console.log($(this).attr('notification-id'))
+		showNotification($(this).attr('notification-id'));
+	});
 
 	insideAlert();
 	insideAlertCount();
@@ -185,6 +187,9 @@ function insideAlert() {
 			} else {
 				$("#inside-alert-modal").modal('hide');
 			}
+		},
+		error: function (xhr, status, error) {
+			console.log(error);
 		}
 	});
 }
@@ -226,7 +231,6 @@ function getNotificacions() {
 }
 
 function markSeen(notification_id) {
-	console.log("Entro");
 	$.ajax({
 		url: "../notifications/markSeen/"+user_id+"/"+notification_id,
 		type: "GET",
@@ -239,27 +243,24 @@ function markSeen(notification_id) {
 }
 
 function viewNotificacions(notifications) {
-	// $("#notifications-dropdown2").empty();
-
-	console.log(notifications);
-	console.log(notifications[0].users.length);
-	console.log(notifications[1].users.length);
-
 	$("#notifications-dropdown2").html(
 		makeNotifications(notifications)
 	);
+}
 
-	// $("#notifications-dropdown2").html(
-	// 	'<li>\
-	// 		<ul class="menu">\
-	//       <li>\
-	//         <a>\
-	//           <i class="ion ion-ios-people info"></i> Notification title\
-	//         </a>\
-	//       </li>\
-	//     </ul>\
-	//   </li>'
- //    );
+function showNotification(notification_id) {
+	$.ajax({
+		url: "../notifications/show/"+notification_id,
+		type: "GET",
+		success: function (result, status, xhr) {
+			$('#alert-div').empty();
+			$('#alert-div').html(result);
+			$("#alert-modal").modal();
+		}, error: function (xhr, status, error) {
+			console.log(error);
+			console.log(xhr);
+		}
+	});
 }
 
 function makeNotifications(notifications) {
@@ -279,13 +280,13 @@ function makeNotifications(notifications) {
 		}
 
 		notifications_view = notifications_view + '<li>\
-	 		<ul class="menu">\
-	       <li>\
-	        <a class="notifications ' + background_color + '" notification-id="' + notifications[i]['id'] + '" href="#"' + '>\
-	         <i class="fa fa-warning '+ color_text + '"></i>' + notifications[i]['notification'] +
-	        '</a>\
-	      </li>\
-	    </ul>\
+			<ul class="menu">\
+		   <li>\
+			<a class="notifications ' + background_color + '" notification-id="' + notifications[i]['id'] + '" href="#"' + '>\
+			 <i class="fa fa-warning '+ color_text + '"></i>' + notifications[i]['notification'] +
+			'</a>\
+		  </li>\
+		</ul>\
 	  </li>'
 	}
 
@@ -325,14 +326,14 @@ function populeteNotification(countPeople) {
 
 		$("#notifications-dropdown").html(
 							'<li>\
-	              <ul class="menu">\
-	                <li>\
-	                  <a id="notification-people" href="#">\
-	                    <i class="fa fa-users text-red"></i> <span>' + countPeople + message + 'en tiempo</span>\
-	                  </a>\
-	                </li>\
-	              </ul>\
-	            </li>');
+				  <ul class="menu">\
+					<li>\
+					  <a id="notification-people" href="#">\
+						<i class="fa fa-users text-red"></i> <span>' + countPeople + message + 'en tiempo</span>\
+					  </a>\
+					</li>\
+				  </ul>\
+				</li>');
 	}
 }
 
@@ -371,34 +372,34 @@ function populatePeopleCount(countPeople) {
 
 		$("#people-count-dropdown").html(
 							'<li class="header">Personas ingresadas</li>\
-	            <li>\
-	              <ul class="menu">\
-	                <li>\
-	                  <a id="employees-count-people" href="#">\
-	                    <i class="fa fa-users text-aqua"></i> <span>' + countPeople['employees_count'] + employess_message + '</span>\
-	                  </a>\
-	                </li>\
-	              </ul>\
-	            </li>\
-	            <li>\
-	              <ul class="menu">\
-	                <li>\
-	                  <a id="contractos-count-people" href="#">\
-	                    <i class="fa fa-users text-light-blue"></i> <span>' + countPeople['contractors_count'] + contractors_message + '</span>\
-	                  </a>\
-	                </li>\
-	              </ul>\
-	            </li>\
-	            <li>\
-	              <ul class="menu">\
-	                <li>\
-	                  <a id="visit-count-people" href="#">\
-	                    <i class="fa fa-users text-yellow"></i> <span>' + countPeople['visit_count'] + visit_message + '</span>\
-	                  </a>\
-	                </li>\
-	              </ul>\
-	            </li>'
+				<li>\
+				  <ul class="menu">\
+					<li>\
+					  <a id="employees-count-people" href="#">\
+						<i class="fa fa-users text-aqua"></i> <span>' + countPeople['employees_count'] + employess_message + '</span>\
+					  </a>\
+					</li>\
+				  </ul>\
+				</li>\
+				<li>\
+				  <ul class="menu">\
+					<li>\
+					  <a id="contractos-count-people" href="#">\
+						<i class="fa fa-users text-light-blue"></i> <span>' + countPeople['contractors_count'] + contractors_message + '</span>\
+					  </a>\
+					</li>\
+				  </ul>\
+				</li>\
+				<li>\
+				  <ul class="menu">\
+					<li>\
+					  <a id="visit-count-people" href="#">\
+						<i class="fa fa-users text-yellow"></i> <span>' + countPeople['visit_count'] + visit_message + '</span>\
+					  </a>\
+					</li>\
+				  </ul>\
+				</li>'
 
-	            );
+				);
 	}
 }

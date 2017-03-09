@@ -115,8 +115,6 @@ class PeopleController extends AppController
 			->contain(['PersonToVisits'])
 			->order(['VisitProfile.created' => 'DESC']);
 
-		// debug($visitProfiles->toArray()); die;
-		
 		$this->set(compact('person', 'userRole_id'));
 		$this->set('accessRoles', $this->paginate($accessRoles, ['scpope' => 'accessRoles']));
 		$this->set('visitProfiles', $this->paginate($visitProfiles, ['scope' => 'visitProfiles']));
@@ -380,6 +378,7 @@ class PeopleController extends AppController
 			$company_id = $this->Auth->user('company_id');
 
 			$visit_count = $this->People->PeopleLocations->find()
+				->where(['valid' => 1])
 				->matching('Enclosures', function ($q) use ($company_id)
 				{
 					return $q->where(['company_id' => $company_id]);
@@ -392,6 +391,7 @@ class PeopleController extends AppController
 				->count();
 
 			$employees_count = $this->People->PeopleLocations->find()
+				->where(['valid' => 1])
 				->matching('Enclosures', function ($q) use ($company_id)
 				{
 					return $q->where(['company_id' => $company_id]);
@@ -404,6 +404,7 @@ class PeopleController extends AppController
 				->count();
 
 			$contractors_count = $this->People->PeopleLocations->find()
+				->where(['valid' => 1])
 				->matching('Enclosures', function ($q) use ($company_id)
 				{
 					return $q->where(['company_id' => $company_id]);

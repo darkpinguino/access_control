@@ -98,7 +98,7 @@ class AuthorizationComponent extends Component
 		}
 	}
 
-	public function savePeopleLocation($person, $door, $maxTime)
+	public function savePeopleLocation($person, $door, $maxTime, $access_request)
 	{
 		$timeOut = new Time();
 		$timeOut->modify('+'.$maxTime.' hours');
@@ -109,6 +109,7 @@ class AuthorizationComponent extends Component
 		$personLocation->people_id = $person->id;
 		$personLocation->enclosure_id = $door->enclosure_id;
 		$personLocation->timeOut = $timeOut;
+		$personLocation->access_request_id = $access_request->id;
 
 		$this->People->PeopleLocations->save($personLocation);
 	}
@@ -122,7 +123,10 @@ class AuthorizationComponent extends Component
 			'enclosure_id' => $door->enclosure_id
 		])->first();
 
-		$this->People->PeopleLocations->delete($peopleLocation);
+		$this->People->PeopleLocations->deleteAll([
+			'people_id' => $person->id,
+			'created >=' => $peopleLocation->created
+		]);
 	}
 
 	public function getMaxTime($person, $company_id)

@@ -48,6 +48,16 @@ class NotificationsTable extends Table
 		$this->belongsToMany('Users', [
 			'through' => 'UserNotifications',
 		]);
+		$this->hasMany('AccessDeniedAlerts', [
+			'foreignKey' => 'notification_id'
+		]);
+		$this->hasMany('InsideAlerts', [
+			'foreignKey' => 'notification_id'
+		]);
+		$this->hasMany('Alerts', [
+			'foreignKey' => 'notification_id'
+		]);
+		
 		// $this->hasMany('UserNotifications', [
 		//     'foreignKey' => 'notification_id'
 		// ]);

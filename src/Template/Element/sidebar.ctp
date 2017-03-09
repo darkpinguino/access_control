@@ -302,6 +302,17 @@
       </li>
     <?php endif ?>
 
+    <?= '<li class="treeview'. (strcmp($controller, 'Alerts') ? '' : ' active').'">' ?>
+      <a href="#">
+        <i class="fa fa-exclamation"></i> <span>Alarmas</span> <i class="fa fa-angle-left pull-right"></i>
+      </a>
+      <ul class="treeview-menu">
+        <li>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Alertas', '/alerts/index', ['escape' => false]) ?>
+        </li>
+      </ul>
+    </li>
+
     
   </ul>
 </section>

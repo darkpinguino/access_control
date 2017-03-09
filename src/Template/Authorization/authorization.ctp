@@ -55,19 +55,14 @@
 	</div>
 <?php endif; ?>
 
-		
-	
+<div id="error"></div>
 
-<div id="error">
-	
-</div>
+<div id="alert-div"></div>
 
 <?= $this->Form->hidden('asd', ['id' => 'user-id', 'value' => $user_id])?>
 
 <?= $this->element('Modal/actualState') ?>  
 <?= $this->element('Modal/vehicleActualState') ?>  
-
-
 <?= $this->element('Modal/insideAlert') ?>  
 
 <?php 
