@@ -3,22 +3,25 @@
   * @var \App\View\AppView $this
   */
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('List Measures'), ['action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('List Questions'), ['controller' => 'Questions', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Question'), ['controller' => 'Questions', 'action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="measures form large-9 medium-8 columns content">
+
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Nuevo Formulario</h3>
+    </div>
+
     <?= $this->Form->create($measure) ?>
-    <fieldset>
-        <legend><?= __('Add Measure') ?></legend>
+    <div class="box-body">
+      <fieldset>
         <?php
-            echo $this->Form->control('measure');
+            echo $this->Form->control('measure', ['label'=> 'Medida']);
         ?>
-    </fieldset>
-    <?= $this->Form->button(__('Submit')) ?>
-    <?= $this->Form->end() ?>
+      </fieldset>
+    </div>
+    <div class="box-footer">
+    <?= $this->Form->button(__('Guardar')) ?>
+    </div>
+  <?= $this->Form->end() ?>
 </div>
+
+
+  

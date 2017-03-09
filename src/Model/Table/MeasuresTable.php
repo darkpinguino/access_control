@@ -35,7 +35,7 @@ class MeasuresTable extends Table
         parent::initialize($config);
 
         $this->setTable('measures');
-        $this->setDisplayField('id');
+        $this->setDisplayField('measure');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');

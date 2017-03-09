@@ -172,11 +172,15 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
             <h4 class="modal-title">Eliminar</h4>
           </div>
           <div class="modal-body">
-            ¿Está seguro que desea eliminar permanentemente <?php echo $controllerName?>: <b><span id=displayFieldText></span></b>?
+            ¿Está seguro que desea eliminar permanentemente <?php echo $controllerName?>:  <b><span id=displayFieldText></span></b>?
             </br>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>
             <?php
                 echo $this->Form->postLink(
-                     'Confirm',
+                     'Confirmar',
                         array('action' => 'delete'),
                         array('class' => 'btn btn-danger btn-sm active'),
                         false);
@@ -184,10 +188,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                   ['action'=> 'delete'],
                   ['class'=>'hidden',
                   'id'=>'hidden-delete-action'])
-                    ?>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            ?>
           </div>
         </div>
 

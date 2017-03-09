@@ -34,4 +34,7 @@
   <div class="box-footer clearfix">
   	<?= $this->element('paginator') ?>
   </div>
+    <div class="box-footer clearfix">
+    <?= $this->Html->link('Agregar Persona', ['action' => 'add'], ['class' => 'btn btn-info pull-left'])?>
+  </div>
 </div>

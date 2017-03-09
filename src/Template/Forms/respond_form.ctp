@@ -24,7 +24,10 @@
             <br>
             <?php break; ?>
           <?php case 3: ?>
-            <?= $this->Form->control('answers.'.$i.'.answer_text', ['type'=>'text', 'label'=>$question->question_text]) ?>
+            <?= $this->Form->control('answers.'.$i.'.answer_text', [
+            'type'=>'text', 
+            'label'=>$question->question_text.' en '.$question->measure_id
+            ]) ?>
             <br>
             <?php break; ?>
           <?php case 4: ?>

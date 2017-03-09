@@ -11,6 +11,8 @@ use App\Controller\AppController;
 class MeasuresController extends AppController
 {
 
+    public $controllerName = 'la Medida';
+
     /**
      * Index method
      *
@@ -20,7 +22,10 @@ class MeasuresController extends AppController
     {
         $measures = $this->paginate($this->Measures);
 
-        $this->set(compact('measures'));
+        $displayField = $this->Measures->displayField();
+
+        $this->set(compact('measures', 'displayField'));
+        $this->set('controllerName', $this->controllerName);
         $this->set('_serialize', ['measures']);
     }
 
@@ -52,11 +57,11 @@ class MeasuresController extends AppController
         if ($this->request->is('post')) {
             $measure = $this->Measures->patchEntity($measure, $this->request->getData());
             if ($this->Measures->save($measure)) {
-                $this->Flash->success(__('The measure has been saved.'));
+                $this->Flash->success(__('La medida ha sido guardada exitosamente.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The measure could not be saved. Please, try again.'));
+            $this->Flash->error(__('La medida no pudo ser guardada. Por favor intente nuevamente'));
         }
         $this->set(compact('measure'));
         $this->set('_serialize', ['measure']);
@@ -77,11 +82,11 @@ class MeasuresController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $measure = $this->Measures->patchEntity($measure, $this->request->getData());
             if ($this->Measures->save($measure)) {
-                $this->Flash->success(__('The measure has been saved.'));
+                $this->Flash->success(__('La medida ha sido editada exitosamente.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The measure could not be saved. Please, try again.'));
+            $this->Flash->error(__('La medida no pudo ser editada. Por favor intente nuevamente.'));
         }
         $this->set(compact('measure'));
         $this->set('_serialize', ['measure']);
@@ -99,9 +104,9 @@ class MeasuresController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $measure = $this->Measures->get($id);
         if ($this->Measures->delete($measure)) {
-            $this->Flash->success(__('The measure has been deleted.'));
+            $this->Flash->success(__('La medida ha sido eliminada exitosamente.'));
         } else {
-            $this->Flash->error(__('The measure could not be deleted. Please, try again.'));
+            $this->Flash->error(__('La medida no pudo ser eliminda. Por favor intente nuevamente.'));
         }
 
         return $this->redirect(['action' => 'index']);

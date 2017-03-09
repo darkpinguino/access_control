@@ -21,7 +21,7 @@
             array('onclick' => "addQuestions()",'class' => 'btn btn-success pull-right', 'type' => "button")
             );   
     ?>
-
+    
       
   </div>
 

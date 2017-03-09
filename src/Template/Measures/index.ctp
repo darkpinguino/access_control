@@ -1,52 +1,29 @@
-<?php
-/**
-  * @var \App\View\AppView $this
-  */
-?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('New Measure'), ['action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Questions'), ['controller' => 'Questions', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Question'), ['controller' => 'Questions', 'action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="measures index large-9 medium-8 columns content">
-    <h3><?= __('Measures') ?></h3>
-    <table cellpadding="0" cellspacing="0">
-        <thead>
-            <tr>
-                <th scope="col"><?= $this->Paginator->sort('id') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('measure') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('created') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
-                <th scope="col" class="actions"><?= __('Actions') ?></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($measures as $measure): ?>
-            <tr>
-                <td><?= $this->Number->format($measure->id) ?></td>
-                <td><?= h($measure->measure) ?></td>
-                <td><?= h($measure->created) ?></td>
-                <td><?= h($measure->modified) ?></td>
-                <td class="actions">
-                    <?= $this->Html->link(__('View'), ['action' => 'view', $measure->id]) ?>
-                    <?= $this->Html->link(__('Edit'), ['action' => 'edit', $measure->id]) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $measure->id], ['confirm' => __('Are you sure you want to delete # {0}?', $measure->id)]) ?>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
+<div class="box">
+  <?= $this->element('tableHeader', ['title' => 'Measures'])?>
+  <div class="box-body">
+    <table id="measuresTable" class="table table-bordered table-striped table-hover">
+      <thead>
+        <tr>
+            <th><?= $this->Paginator->sort('id', 'ID') ?></th>
+            <th><?= $this->Paginator->sort('measure', 'Medida') ?></th>
+            <th><?= __('Acciones') ?></th>
+        </tr>
+      </thead>
+      <tbody>
+          <?php foreach ($measures as $measure): ?>
+          <tr>
+            <td><?= $this->Number->format($measure->id) ?></td>
+            <td><?= h($measure->measure) ?></td>
+            <?= $this->element('action', ['entityId' => $measure->id, 'displayField' => $measure->{$displayField}])?>
+          </tr>
+          <?php endforeach; ?>
+      </tbody>
     </table>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
-        </ul>
-        <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
-    </div>
+  </div>
+  <div class="box-footer clearfix">
+    <?= $this->element('paginator') ?>
+  </div>
+  <div class="box-footer clearfix">
+    <?= $this->Html->link('Crear Nueva Medida', ['action' => 'add'], ['class' => 'btn btn-info pull-left'])?>
+  </div>
 </div>
