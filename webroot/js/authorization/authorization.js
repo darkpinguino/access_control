@@ -257,8 +257,8 @@ function showNotification(notification_id) {
 			$('#alert-div').html(result);
 			$("#alert-modal").modal();
 		}, error: function (xhr, status, error) {
-			console.log(error);
-			console.log(xhr);
+			// console.log(error);
+			// console.log(xhr);
 		}
 	});
 }
@@ -271,12 +271,12 @@ function makeNotifications(notifications) {
 	notifications_view = notifications_view + '<li class="header">' + countNotifications(notifications) + '</li>';
 
 	for (var i = 0; i < notifications.length; i++) {
-		if (notifications[i].users.length == 0) {
-			color_text = "text-red";
-			background_color = 'bg-gray disabled color-palette';
-		} else {
+		if (notifications[i].users.length > 0 || notifications[i].active == false) {
 			color_text = "text-black";
 			background_color = '';
+		} else {
+			color_text = "text-red";
+			background_color = 'bg-gray disabled color-palette';
 		}
 
 		notifications_view = notifications_view + '<li>\
@@ -297,7 +297,7 @@ function countNotifications(notifications) {
 	var count = 0;
 
 	for (var i = 0; i < notifications.length; i++) {
-		if (notifications[i].users.length == 0) {
+		if (notifications[i].users.length == 0 && notifications[i].active == true) {
 			count++;
 		}
 	}

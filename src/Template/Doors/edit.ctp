@@ -29,6 +29,13 @@
             'options' => $enclosures, 
             'label' => 'Recinto'
           ]);
+		  echo $this->Form->input('main', [
+				'type' => 'checkbox',
+				'label' => 'Principal',
+				'templates' => [
+					'inputContainer' => '<div class="checkbox">{{content}}</div>'
+				]
+			]);
 		  if ($userRole_id == 1) {
 			  echo $this->Form->input('company_id', ['label' => 'Empresa', 'options' => $companies]);
 		  }

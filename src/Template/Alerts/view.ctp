@@ -11,6 +11,10 @@
 						<td><?= h($alert->notification->notification) ?></td>
 					</tr>
 					<tr>
+						<th><?= __('Estado') ?></th>
+						<td><?= $this->element('notification_active', ['active' => $alert->notification->active]) ?>
+					</tr>
+					<tr>
 						<th><?= __('Comentario') ?></th>
 						<td><?= h($alert->notification->comment) ?></td>
 					</tr>

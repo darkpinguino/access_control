@@ -7,6 +7,13 @@
 	  <fieldset>
 		<?php
 		  echo $this->Form->input('comment', ['type' => 'text', 'label' => 'Comentario']);
+		  echo $this->Form->input('active', [
+				'type' => 'checkbox',
+				'label' => 'activa',
+				'templates' => [
+					'inputContainer' => '<div class="checkbox">{{content}}</div>'
+				]
+			]);
 		?>
 
 	  </fieldset>

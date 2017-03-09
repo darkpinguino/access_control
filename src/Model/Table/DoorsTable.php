@@ -42,7 +42,7 @@ class DoorsTable extends Table
 			'foreignKey' => 'enclosure_id',
 			'joinType' => 'INNER'
 		]);
-		$this->hasMany('AccessRequests', [
+		$this->hasMany('AccessRequest', [
 			'foreignKey' => 'door_id'
 		]);
 		// $this->hasMany('AccessRoleDoors', [

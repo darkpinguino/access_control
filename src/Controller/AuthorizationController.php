@@ -271,6 +271,8 @@ use Cake\I18n\Time;
 			$this->loadModel('PeopleLocations');
 			$this->loadModel('Notifications');
 
+			$this->loadComponent('Authorization');
+
 			$actualTime = new time();
 
 			$people_locations = $this->PeopleLocations->find()
@@ -284,31 +286,39 @@ use Cake\I18n\Time;
 					{
 						return $q->where(['CompanyPeople.company_id' => $company_id]);
 					},
-					'Enclosures'
+					'Enclosures',
+					'AccessRequest'
 			])->toArray();
+
+
 
 
 			foreach ($people_locations as $people_location) {
 
-				$notification = $this->Notifications->find()
-					->matching('Alerts', function ($q) use ($people_location)
-					{
-						return $q->where(['Alerts.access_request_id' => $people_location->access_request_id]);
-					})
-					->first();
+				// debug($people_location); die;
 
-				if (is_null($notification)) {
-					$alert = $this->Notifications->Alerts->newEntity();
-					$alert->access_request_id = $people_location->access_request_id;
-					$alert->type = 2;
+				$this->Authorization->addAlert($people_location->access_request, $people_location->person, $company_id, "ha excedido el tiempo de permanencia", 2);
 
-					$notification = $this->Notifications->newEntity();
-					$notification->notification = $people_location->person->fullName. " ha excedido el tiempo de permanencia";
-					$notification->company_id = $company_id;
-					$notification->alerts = [$alert];
 
-					$this->Notifications->save($notification);
-				}
+				// $notification = $this->Notifications->find()
+				// 	->matching('Alerts', function ($q) use ($people_location)
+				// 	{
+				// 		return $q->where(['Alerts.access_request_id' => $people_location->access_request_id]);
+				// 	})
+				// 	->first();
+
+				// if (is_null($notification)) {
+				// 	$alert = $this->Notifications->Alerts->newEntity();
+				// 	$alert->access_request_id = $people_location->access_request_id;
+				// 	$alert->type = 2;
+
+				// 	$notification = $this->Notifications->newEntity();
+				// 	$notification->notification = $people_location->person->fullName. " ha excedido el tiempo de permanencia";
+				// 	$notification->company_id = $company_id;
+				// 	$notification->alerts = [$alert];
+
+				// 	$this->Notifications->save($notification);
+				// }
 			}
 
 			return $people_locations;
@@ -491,8 +501,9 @@ use Cake\I18n\Time;
 						$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->rut);
 				} else { //verificar atorizacion para la entrada
 					$authorizedPerson = $this->Authorization->isAuthorizedPerson($person, $door);
+					$mainDoorAuthorization = $this->Authorization->mainDoorAuthorization($person, $door);
 
-					if ($authorizedPerson) {
+					if ($authorizedPerson and $mainDoorAuthorization) {
 						$pending_access_request = $this->AccessRequest->find()->
 						  where(['people_id' => $person->id, 'door_id' => $door->id])->last();
 
@@ -514,7 +525,6 @@ use Cake\I18n\Time;
 						  }
 						}
 
-
 						if (!is_null($this->request->data('vehicle'))) {
 							$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
 							$this->saveVehicleLocation($vehicle, $door, $person, $driver);
@@ -533,6 +543,9 @@ use Cake\I18n\Time;
 
 					} else {
 						$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 3, 1);
+						if (!$mainDoorAuthorization) {
+							$this->Authorization->addAlert($access_request, $person, $company_id, "no utilizó puerta principal", 1);
+						}
 						if (!$this->request->is('ajax'))
 							$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->rut);
 					}
