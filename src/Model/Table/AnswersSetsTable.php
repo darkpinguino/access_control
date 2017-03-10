@@ -30,6 +30,11 @@ class AnswersSetsTable extends Table
 
         $this->addBehavior('Timestamp');
 
+        $this->belongsTo('Forms', [
+            'foreignKey' => 'form_id',
+            'joinType' => 'INNER'
+        ]);
+
         $this->hasMany('Answers', [
             'foreignKey' => 'answer_set_id',
         ]);

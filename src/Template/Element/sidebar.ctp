@@ -16,7 +16,7 @@
           <?= $this->Html->link('<i class="fa fa-circle-o"></i> Listar Empresas', '/companies/index', ['escape' => false]) ?>
         </li>
         <li>
-          <?= $this->Html->link('<i class="fa fa-plus"></i> Nueva Empresa', '/companies/add', ['escape' => false]) ?>
+          <?= $this->Html->link('<i class="fa fa-circle-o"></i> Nueva Empresa', '/companies/add', ['escape' => false]) ?>
         </li>
       </ul>
     </li>

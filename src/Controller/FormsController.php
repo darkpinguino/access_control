@@ -124,13 +124,15 @@ class FormsController extends AppController
 		$answer_set = $this->AnswersSets->newEntity();
 		$form = $this->Forms->get($id, ['contain' => 'Questions']);
 		//Hasta acá es para cargar las preguntas del formulario.
+		$answer_set->form_id = $form->id;
 
 		if ($this->request->is('post')) {
 			$answer_set = $this->AnswersSets->patchEntity($answer_set, $this->request->data);
 			//debug($answer_set); die;
 
 			if($this->AnswersSets->save($answer_set)){
-				$this->Flash->success(__('Este formulario ha respondido creado exitosamente.'));
+				$this->Flash->success(__('Este formulario ha respondido exitosamente.'));
+				return $this->redirect(['action' => 'index']);
 			} else {
 				$this->Flash->error(__('El formulario no ha podido ser respondido.
 				 Por favor intente nuevamente.'));
@@ -148,12 +150,25 @@ class FormsController extends AppController
 		$this->render('/Element/ajax_dropdown');
 	}
 
-	public function viewAnsweredForm($id = null, $id_AS = null)
+	public function indexAnsweredForm($id = null)
 	{
-		$this->loadmodel('AnswersSets');
-		$answer_set = $this->AnswersSets->get($id_AS);
-		debug($answer_set);
+		//$answers_sets = $this->Forms->get($id, ['contain' => 'AnswersSets'])->answers_sets;
+		$answers_sets = $this->Forms->AnswersSets->find()
+			->where(['AnswersSets.form_id' => $id]);
+		$answers_sets = $this->paginate($answers_sets);
+		$this->set(compact('answers_sets'));
 
 	}
+
+	public function viewAnsweredForm($id = null)
+	{
+		$answers_sets = $this->Forms->AnswersSets->get($id, [
+			'contain' => ['Answers.Questions']
+		]);
+		debug($answers_sets);
+		$this->set('answers_sets', $answers_sets);
+		$this->set('_serialize', ['answers_sets']);
+	}
+
 
 }

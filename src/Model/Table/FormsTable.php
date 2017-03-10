@@ -38,6 +38,9 @@ class FormsTable extends Table
         $this->hasMany('Questions', [
             'foreignKey' => 'form_id'
         ]);
+        $this->hasMany('AnswersSets', [
+            'foreignKey' => 'form_id'
+        ]);
     }
 
     /**
