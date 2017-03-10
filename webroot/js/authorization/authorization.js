@@ -177,11 +177,13 @@ $(document).ready(function () {
 		showNotification($(this).attr('notification-id'));
 	});
 
-	insideAlert();
-	insideAlertCount();
+	// insideAlert();
+	// insideAlertCount();
+	getNotificacions();
 
-	setInterval(insideAlert, 1000*60);
-	setInterval(insideAlertCount, 1000*60);
+	// setInterval(insideAlert, 1000*60);
+	// setInterval(insideAlertCount, 1000*60);
+	setInterval(getNotificacions, 1000*60);
 });
 
 function passengerRut(count) {
@@ -261,6 +263,19 @@ function markSeen(notification_id) {
 }
 
 function viewNotificacions(notifications) {
+
+	var new_notification_count = countNotifications(notifications);
+
+	'<span id="people-count" class="label label-danger">1</span>'
+	$("#notifications-menu2").empty();
+	if (new_notification_count > 0) {
+		$("#notifications-menu2").append('\
+			<i class="fa fa-bell-o"></i>\
+			<span id="people-count" class="label label-danger">'+new_notification_count+'</span>'
+		);
+	}else {
+		$("#notifications-menu2").append('<i class="fa fa-bell-o"></i>');
+	}
 	$("#notifications-dropdown2").html(
 		makeNotifications(notifications)
 	);
@@ -285,8 +300,18 @@ function makeNotifications(notifications) {
 	var notifications_view = "";
 	var color_text;
 	var background_color;
+	var count_message = ""
+	var new_notification_count;
 
-	notifications_view = notifications_view + '<li class="header">' + countNotifications(notifications) + '</li>';
+	new_notification_count = countNotifications(notifications);
+
+	if (new_notification_count == 1) {
+		count_message =  " 1 Notificación nueva"
+	} else {
+		count_message =  " " + new_notification_count + " Notificaciones nuevas"
+	}
+
+	notifications_view = notifications_view + '<li class="header">' + count_message + '</li>';
 
 	for (var i = 0; i < notifications.length; i++) {
 		if (notifications[i].users.length > 0 || notifications[i].active == false) {
@@ -320,11 +345,13 @@ function countNotifications(notifications) {
 		}
 	}
 
-	if (count == 1) {
-		return " 1 Notificación nueva"
-	} else {
-		return " " + count + " Notificaciones nuevas"
-	}
+	return count;
+
+	// if (count == 1) {
+	// 	return " 1 Notificación nueva"
+	// } else {
+	// 	return " " + count + " Notificaciones nuevas"
+	// }
 }
 
 function populeteNotification(countPeople) {

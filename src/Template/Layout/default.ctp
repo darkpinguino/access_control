@@ -99,14 +99,6 @@ $controller = $this->request->params['controller'];
               </ul>
             </li>
 
-
-            <li class="dropdown notifications-menu">
-              <a id="notifications-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-bell-o"></i>
-              </a>
-              <ul id="notifications-dropdown" class="dropdown-menu">
-              </ul>
-            </li>
             <li class="dropdown notifications-menu">
               <a id="people-count-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <i class="fa fa-male"></i>
