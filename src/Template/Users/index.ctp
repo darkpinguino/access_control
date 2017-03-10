@@ -32,7 +32,7 @@
 							<?php endif; ?>
 							<td><?= h($user->created) ?></td>
 							<td><?= h($user->modified) ?></td>
-							<?= $this->element('action', ['entityId' => $user->id])?>
+							<?= $this->element('action', ['entityId' => $user->id, 'displayField' => $user->{$displayField}])?>
 					</tr>
 					<?php endforeach; ?>
 			</tbody>

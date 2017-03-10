@@ -35,6 +35,12 @@ class FormsTable extends Table
             'foreignKey' => 'company_id',
             'joinType' => 'INNER'
         ]);
+        $this->hasMany('Questions', [
+            'foreignKey' => 'form_id'
+        ]);
+        $this->hasMany('AnswersSets', [
+            'foreignKey' => 'form_id'
+        ]);
     }
 
     /**
@@ -59,6 +65,10 @@ class FormsTable extends Table
 
         return $validator;
     }
+
+    
+
+
 
     /**
      * Returns a rules checker object that will be used for validating

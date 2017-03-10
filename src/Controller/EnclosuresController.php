@@ -24,6 +24,8 @@ class EnclosuresController extends AppController
 	  'contain' => ['Companies']
 	];
 
+	public $controllerName = 'el Recinto';
+
 	/**
 	 * Index method
 	 *
@@ -47,8 +49,10 @@ class EnclosuresController extends AppController
 		}
 
 		$enclosures = $this->paginate($enclosures);
+		$displayField = $this->Enclosures->displayField();
 
-		$this->set(compact('enclosures', 'userRole_id'));
+		$this->set(compact('enclosures', 'displayField', 'userRole_id'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['enclosures']);
 	}
 

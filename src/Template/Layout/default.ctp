@@ -57,6 +57,8 @@ $controller = $this->request->params['controller'];
   <!-- AdminLTE App -->
   <?= $this->Html->script('app.min', ['block' => true]) ?>  
 
+  <?= $this->Html->script('default', ['block' => true]) ?>  
+
   <?= $this->Html->script('utility/getURLParameters', ['block' => true]) ?>
   <?= $this->Html->script('utility/paginatorSearch', ['block' => true]) ?>
 
@@ -177,6 +179,40 @@ $controller = $this->request->params['controller'];
 	      </ol> -->
 	    </section>
 
+      <!-- Modal -->
+    <div id="myModalDelete2" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Eliminar</h4>
+          </div>
+          <div class="modal-body">
+            ¿Está seguro que desea eliminar permanentemente <?php echo $controllerName?>:  <b><span id=displayFieldText></span></b>?
+            </br>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>
+            <?php
+                echo $this->Form->postLink(
+                     'Confirmar',
+                        array('action' => 'delete'),
+                        array('class' => 'btn btn-danger btn-sm active'),
+                        false);
+                echo $this->Html->link(__('Hidden-Action'),
+                  ['action'=> 'delete'],
+                  ['class'=>'hidden',
+                  'id'=>'hidden-delete-action'])
+            ?>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
 	    <!-- Main content -->
 	    <section class="content">
 	      <div class="row">
@@ -195,23 +231,7 @@ $controller = $this->request->params['controller'];
     </footer>
 	</div>
 
-<div id="myModalDelete" class="modal fade">
-  <div class="modal-dialog modal-lg">
-  <div class="modal-content">
-    <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-      <span aria-hidden="true">×</span></button>
-    <h4 class="modal-title">Estado Actual</h4>
-    </div>
-    <div class="modal-body">
-    </div>
-    <div class="modal-footer">
-    <?= $this->Html->link(__('Exportar'), ['action' => 'exportActualState', '_ext' => 'pdf'], ['class' => 'btn btn-primary']); ?>
-    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-    </div>
-  </div>
-  </div>
-</div>
+
 
 
 </body>

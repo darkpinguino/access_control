@@ -21,123 +21,145 @@ use Cake\Validation\Validator;
 class CompaniesTable extends Table
 {
 
-	/**
-	 * Initialize method
-	 *
-	 * @param array $config The configuration for the Table.
-	 * @return void
-	 */
-	public function initialize(array $config)
-	{
-		parent::initialize($config);
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
 
-		$this->table('companies');
-		$this->displayField('name');
-		$this->primaryKey('id');
+        $this->table('companies');
+        $this->displayField('name');
+        $this->primaryKey('id');
 
-		$this->addBehavior('Timestamp');
+        $this->addBehavior('Timestamp');
 
-		$this->hasMany('AccessRoles', [
-			'foreignKey' => 'company_id'
-		]);
-		$this->hasMany('Doors', [
-			'foreignKey' => 'company_id'
-		]);
-		$this->hasMany('People', [
-			'foreignKey' => 'company_id'
-		]);
+        $this->hasMany('AccessRoles', [
+            'foreignKey' => 'company_id'
+        ]);
+        $this->hasMany('Doors', [
+            'foreignKey' => 'company_id'
+        ]);
+        $this->hasMany('People', [
+            'foreignKey' => 'company_id'
+        ]);
 
-		$this->belongsToMany('People', [
-			'through' => 'CompanyPeople'
-			// 'foreignKey' => 'company_id',
-			// 'targetForeignKey' => 'people_id',
-		]);
-		
-		$this->hasMany('Users', [
-			'foreignKey' => 'company_id'
-		]);
-		$this->hasMany('SensorData', [
-			'foreignKey' => 'company_id'
-		]);
-		$this->hasMany('SensorTypes', [
-			'foreignKey' => 'company_id'
-		]);
-		$this->hasMany('Sensors', [
-			'foreignKey' => 'company_id'
-		]);
-		$this->hasMany('Vehicles', [
-			'foreignKey' => 'company_id'
-		]);
-		$this->hasMany('Forms', [
-			'foreignKey' => 'company_id'
-		]);
+        $this->belongsToMany('People', [
+            'through' => 'CompanyPeople'
+            // 'foreignKey' => 'company_id',
+            // 'targetForeignKey' => 'people_id',
+        ]);
+        
+        $this->hasMany('Users', [
+            'foreignKey' => 'company_id'
+        ]);
+        $this->hasMany('SensorData', [
+            'foreignKey' => 'company_id'
+        ]);
+        $this->hasMany('SensorTypes', [
+            'foreignKey' => 'company_id'
+        ]);
+        $this->hasMany('Sensors', [
+            'foreignKey' => 'company_id',
+            'dependent' => false
+        ]);
+        $this->hasMany('Vehicles', [
+            'foreignKey' => 'company_id'
+        ]);
+         $this->hasMany('Forms', [
+            'foreignKey' => 'company_id'
+        ]);
+    }
 
-		// $this->hasMany('CompanyProfiles', [
-		// 	'foreignKey' => 'company_id'
-		// ]);
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('id')
+            ->allowEmpty('id', 'create');
 
-		$this->belongsToMany('Profiles', [
-			'foreignKey' => 'company_id',
-			'targetForeignKey' => 'profile_id',
-			'joinTable' => 'CompanyProfiles',
-			'through' => 'CompanyProfiles'
-		]);
+        $validator
+            ->requirePresence('name', 'create')
+            ->notEmpty('name');
 
-	}
+        $validator
+            ->email('email')
+            ->requirePresence('email', 'create')
+            ->notEmpty('email');
 
-	/**
-	 * Default validation rules.
-	 *
-	 * @param \Cake\Validation\Validator $validator Validator instance.
-	 * @return \Cake\Validation\Validator
-	 */
-	public function validationDefault(Validator $validator)
-	{
-		$validator
-			->integer('id')
-			->allowEmpty('id', 'create');
+        $validator
+            ->integer('phone')
+            ->requirePresence('phone', 'create')
+            ->notEmpty('phone');
 
-		$validator
-			->requirePresence('name', 'create')
-			->notEmpty('name');
+        $validator
+            ->requirePresence('address', 'create')
+            ->notEmpty('address');
 
-		$validator
-			->email('email')
-			->requirePresence('email', 'create')
-			->notEmpty('email');
+        $validator
+            ->requirePresence('contact', 'create')
+            ->notEmpty('contact');
 
-		$validator
-			->integer('phone')
-			->requirePresence('phone', 'create')
-			->notEmpty('phone');
+        $validator
+            ->requirePresence('description', 'create')
+            ->notEmpty('description');
 
-		$validator
-			->requirePresence('address', 'create')
-			->notEmpty('address');
+        return $validator;
+    }
 
-		$validator
-			->requirePresence('contact', 'create')
-			->notEmpty('contact');
 
-		$validator
-			->requirePresence('description', 'create')
-			->notEmpty('description');
 
-		return $validator;
-	}
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->isUnique(['email']));
+        return $rules;
+    }
 
-	/**
-	 * Returns a rules checker object that will be used for validating
-	 * application integrity.
-	 *
-	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-	 * @return \Cake\ORM\RulesChecker
-	 */
-	public function buildRules(RulesChecker $rules)
-	{
-		$rules->add($rules->isUnique(['name'], 
-			'El nombre de la empresa ya está en uso.'));
+    // public function beforeDelete ($cascade = false)
+    // {
+    //     debug($this->id);die;
+    //     $count = $this->Forms->find("count", array(
+    //         "conditions" => array("company_id" => $this->id)
+    //     ));
+    //     if ($count == 0) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
-		return $rules;
-	}
+    public function beforeDelete($event, $entity)
+    {
+        debug($entity); die;
+
+        // $count = $this->Forms->find("count", array(
+        //     "conditions" => array("company_id" => $entity->id)
+        // ));
+
+        $count = $this->Forms->find()
+            ->where(['company_id' => $entity->id])
+            ->count();
+
+        if ($count == 0) {
+            //debug("count = 0"); die;
+            return true;
+        }
+
+        //debug("conunt != 0"); die;
+        return false;
+    }
 }

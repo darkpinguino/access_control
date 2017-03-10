@@ -18,7 +18,7 @@
 							<td><?= h($vehicleType->type) ?></td>
 							<td><?= h($vehicleType->created) ?></td>
 							<td><?= h($vehicleType->modified) ?></td>
-							<?= $this->element('action', ['entityId' => $vehicleType->id])?>
+							<?= $this->element('action', ['entityId' => $vehicleType->id, 'displayField' => $vehicleType->{$displayField}])?>
 					</tr>
 					<?php endforeach; ?>
 			</tbody>

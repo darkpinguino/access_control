@@ -19,6 +19,8 @@ class AccessRequestController extends AppController
 		'id' => 'desc']
 	];
 
+	public $controllerName = 'la Petición de Acceso';
+
 	public function isAuthorized($user)
 	{
 		$userRole_id = $user['userRole_id'];
@@ -33,6 +35,7 @@ class AccessRequestController extends AppController
 
 		return parent::isAuthorized($user);
 	}
+	public $controllerName = 'la Petición de Acceso';
 	/**
 	 * Index method
 	 *
@@ -94,7 +97,9 @@ class AccessRequestController extends AppController
 
 		$accessRequest = $this->paginate($accessRequest);
 
-		$this->set(compact('accessRequest', 'userRole_id'));
+		$displayField = $this->AccessRequest->displayField();	
+		$this->set(compact('accessRequest', 'displayField', 'userRole_id'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['accessRequest']);
 	}
 

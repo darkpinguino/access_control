@@ -1,4 +1,4 @@
-<?= $this->Html->script('forms/add', ['block'=>'scriptView'])?>
+<?= $this->Html->script('form/add', ['block'=>'scriptView'])?>
 
 <div class="box">
     <div class="box-header">
@@ -14,7 +14,6 @@
       </fieldset>
     
     <div id=dyn-form>
-
     </div>
 
     <?php
@@ -22,9 +21,10 @@
             array('onclick' => "addQuestions()",'class' => 'btn btn-success pull-right', 'type' => "button")
             );   
     ?>
-
+    
       
   </div>
+
   <div class="box-footer">
     <?= $this->Form->button(__('Guardar')) ?>
   </div>

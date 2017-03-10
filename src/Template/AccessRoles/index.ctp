@@ -29,7 +29,7 @@
           <?php endif; ?>
           <td><?= h($accessRole->created) ?></td>
           <td><?= h($accessRole->modified) ?></td>
-          <?= $this->element('action', ['entityId' => $accessRole->id])?>
+          <?= $this->element('action', ['entityId' => $accessRole->id, 'displayField' => $accessRole->{$displayField}])?>
         </tr>
         <?php endforeach; ?>
       </tbody>

@@ -20,7 +20,7 @@
 							<td><?= h($userRole->description) ?></td>
 							<td><?= h($userRole->created) ?></td>
 							<td><?= h($userRole->modified) ?></td>
-							<?= $this->element('action', ['entityId' => $userRole->id])?>
+							<?= $this->element('action', ['entityId' => $userRole->id, 'displayField' => $userRole->{$displayField}])?>
 					</tr>
 					<?php endforeach; ?>
 			</tbody>

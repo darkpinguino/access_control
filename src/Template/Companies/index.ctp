@@ -24,7 +24,7 @@
             <td><?= h($company->address) ?></td>
             <td><?= h($company->contact) ?></td>
             <td><?= h($company->created) ?></td>
-            <?= $this->element('action', ['entityId' => $company->id])?>
+            <?= $this->element('action', ['entityId' => $company->id, 'displayField' => $company->{$displayField}])?>
           </tr>
           <?php endforeach; ?>
       </tbody>
@@ -32,5 +32,8 @@
   </div>
   <div class="box-footer clearfix">
   	<?= $this->element('paginator') ?>
+  </div>
+  <div class="box-footer clearfix">
+    <?= $this->Html->link('Crear Nueva Empresa', ['action' => 'add'], ['class' => 'btn btn-info pull-left'])?>
   </div>
 </div>

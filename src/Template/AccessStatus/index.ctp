@@ -18,7 +18,7 @@
           <td><?= h($accessStatus->status) ?></td>
           <td><?= h($accessStatus->created) ?></td>
           <td><?= h($accessStatus->modified) ?></td>
-          <?= $this->element('action', ['entityId' => $accessStatus->id])?>
+          <?= $this->element('action', ['entityId' => $accessStatus->id, 'displayField' => $accessStatus->{$displayField}])?>
         </tr>
         <?php endforeach; ?>
       </tbody>

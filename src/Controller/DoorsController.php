@@ -20,6 +20,8 @@ class DoorsController extends AppController
 		return parent::isAuthorized($user);
 	}
 	
+  public $controllerName = 'la Puerta';
+
 	/**
 	 * Index method
 	 *
@@ -52,7 +54,10 @@ class DoorsController extends AppController
 			$doors = $this->paginate($doors);
 		}
 
-		$this->set(compact('doors', 'userRole_id'));
+		$displayField = $this->Doors->displayField();
+
+    $this->set(compact('doors', 'displayField', 'userRole_id'));
+    $this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['doors']);
 	}
 

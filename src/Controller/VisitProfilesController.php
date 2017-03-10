@@ -10,6 +10,8 @@ use App\Controller\AppController;
  */
 class VisitProfilesController extends AppController
 {
+	public $controllerName = 'el Perfil de Visita';
+	
 	public function isAuthorized($user)
 	{
 		if ($this->request->action === 'add') {
@@ -18,6 +20,7 @@ class VisitProfilesController extends AppController
 
 		return parent::isAuthorized($user);
 	}
+
 	/**
 	 * Index method
 	 *
@@ -29,12 +32,14 @@ class VisitProfilesController extends AppController
 			// 'contain' => ['People', 'ReasonVisits', 'Companies']
 		];
 		$visitProfiles = $this->paginate($this->VisitProfiles);
+		$displayField = $this->VisitProfiles->displayField();
 
 		// $visitProfiles = $this->VisitProfiles->find();
 
 		// debug($visitProfiles->toArray()); die;
 
-		$this->set(compact('visitProfiles'));
+		$this->set(compact('visitProfiles','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['visitProfiles']);
 	}
 

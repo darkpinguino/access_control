@@ -19,6 +19,8 @@ class VehicleAccessRequestController extends AppController
 		'id' => 'desc']
 	];
 
+	public $controllerName = 'la Petición de Acceso del Vehículo';
+
 	public function isAuthorized($user)
 	{
 		$userRole_id = $user['userRole_id'];
@@ -55,7 +57,9 @@ class VehicleAccessRequestController extends AppController
 			$vehicleAccessRequest = $this->paginate($vehicleAccessRequest);
 		}
 
-		$this->set(compact('vehicleAccessRequest', 'userRole_id'));
+		$displayField = $this->VehicleAccessRequest->displayField();
+		$this->set(compact('vehicleAccessRequest', 'userRole_id', 'displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['vehicleAccessRequest']);
 	}
 

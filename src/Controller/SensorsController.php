@@ -22,6 +22,8 @@ class SensorsController extends AppController
 	  'contain' => ['SensorTypes', 'Doors', 'Companies']
 	];
 
+	public $controllerName = 'el Sensor';
+
 	/**
 	 * Index method
 	 *
@@ -30,8 +32,10 @@ class SensorsController extends AppController
 	public function index()
 	{
 		$sensors = $this->paginate($this->Sensors);
+		$displayField = $this->Sensors->displayField();
 
-		$this->set(compact('sensors'));
+		$this->set(compact('sensors','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['sensors']);
 	}
 

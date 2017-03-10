@@ -1,5 +1,5 @@
 <div class="box">
-	<?= $this->element('tableHeader', ['title' => 'Empresas'])?>
+	<?= $this->element('tableHeader', ['title' => 'Datos de Sensores'])?>
 	<div class="box-body">
     <table class="table table-bordered table-striped table-hover">
         <thead>
@@ -24,7 +24,7 @@
                 <td><?= $sensorData->has('company') ? $this->Html->link($sensorData->company->name, ['controller' => 'Companies', 'action' => 'view', $sensorData->company->id]) : '' ?></td>
                 <td><?= h($sensorData->created) ?></td>
                 <td><?= h($sensorData->modified) ?></td>
-                <?= $this->element('action', ['entityId' => $sensorData->id])?>
+                <?= $this->element('action', ['entityId' => $sensorData->id, 'displayField' => $sensorData->{$displayField}])?>
             </tr>
             <?php endforeach; ?>
         </tbody>

@@ -47,7 +47,7 @@ class UsersController extends AppController
 		return $this->redirect($this->Auth->logout());
   }
 
-
+  	public $controllerName = 'el Usuario';
 	/**
 	 * Index method
 	 *
@@ -74,8 +74,11 @@ class UsersController extends AppController
 		}
 
 		$users = $this->paginate($users);
+		
+		$displayField = $this->Users->displayField();
 
-		$this->set(compact('users', 'userRole_id'));
+		$this->set(compact('users', 'displayField', 'userRole_id'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['users']);
 	}
 

@@ -14,13 +14,39 @@
       </thead>
       <tbody>
         <?php foreach ($forms as $form): ?>
-        <tr>
-          <td><?= h($form->id) ?></td>
-          <td><?= h($form->name) ?></td>
-          <td><?= $form->has('company') ? $this->Html->link($form->company->name, ['controller' => 'Companies', 'action' => 'view', $form->company->id]) : '' ?></td>
-          <td><?= h($form->created) ?></td>
-          <?= $this->element('action', ['entityId' => $form->id])?>       
-        </tr>
+          <tr>
+              <td><?= $this->Number->format($form->id) ?></td>
+              <td><?= h($form->name) ?></td>
+              <td><?= $form->has('company') ? $this->Html->link($form->company->name, ['controller' => 'Companies', 'action' => 'view', $form->company->id]) : '' ?></td>
+              <td><?= h($form->created) ?></td>
+              
+              <td>
+                  <?= $this->Html->link(__('Ver'), 
+                    ['action' => 'view', $form->id], 
+                    ['class' => 'btn btn-primary btn-xs']) 
+                  ?>
+                  <?= $this->Html->link(__('Editar'), 
+                    ['action' => 'edit', $form->id], 
+                    ['class' => 'btn btn-warning btn-xs']) 
+                  ?>
+                  <?php 
+                  echo $this->Html->link(__('Eliminar'), 
+                      '#', 
+                    [
+                         'class'=>'btn btn-danger btn-xs btn-confirm',
+                         'data-toggle'=> 'modal',
+                         'data-target' => '#myModalDelete2',
+                         'data-action'=> $form->id,
+                         'data-displayField' => $form->name,
+                         'escape' => false], 
+                  false);
+                  ?>
+                  <?= $this->Html->link(__('Responder'), 
+                    ['action' => 'respondForm', $form->id], 
+                    ['class' => 'btn btn-success btn-xs']) 
+                  ?>
+              </td>
+          </tr>
         <?php endforeach; ?>
       </tbody>
       </table>

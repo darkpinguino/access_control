@@ -10,6 +10,8 @@ use App\Controller\AppController;
  */
 class VehiclesController extends AppController
 {
+	public $controllerName = 'el Vehículo';
+
 	public function isAuthorized($user)
 	{
 		$userRole_id = $user['userRole_id'];
@@ -56,7 +58,10 @@ class VehiclesController extends AppController
 
 		$vehicles = $this->paginate($vehicles);
 
-		$this->set(compact('vehicles', 'userRole_id'));
+		$displayField = $this->Vehicles->displayField();
+
+		$this->set(compact('vehicles','displayField', 'userRole_id'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['vehicles']);
 	}
 
