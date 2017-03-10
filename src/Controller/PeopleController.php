@@ -386,7 +386,6 @@ class PeopleController extends AppController
 			$company_id = $this->Auth->user('company_id');
 
 			$visit_count = $this->People->PeopleLocations->find()
-				->where(['valid' => 1])
 				->matching('Enclosures', function ($q) use ($company_id)
 				{
 					return $q->where(['company_id' => $company_id]);
@@ -399,7 +398,6 @@ class PeopleController extends AppController
 				->count();
 
 			$employees_count = $this->People->PeopleLocations->find()
-				->where(['valid' => 1])
 				->matching('Enclosures', function ($q) use ($company_id)
 				{
 					return $q->where(['company_id' => $company_id]);
@@ -412,7 +410,6 @@ class PeopleController extends AppController
 				->count();
 
 			$contractors_count = $this->People->PeopleLocations->find()
-				->where(['valid' => 1])
 				->matching('Enclosures', function ($q) use ($company_id)
 				{
 					return $q->where(['company_id' => $company_id]);
