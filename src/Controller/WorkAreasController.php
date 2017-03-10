@@ -10,6 +10,9 @@ use App\Controller\AppController;
  */
 class WorkAreasController extends AppController
 {
+
+	public $controllerName = 'la Área de Trabajo';
+
 	public function isAuthorized($user)
 	{
 		$userRole_id = $user['userRole_id'];
@@ -42,8 +45,10 @@ class WorkAreasController extends AppController
     }
 
 		$workAreas = $this->paginate($workAreas);
+		$displayField = $this->WorkAreas->displayField();
 
-		$this->set(compact('workAreas', 'userRole_id'));
+		$this->set(compact('workAreas', 'userRole_id','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['workAreas']);
 	}
 

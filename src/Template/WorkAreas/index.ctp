@@ -25,7 +25,7 @@
 						<?php if ($userRole_id == 1): ?>
 							<td><?= h($workArea->company->name) ?></td>
 						<?php endif; ?>
-						<?= $this->element('action', ['entityId' => $workArea->id])?>
+						<?= $this->element('action', ['entityId' => $workArea->id,'displayField' => $workArea->{$displayField}])?>
 			</td>
 					</tr>
 					<?php endforeach; ?>

@@ -10,6 +10,9 @@ use App\Controller\AppController;
  */
 class ContractorCompaniesController extends AppController
 {
+
+	public $controllerName = 'la Empresa Contratista';
+
 	public function isAuthorized($user)
 	{
 		$userRole_id = $user['userRole_id'];
@@ -41,9 +44,13 @@ class ContractorCompaniesController extends AppController
     		->where(['company_id' => $company_id, 'ContractorCompanies.name LIKE' => '%'.$search.'%']);
     }
 
-		$contractorCompanies = $this->paginate($contractorCompanies);
+    	//debug($contractorCompanies->toArray()); die;
 
-		$this->set(compact('contractorCompanies', 'userRole_id'));
+		$contractorCompanies = $this->paginate($contractorCompanies);
+		$displayField = $this->ContractorCompanies->displayField();
+
+		$this->set(compact('contractorCompanies', 'userRole_id','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['contractorCompanies']);
 	}
 
