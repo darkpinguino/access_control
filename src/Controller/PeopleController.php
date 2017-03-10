@@ -12,34 +12,14 @@ use Cake\I18n\Time;
  */
 class PeopleController extends AppController
 {
-<<<<<<< HEAD
+	public $controllerName = 'la Persona';
+
 	public function isAuthorized($user)
 	{
 		$userRole_id = $user['userRole_id'];
 
 		if ($this->request->action === 'edit' || $this->request->action === 'peopleCount') {
 			return true;
-=======
-		public $paginate = [
-			'limit' => 10,
-			// 'contain' => ['Companies']
-		];
-
-		public $controllerName = 'la Persona';
-		/**
-		 * Index method
-		 *
-		 * @return \Cake\Network\Response|null
-		 */
-		public function index()
-		{
-				$people = $this->paginate($this->People);
-				$displayField = $this->People->displayField();
-
-				$this->set(compact('people','displayField'));
-				$this->set('controllerName', $this->controllerName);
-				$this->set('_serialize', ['people']);
->>>>>>> Yanira
 		}
 
 		if ($userRole_id == 2 || $userRole_id == 3) {
@@ -80,7 +60,11 @@ class PeopleController extends AppController
 		}
 
 		$this->set('people', $this->paginate($people));
-		$this->set(compact('userRole_id'));
+
+		$displayField = $this->People->displayField();
+
+		$this->set(compact('userRole_id','displayField'));
+		$this->set('controllerName', $this->controllerName);
 		$this->set('_serialize', ['people']);
 	}
 
