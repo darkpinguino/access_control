@@ -18,20 +18,6 @@ class AuthorizationComponent extends Component
 				return $q->where(['People.id' => $person->id]);
 			})->first();
 
-		// if (!$door->main) {
-		// 	$people_locations = $this->Doors->AccessRequest->PeopleLocations->find()
-		// 		->where(['PeopleLocations.people_id' => $person->id])
-		// 		->matching('AccessRequest.Doors', function ($q) 
-		// 		{
-		// 			return $q->where(['Doors.main' => true]);
-		// 		});
-
-		// 	if ($people_locations->isEmpty()) {
-		// 		addAlert()
-		// 		return false;
-		// 	}
-		// }
-
 		if (is_null($result)) {
 			return false;
 		} else {

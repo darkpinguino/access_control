@@ -304,7 +304,7 @@
 
     <?= '<li class="treeview'. (strcmp($controller, 'Alerts') ? '' : ' active').'">' ?>
       <a href="#">
-        <i class="fa fa-exclamation"></i> <span>Alarmas</span> <i class="fa fa-angle-left pull-right"></i>
+        <i class="fa fa-exclamation"></i> <span>Alertas</span> <i class="fa fa-angle-left pull-right"></i>
       </a>
       <ul class="treeview-menu">
         <li>
@@ -312,8 +312,6 @@
         </li>
       </ul>
     </li>
-
-    
   </ul>
 </section>
 <!-- /.sidebar -->
