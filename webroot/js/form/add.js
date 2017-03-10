@@ -37,11 +37,16 @@ function modifyQuestion(option, id_group) {
 function pregunta(question_count) {
 	return '\
 		<div id="input-container-'+question_count+'">' +
-		'<label>Pregunta</label>'+
+		'<label>Escriba su pregunta aquí</label>'+
 		'<div class="input-group" id="question-group-'+question_count+'">'+
 		'</div>'+
 		'<br>' +
-		'</div>'
+		'</div>'+
+		'<div class="form-group">'+
+		'<input type="text" class="form-control col-md-12" name="questions['+question_count+'][placeholder]" '+
+		'placeholder="Escriba un ejemplo de respuesta a la pregunta anterior">'+
+		'</div>'+
+		'<hr>' 
 		;
 }
 

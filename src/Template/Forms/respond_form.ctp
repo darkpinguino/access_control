@@ -15,19 +15,19 @@
             ]) ?>
           <?php switch($question->type): 
           case 1: ?>
-            <?= $this->Form->control('answers.'.$i.'.answer_text', ['label'=>$question->question_text, 'placeholder'=>'Escriba su respuesta aquí']) ?>
+            <?= $this->Form->control('answers.'.$i.'.answer_text', ['label'=>$question->question_text, 'placeholder' =>$question->placeholder]) ?>
             <br>
             <?php break; ?>
           <?php case 2: ?>
             <?= $this->Form->control('answers.'.$i.'.answer_text', [
-              'type'=>'textarea', 'label'=>$question->question_text, 'placeholder'=> 'Ingrese el texto aquí']) ?>
+              'type'=>'textarea', 'label'=>$question->question_text, 'placeholder' =>$question->placeholder]) ?>
             <br>
             <?php break; ?>
           <?php case 3: ?>
             <?= $this->Form->control('answers.'.$i.'.answer_text', [
             'type'=>'text', 
-            'label'=>$question->question_text.' en '.$question->measure_id
-            ]) ?>
+            'label'=> $question->question_text.'  en '.$question->measure_id, 
+            'placeholder' =>$question->placeholder]) ?>
             <br>
             <?php break; ?>
           <?php case 4: ?>
@@ -35,6 +35,7 @@
             <?= $this->Form->control('answers.'.$i.'.answer_text', [
               'label' => false,
               'type'=>'date', 
+              'placeholder' =>$question->placeholder,
               'class'=>['answer-date','form-control'],
               'answer-index'=>$i
             ]) ?>
@@ -52,4 +53,3 @@
   </div>
   <?= $this->Form->end() ?>
 </div>
-

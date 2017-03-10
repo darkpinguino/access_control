@@ -1,27 +1,21 @@
 <div class="box">
     <div class="row">
-        <div class="col-md-5 col-md-offset-3">
+        <div class="col-md-10 col-md-offset-1">
             <div class="box-header">
-                <h3><?= h($->name) ?></h3>
+                <h3><?= h($answers_sets->form->name) ?></h3>
             </div>
             <div class="box-body">
-            <table class="table">
-            <tr>
-            <th><?= __('Nombre') ?></th>
-            <td><?= h($form->name) ?></td>
-            </tr>
-            <tr>
-            <th><?= __('ID') ?></th>
-            <td><?= $this->Number->format($form->id) ?></td>
-            <tr>
-            <th><?= __('Creado') ?></th>
-            <td><?= h($form->created) ?></td>
-            </tr>
-            <tr>
-            <th><?= __('Modificado') ?></th>
-            <td><?= h($form->modified) ?></td>
-            </tr>
-            </table>
+                <?php foreach ($answers_sets->answers as $answer): ?>
+                    <?php if ($answer->question->type==3): ?>
+                        <h4><?= ($answer->question->question_text) ?></h4>
+                        <h5><ins><?= ($answer->answer_text).' '.($answer->question->measure_id) ?></ins></h5>
+                        <br>
+                    <?php else: ?>
+                        <h4><?= ($answer->question->question_text) ?></h4>
+                        <h5><ins><?= ($answer->answer_text) ?></ins></h5>
+                        <br>
+                    <?php endif ?>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>

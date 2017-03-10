@@ -60,7 +60,7 @@ class FormsController extends AppController
 			$company_id = $this->Auth->user()['company_id'];
 			$form = $this->Forms->patchEntity($form, $this->request->data);
 			$form->company_id=$company_id;
-
+			//debug($this->request->data);die;
 			if ($this->Forms->save($form)) {
 				$this->Flash->success(__('Este formulario ha sido creado exitosamente.'));
 				return $this->redirect(['action' => 'index']);
@@ -122,9 +122,14 @@ class FormsController extends AppController
 	{
 		$this->loadmodel('AnswersSets');
 		$answer_set = $this->AnswersSets->newEntity();
-		$form = $this->Forms->get($id, ['contain' => 'Questions']);
+		//$form = $this->Forms->find($id, ['contain' => 'Questions']);
+		$form = $this->Forms->find()
+			->where(['Forms.id' => $id])
+			->contain(['Questions'])
+			->first();
 		//Hasta acá es para cargar las preguntas del formulario.
 		$answer_set->form_id = $form->id;
+		//debug($form); die;
 
 		if ($this->request->is('post')) {
 			$answer_set = $this->AnswersSets->patchEntity($answer_set, $this->request->data);
@@ -163,12 +168,16 @@ class FormsController extends AppController
 	public function viewAnsweredForm($id = null)
 	{
 		$answers_sets = $this->Forms->AnswersSets->get($id, [
-			'contain' => ['Answers.Questions']
+			'contain' => ['Answers.Questions','Forms']
 		]);
-		debug($answers_sets);
+		//debug($answers_sets); die;
 		$this->set('answers_sets', $answers_sets);
 		$this->set('_serialize', ['answers_sets']);
 	}
+
+
+
+
 
 
 }
