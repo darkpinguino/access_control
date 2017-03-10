@@ -54,6 +54,10 @@ class UsersTable extends Table
 			'foreignKey' => 'doorCharge_id',
 			'joinType' => 'INNER'
 		]);
+
+		$this->belongsToMany('Notifications', [
+      'through' => 'UserNotifications',
+  ]);
 	}
 
 	/**

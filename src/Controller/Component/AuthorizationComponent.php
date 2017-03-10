@@ -25,6 +25,28 @@ class AuthorizationComponent extends Component
 		}
 	}
 
+	public function mainDoorAuthorization($person, $door)
+	{
+		$this->PeopleLocations = TableRegistry::get('PeopleLocations');
+
+		if (!$door->main) {
+			$people_locations = $this->PeopleLocations->find()
+				->where(['PeopleLocations.people_id' => $person->id])
+				->matching('AccessRequest.Doors', function ($q) 
+				{
+					return $q->where(['Doors.main' => true]);
+				});
+
+			if ($people_locations->isEmpty()) {
+				return false;
+			} else {
+				return true;
+			}
+		}else {
+			return true;
+		}
+	}
+
 	public function isExpiredRole($person, $door)
 	{
 		$this->People = TableRegistry::get('People');
@@ -98,7 +120,7 @@ class AuthorizationComponent extends Component
 		}
 	}
 
-	public function savePeopleLocation($person, $door, $maxTime)
+	public function savePeopleLocation($person, $door, $maxTime, $access_request)
 	{
 		$timeOut = new Time();
 		$timeOut->modify('+'.$maxTime.' hours');
@@ -109,6 +131,7 @@ class AuthorizationComponent extends Component
 		$personLocation->people_id = $person->id;
 		$personLocation->enclosure_id = $door->enclosure_id;
 		$personLocation->timeOut = $timeOut;
+		$personLocation->access_request_id = $access_request->id;
 
 		$this->People->PeopleLocations->save($personLocation);
 	}
@@ -156,6 +179,32 @@ class AuthorizationComponent extends Component
 		}
 
 		return $maxTime;
+	}
+
+	public function addAlert($access_request, $person, $company_id, $message, $type)
+	{
+		$this->Notifications = TableRegistry::get('Notifications');
+
+		$notification = $this->Notifications->find()
+			->matching('Alerts', function ($q) use ($access_request)
+			{
+				return $q->where(['Alerts.access_request_id' => $access_request->id]);
+			})
+			->first();
+
+		if (is_null($notification)) {
+			$alert = $this->Notifications->Alerts->newEntity();
+			$alert->access_request_id = $access_request->id;
+			$alert->type = $type;
+
+			$notification = $this->Notifications->newEntity();
+			$notification->notification = $person->fullName." ".$message;
+			$notification->company_id = $company_id;
+			$notification->active = true;
+			$notification->alerts = [$alert];
+
+			$this->Notifications->save($notification);
+		}
 	}
 }
 

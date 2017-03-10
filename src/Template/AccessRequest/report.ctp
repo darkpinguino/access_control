@@ -11,7 +11,7 @@
 		<?php 
 			echo $this->Form->create();
 			echo $this->Form->label('Rango reporte');
-			echo $this->Form->input('range-report', ['label' => false, 'type' => 'date']);
+			echo $this->Form->input('range-report', ['label' => false, 'type' => 'date', 'name' => 'asdad']);
 			echo $this->Form->input('fullRange', [
 				'type' => 'checkbox',
 				'label' => 'Todo el rango',

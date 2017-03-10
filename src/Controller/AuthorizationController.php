@@ -35,6 +35,7 @@ use Cake\I18n\Time;
 			$this->loadModel('VehicleProfiles');
 
 			$company_id = $this->Auth->user()['company_id'];
+			$user_id = $this->Auth->user('id');
 			$door_id = $this->Auth->user()['doorCharge_id'];
 			$vehicle_access = $this->request->session()->read('vehicle_access');
 
@@ -86,7 +87,7 @@ use Cake\I18n\Time;
 			$this->set('people_locations', $people_locations);
 			$this->set('people_out', $people_out);
 			$this->set('vehicles_locations', $vehicles_locations);
-			$this->set(compact('person', 'door', 'vehicle_types', 'vehicle_profiles', 'check_out'));  
+			$this->set(compact('person', 'door', 'vehicle_types', 'vehicle_profiles', 'check_out', 'user_id'));  
 
 			if ($this->request->is('ajax')) 
 			{
@@ -150,8 +151,9 @@ use Cake\I18n\Time;
 				$people_locations = $this->getPeopleLocationInsideAlert($company_id);
 
 				if (!empty($people_locations)) {
-					$this->set('people_locations', $people_locations);
-					$this->render('/Element/Authorization/actual_state');
+					// $this->set('people_locations', $people_locations);
+					// $this->render('/Element/Authorization/actual_state');
+					$this->render(false);
 				} else {
 					$this->render(false);
 				}
@@ -209,12 +211,12 @@ use Cake\I18n\Time;
 				->distinct('people_id');
 
 			$this->paginate = [
-			    'sortWhitelist'=> [
-			    	'Enclosures.name', 
-			    	'People.name', 
-			    	'People.rut', 
-			    	'People.CompanyPeople[0].Profiles.id'
-			    ]
+				'sortWhitelist'=> [
+					'Enclosures.name', 
+					'People.name', 
+					'People.rut', 
+					'People.CompanyPeople[0].Profiles.id'
+				]
 			];
 
 			return $this->Paginate($people_locations);
@@ -272,21 +274,57 @@ use Cake\I18n\Time;
 		private function getPeopleLocationInsideAlert($company_id)
 		{
 			$this->loadModel('PeopleLocations');
+			$this->loadModel('Notifications');
+
+			$this->loadComponent('Authorization');
 
 			$actualTime = new time();
 
-			$people_locations = $this->PeopleLocations->find()->
-				where(['PeopleLocations.timeOut <' => $actualTime])->
-				matching('Enclosures', function ($q) use ($company_id)
+			$people_locations = $this->PeopleLocations->find()
+				->where(['PeopleLocations.timeOut <' => $actualTime])
+				->matching('Enclosures', function ($q) use ($company_id)
 				{
 					return $q->where(['Enclosures.company_id' => $company_id]);
-			})->contain([
-				'People.CompanyPeople.Profiles' => function ($q) use ($company_id)
-				{
-					return $q->where(['CompanyPeople.company_id' => $company_id]);
-				},
-				'Enclosures'
+				})
+				->contain([
+					'People.CompanyPeople.Profiles' => function ($q) use ($company_id)
+					{
+						return $q->where(['CompanyPeople.company_id' => $company_id]);
+					},
+					'Enclosures',
+					'AccessRequest'
 			])->toArray();
+
+
+
+
+			foreach ($people_locations as $people_location) {
+
+				// debug($people_location); die;
+
+				$this->Authorization->addAlert($people_location->access_request, $people_location->person, $company_id, "ha excedido el tiempo de permanencia", 2);
+
+
+				// $notification = $this->Notifications->find()
+				// 	->matching('Alerts', function ($q) use ($people_location)
+				// 	{
+				// 		return $q->where(['Alerts.access_request_id' => $people_location->access_request_id]);
+				// 	})
+				// 	->first();
+
+				// if (is_null($notification)) {
+				// 	$alert = $this->Notifications->Alerts->newEntity();
+				// 	$alert->access_request_id = $people_location->access_request_id;
+				// 	$alert->type = 2;
+
+				// 	$notification = $this->Notifications->newEntity();
+				// 	$notification->notification = $people_location->person->fullName. " ha excedido el tiempo de permanencia";
+				// 	$notification->company_id = $company_id;
+				// 	$notification->alerts = [$alert];
+
+				// 	$this->Notifications->save($notification);
+				// }
+			}
 
 			return $people_locations;
 		}
@@ -471,8 +509,9 @@ use Cake\I18n\Time;
 						$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->fullRut);
 				} else { //verificar atorizacion para la entrada
 					$authorizedPerson = $this->Authorization->isAuthorizedPerson($person, $door);
+					$mainDoorAuthorization = $this->Authorization->mainDoorAuthorization($person, $door);
 
-					if ($authorizedPerson) {
+					if ($authorizedPerson and $mainDoorAuthorization) {
 						$pending_access_request = $this->AccessRequest->find()->
 						  where(['people_id' => $person->id, 'door_id' => $door->id])->last();
 
@@ -492,10 +531,9 @@ use Cake\I18n\Time;
 						  findByAccessRequestId($pending_access_request->id)->first();
 
 						  if (!is_null($vehicle_access_request_query)) {
-						  	$driver = $vehicle_access_request_query->driver;
+							$driver = $vehicle_access_request_query->driver;
 						  }
 						}
-
 
 						if (!is_null($this->request->data('vehicle'))) {
 							$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
@@ -507,7 +545,7 @@ use Cake\I18n\Time;
 						}
 						
 						$maxTime = $this->Authorization->getMaxTime($person, $company_id);
-						$this->Authorization->savePeopleLocation($person, $door, $maxTime);
+						$this->Authorization->savePeopleLocation($person, $door, $maxTime, $access_request);
 						if (!$this->request->is('ajax'))
 							$this->Flash->success("Se autoriza el ingreso de la persona con RUT: ".$person->fullRut);  //ingreso con exito
 
@@ -515,6 +553,9 @@ use Cake\I18n\Time;
 
 					} else {
 						$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 3, 1);
+						if (!$mainDoorAuthorization) {
+							$this->Authorization->addAlert($access_request, $person, $company_id, "no utilizó puerta principal", 1);
+						}
 						if (!$this->request->is('ajax'))
 							$this->Flash->error("No se autoriza el ingreso de la persona con RUT: ".$person->rut);
 					}

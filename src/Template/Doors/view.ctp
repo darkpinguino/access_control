@@ -28,6 +28,13 @@
 						<td><?= $this->element('door_access', ['accessID' => $door->access_type])?></td>
 					</tr>
 
+					<?php if ($door->main): ?>
+						<tr>
+							<th>Principal</th>
+							<td><span class="label label-success">Principal</span></td>
+						</tr>
+					<?php endif ?>
+
 					<?php if ($userRole_id == 1): ?>
 						<tr>
 							<th><?= __('Empresa') ?></th>

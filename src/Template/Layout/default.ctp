@@ -89,6 +89,17 @@ $controller = $this->request->params['controller'];
   		  <div class="navbar-custom-menu">
   		    <ul class="nav navbar-nav">
           <?php if (!strcmp($controller, 'Authorization')): ?>
+
+
+            <li class="dropdown notifications-menu">
+              <a id="notifications-menu2" href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-bell-o"></i>
+              </a>
+              <ul id="notifications-dropdown2" class="dropdown-menu">
+              </ul>
+            </li>
+
+
             <li class="dropdown notifications-menu">
               <a id="notifications-menu" href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <i class="fa fa-bell-o"></i>

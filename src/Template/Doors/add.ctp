@@ -37,6 +37,13 @@
 					'label' => 'Empresa'
 			  ]);
 			}
+			echo $this->Form->input('main', [
+				'type' => 'checkbox',
+				'label' => 'Principal',
+				'templates' => [
+					'inputContainer' => '<div class="checkbox">{{content}}</div>'
+				]
+			]);
 		?>
 		</fieldset>
 	</div>

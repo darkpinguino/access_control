@@ -52,6 +52,12 @@ class AccessRequestTable extends Table
 		$this->hasMany('VisitProfiles', [
 			'foreignKey' => 'access_request_id'
 		]);
+		$this->hasMany('AccessDeniedAlerts', [
+			'foreignKey' => 'access_request_id'
+		]);
+		$this->hasMany('PeopleLocations', [
+			'foreignKey' => 'access_request_id'
+		]);
 	}
 
 	/**
