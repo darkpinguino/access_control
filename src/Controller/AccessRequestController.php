@@ -35,7 +35,6 @@ class AccessRequestController extends AppController
 
 		return parent::isAuthorized($user);
 	}
-	public $controllerName = 'la Petición de Acceso';
 	/**
 	 * Index method
 	 *

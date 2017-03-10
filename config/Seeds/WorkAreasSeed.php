@@ -4,7 +4,7 @@ use Migrations\AbstractSeed;
 /**
  * VehicleType seed.
  */
-class WorkAreas extends AbstractSeed
+class WorkAreasSeed extends AbstractSeed
 {
 	/**
 	 * Run Method.
