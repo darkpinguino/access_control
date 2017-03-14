@@ -391,41 +391,11 @@ class PeopleController extends AppController
 		{
 			$company_id = $this->Auth->user('company_id');
 
-			$visit_count = $this->People->PeopleLocations->find()
-				->matching('Enclosures', function ($q) use ($company_id)
-				{
-					return $q->where(['company_id' => $company_id]);
-				})
-				->matching('People.CompanyPeople', function ($q)
-				{
-					return $q->where(['CompanyPeople.profile_id' => 1]);
-				})
-				->distinct(['people_id'])
-				->count();
+			$visit_count = $this->count(1);
 
-			$employees_count = $this->People->PeopleLocations->find()
-				->matching('Enclosures', function ($q) use ($company_id)
-				{
-					return $q->where(['company_id' => $company_id]);
-				})
-				->matching('People.CompanyPeople', function ($q)
-				{
-					return $q->where(['CompanyPeople.profile_id' => 2]);
-				})
-				->distinct(['people_id'])
-				->count();
+			$employees_count = $this->count(2);
 
-			$contractors_count = $this->People->PeopleLocations->find()
-				->matching('Enclosures', function ($q) use ($company_id)
-				{
-					return $q->where(['company_id' => $company_id]);
-				})
-				->matching('People.CompanyPeople', function ($q)
-				{
-					return $q->where(['CompanyPeople.profile_id' => 3]);
-				})
-				->distinct(['people_id'])
-				->count();
+			$contractors_count = $this->count(3);
 
 			$this->set(compact('visit_count', 'employees_count', 'contractors_count'));
 			$this->set('_serialize', ['visit_count', 'employees_count', 'contractors_count']);
@@ -565,5 +535,22 @@ class PeopleController extends AppController
 				return $q->where(['People.id' => $person_id]);
 			})
 			->toArray();
+	}
+
+	private function count($profile_id)
+	{
+		$company_id = $this->Auth->user('company_id');
+
+		$count = $this->People->PeopleLocations->find()
+			->matching('People.CompanyPeople', function ($q) use ($company_id, $profile_id)
+			{
+				return $q->where([
+					'CompanyPeople.profile_id' => $profile_id,
+					'CompanyPeople.company_id' => $company_id]);
+			})
+			->distinct(['people_id'])
+			->count();
+
+		return $count;
 	}
 }

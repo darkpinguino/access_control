@@ -211,7 +211,6 @@ use Cake\Datasource\ConnectionManager;
 					return $q->where(['Enclosures.company_id' => $company_id]);
 				})
 				->order(['PeopleLocations.created' => 'DESC']);
-				// ->distinct('people_id');
 
 			$this->paginate = [
 				'sortWhitelist'=> [
@@ -222,7 +221,6 @@ use Cake\Datasource\ConnectionManager;
 				]
 			];
 
-			// return $people_locations;
 			return $this->Paginate($people_locations);
 		}
 
