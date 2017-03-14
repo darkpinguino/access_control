@@ -6,6 +6,8 @@ use Cake\Event\Event;
 use Cake\I18n\Date;
 use Cake\I18n\Time;
 
+use Cake\Datasource\ConnectionManager;
+
  /**
  * 
  */
@@ -182,6 +184,7 @@ use Cake\I18n\Time;
 			$this->loadModel('PeopleLocations');
 
 			$people_locations = $this->PeopleLocations->find()
+				->where(['last' => true])
 				->contain([
 					'People.CompanyPeople.Profiles' => function ($q) use ($company_id)
 					{
@@ -207,8 +210,8 @@ use Cake\I18n\Time;
 				{
 					return $q->where(['Enclosures.company_id' => $company_id]);
 				})
-				->order(['PeopleLocations.created' => 'DESC'])
-				->distinct('people_id');
+				->order(['PeopleLocations.created' => 'DESC']);
+				// ->distinct('people_id');
 
 			$this->paginate = [
 				'sortWhitelist'=> [
@@ -219,6 +222,7 @@ use Cake\I18n\Time;
 				]
 			];
 
+			// return $people_locations;
 			return $this->Paginate($people_locations);
 		}
 

@@ -26,7 +26,7 @@
           <?php case 3: ?>
             <?= $this->Form->control('answers.'.$i.'.answer_text', [
             'type'=>'text', 
-            'label'=> $question->question_text.'  en '.$question->measure_id, 
+            'label'=> $question->question_text, 
             'placeholder' =>$question->placeholder]) ?>
             <br>
             <?php break; ?>

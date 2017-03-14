@@ -127,28 +127,44 @@ class AuthorizationComponent extends Component
 
 		$this->People = TableRegistry::get('People');
 
-		$personLocation = $this->People->PeopleLocations->newEntity();
-		$personLocation->people_id = $person->id;
-		$personLocation->enclosure_id = $door->enclosure_id;
-		$personLocation->timeOut = $timeOut;
-		$personLocation->access_request_id = $access_request->id;
+		$person_location = $this->People->PeopleLocations->newEntity();
+		$person_location->people_id = $person->id;
+		$person_location->enclosure_id = $door->enclosure_id;
+		$person_location->timeOut = $timeOut;
+		$person_location->access_request_id = $access_request->id;
+		$person_location->last = true;
 
-		$this->People->PeopleLocations->save($personLocation);
+		$this->People->PeopleLocations->updateAll(
+			['last' => false],
+			['people_id' => $person->id]
+		);
+
+		$this->People->PeopleLocations->save($person_location);
 	}
 
 	public function deletePeopleLocation($person, $door)   
 	{
 		$this->People = TableRegistry::get('People');
 
-		$peopleLocation = $this->People->PeopleLocations->find()->where([
+		$person_location = $this->People->PeopleLocations->find()->where([
 			'people_id' => $person->id,
 			'enclosure_id' => $door->enclosure_id
 		])->first();
 
 		$this->People->PeopleLocations->deleteAll([
 			'people_id' => $person->id,
-			'created >=' => $peopleLocation->created
+			'created >=' => $person_location->created
 		]);
+
+		$person_location = $this->People->PeopleLocations->find()
+			->where(['people_id' => $person->id])
+			->last();
+
+		if ($person_location != null) {
+			$person_location->last = true;
+
+			$this->People->PeopleLocations->save($person_location);
+		}
 	}
 
 	public function getMaxTime($person, $company_id)

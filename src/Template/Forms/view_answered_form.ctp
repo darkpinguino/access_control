@@ -8,7 +8,7 @@
                 <?php foreach ($answers_sets->answers as $answer): ?>
                     <?php if ($answer->question->type==3): ?>
                         <h4><?= ($answer->question->question_text) ?></h4>
-                        <h5><ins><?= ($answer->answer_text).' '.($answer->question->measure_id) ?></ins></h5>
+                        <h5><ins><?= ($answer->answer_text) ?></ins></h5>
                         <br>
                     <?php else: ?>
                         <h4><?= ($answer->question->question_text) ?></h4>
