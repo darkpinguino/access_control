@@ -12,6 +12,15 @@ class FormsController extends AppController
 {
 
 	public $controllerName = 'el Formulario';
+
+	public function isAuthorized($user)
+	{
+		
+		return true;
+		
+		return parent::isAuthorized($user);
+	}
+
 	/**
 	 * Index method
 	 *
@@ -175,9 +184,30 @@ class FormsController extends AppController
 		$this->set('_serialize', ['answers_sets']);
 	}
 
+	public function vehicleRespondForm()
+	{
+		$company_id = $this->Auth->user('company_id');
 
+		$vehicle_access = $this->request->session()->read('vehicle_access');
 
+		$forms = $this->Forms->find('list')
+			->where(['company_id' => $company_id]);
 
+		$this->set(compact('forms'));
 
+		// debug($vehicle_access); die;
+	}
 
+	public function getForm($form_id = null, $controller = null, $action = null)
+	{
+		$url = [];
+		$url['controller'] = $controller;
+		$url['action'] = $action;
+		$answer_set = $this->Forms->AnswersSets->newEntity();
+		$form = $this->Forms->get($form_id, [
+			'contain' => 'Questions']);
+
+		$this->set(compact('form', 'answer_set', 'url'));
+		$this->render('../Element/Forms/respond_form');
+	}
 }

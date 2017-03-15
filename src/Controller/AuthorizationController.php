@@ -516,6 +516,17 @@ use Cake\Datasource\ConnectionManager;
 						}
 
 						if (!is_null($this->request->data('vehicle'))) {
+							
+							// debug("entrooo"); die;
+							// return $this->redirect([
+							// 	'controller' => 'Forms',
+							// 	'action' => 'viewAnsweredForm'
+							// ]);
+
+							return $this->respondForm();
+
+
+
 							$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
 							$this->saveVehicleLocation($vehicle, $door, $person, $driver);
 
@@ -766,6 +777,16 @@ use Cake\Datasource\ConnectionManager;
 			$this->VehicleAccessRequest->save($vehicleAccessRequest);
 
 			return $vehicleAccessRequest;
+		}
+
+		private function respondForm()
+		{
+			$this->request->session()->write('vehicle_access', $this->request->data());
+
+			return $this->redirect([
+				'controller' => 'Forms',
+				'action' => 'vehicleRespondForm'
+			]);
 		}
 
 		public function registerPeopleLocation($person, $door, $acction)

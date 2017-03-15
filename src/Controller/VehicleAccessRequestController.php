@@ -73,7 +73,7 @@ class VehicleAccessRequestController extends AppController
 	public function view($id = null)
 	{
 		$vehicleAccessRequest = $this->VehicleAccessRequest->get($id, [
-			'contain' => ['Vehicles', 'AccessRequest.People', 'AccessRequest.Doors.Companies', 'AccessRequest.AccessStatus']
+			'contain' => ['Vehicles', 'AccessRequest.People', 'AccessRequest.Doors.Companies', 'AccessRequest.AccessStatus', 'AnswersSets.Forms', 'AnswersSets.Answers.Questions']
 		]);
 
 		// debug($vehicleAccessRequest); die;
