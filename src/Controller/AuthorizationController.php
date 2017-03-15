@@ -461,8 +461,10 @@ use Cake\Datasource\ConnectionManager;
 						}
 					}
 
-					if ($person->company_people[0]->profile_id == 1) {	//expirar roles de personas distintas a personal
+					if ($person->company_people[0]->profile_id == 1 && !$person->company_people[0]->recurring_person) {	//expirar roles de personas distintas a personal
 						// $accessRoles = $this->People->AccessRolePeople->findByPeopleId($person->id);
+
+						// debug($person); die;
 
 						$accessRoles = $this->People->AccessRolePeople->find()
 							->where(['people_id' => $person->id])

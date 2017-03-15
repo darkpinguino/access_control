@@ -20,7 +20,7 @@ class WorkAreasSeed extends AbstractSeed
 	{
 		$data = [
 			[
-				'id' => '1',
+				'id' => '-1',
 				'name' => '',
 				'company_id' => '-1',
 				'created' => date('Y-m-d H:i:s'),

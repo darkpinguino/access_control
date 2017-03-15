@@ -5,8 +5,6 @@ $(document).ready(function () {
 		autoclose: true
 	});
 
-	console.log($("#expiration_date").val());
-
 	var date = new Date($("#expiration_date").val());
 
 	$("#expiration").datepicker('setUTCDate', date);

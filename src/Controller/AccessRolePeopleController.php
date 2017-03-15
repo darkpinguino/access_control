@@ -99,34 +99,70 @@ class AccessRolePeopleController extends AppController
 			'CompanyPeople' => function ($q) use ($company_id)
 			{
 				return $q->where(['company_id' => $company_id]);
+			},
+			'AccessRoles' => function ($q) use ($company_id)
+			{
+				return $q->where(['company_id' => $company_id]);
 			}
 		]]);
 		if ($this->request->is('post')) {
 
 			$new_access_role = $this->passNewData($id, $this->request->data('role_id'));
 
-			$access_roles = [];
-			$expirationDate = new Date();
-			$expirationDate->modify('+1 day');
-
-			foreach ($new_access_role as $access_role) {
-				$data = [
-					'people_id' => $id,
-					'access_role_id' => $access_role,
-					'expiration' => $expirationDate
-				];
-
-				array_push($access_roles, $data);
+			if ($this->request->data['notExpire']) {
+				$expiration = '0000-00-00';
+			} else {
+				$expiration = Date::createFromFormat(
+					'd/m/Y', $this->request->data('expiration'));
 			}
 
-			$this->AccessRolePeople->saveMany($this->AccessRolePeople->newEntities($access_roles));
+			$access_roles = [];
+
+			foreach ($new_access_role as $role_id) {
+				$access_role = $this->AccessRolePeople->AccessRoles->get($role_id);
+				$access_role->_joinData = $this->AccessRolePeople->newEntity();
+				$access_role->_joinData->expiration = $expiration;
+				array_push($access_roles, $access_role);
+			}
+
+			foreach ($person->access_roles as $access_role) {
+				$access_role->_joinData->expiration = $expiration;
+			}
+
+			$person->dirty('access_roles', true);
+
+			$roles_id = [];
+
+			foreach ($person->access_roles as $role_id) {
+				array_push($roles_id, $role_id->id);
+			}
+
+			if (empty($this->request->data('role_id')) && !empty($roles_id)) {
+				$this->AccessRolePeople->deleteAll([
+					'people_id' => $id,
+					'access_role_id IN' => $roles_id
+				]);
+			} else if (!empty($roles_id)){
+				$this->AccessRolePeople->deleteAll([
+					'people_id' => $id,
+					'access_role_id IN' => $roles_id,
+					'access_role_id NOT IN' => $this->request->data('role_id')
+				]);
+			}
+
+			$this->AccessRolePeople->People->AccessRoles->link($person, $access_roles);
+			$this->AccessRolePeople->People->save($person, ['associated' => ['AccessRoles']]);
 			$company_people = $this->AccessRolePeople->People->CompanyPeople->newEntity($person->company_people[0]->toArray());
 			$company_people = $person->company_people[0];
 			$company_people->pending = 0;
 
-			$this->AccessRolePeople->People->CompanyPeople->save($company_people);
+			// debug($this->request->data); die; 
+			
+			if ($this->request->data('recurring_person')) {
+				$company_people->recurring_person = true;
+			}
 
-			// debug($company_people); die;
+			$this->AccessRolePeople->People->CompanyPeople->save($company_people);
 
 			$this->Flash->success(__('El rol de acceso ha sido guardado.'));
 				return $this->redirect([
@@ -138,11 +174,15 @@ class AccessRolePeopleController extends AppController
 		$access_role_people = $this->AccessRolePeople->AccessRoles->find('list')
 			->matching('People')
 			->where(['AccessRolePeople.people_id' => $id]);
+		$accessRolePerson->expiration = new Date();
+		$accessRolePerson->expiration->modify('+1 day');
 
 		$person = $this->AccessRolePeople->People->get($this->request->query('person'));
 		$this->set('accessRoles', $role);
 
-		$this->set(compact('accessRolePerson', 'person', 'role', 'access_role_people'));
+		$recurring_person = $this->recurringPerson($person);
+
+		$this->set(compact('accessRolePerson', 'person', 'role', 'access_role_people', 'recurring_person'));
 		$this->set('_serialize', ['accessRolePerson']);
 	}
 
@@ -226,5 +266,35 @@ class AccessRolePeopleController extends AppController
 				return $q->where(['People.id' => $person_id]);
 			})
 			->toArray();
+	}
+
+	private function recurringPerson($person)
+	{
+		$this->loadModel('AccessRequest');
+
+		$company_id = $this->Auth->user('company_id');
+		$date = new Date();
+		$date->modify('-1 month');
+		$accessRequest = $this->AccessRequest->find()
+			->where([
+				'people_id' => $person->id,
+				'access_status_id' => 1,
+				'action' => 1,
+				'AccessRequest.created >=' => $date
+			])
+			->matching('Doors', function ($q) use ($company_id)
+			{
+				return $q->where([
+					'Doors.company_id' => $company_id,
+					'Doors.main' => 1
+				]);
+			})
+			->count();
+
+		if ($accessRequest > 3) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

@@ -19,7 +19,7 @@
 				]);
 
 				echo $this->Form->label('Expira');
-				echo $this->Form->input('expiration', ['label' => false, 'type' => 'date', 'class' => 'form-control', 'value' => "asdas"]);
+				echo $this->Form->input('expiration', ['label' => false, 'type' => 'date', 'class' => 'form-control']);
 				echo $this->Form->input('notExpire', [
 					'type' => 'checkbox',
 					'label' => 'no expira',

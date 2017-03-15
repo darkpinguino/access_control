@@ -46,9 +46,9 @@ class PeopleController extends AppController
 		} else {
 			$company_id = $this->Auth->user('company_id');
 			$people = $this->People->find('all')
-				// ->where(['rut LIKE' => '%'.$search.'%'])
-				// ->orWhere(['People.name LIKE' => '%'.$search.'%'])
-				// ->orWhere(['People.lastname LIKE' => '%'.$search.'%'])
+				->where(['rut LIKE' => '%'.$search.'%'])
+				->orWhere(['People.name LIKE' => '%'.$search.'%'])
+				->orWhere(['People.lastname LIKE' => '%'.$search.'%'])
 				->matching('Companies', function ($q) use ($company_id)
 				{
 					return $q->where(['Companies.id' => $company_id]);
