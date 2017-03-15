@@ -298,34 +298,10 @@ use Cake\Datasource\ConnectionManager;
 			])->toArray();
 
 
-
-
 			foreach ($people_locations as $people_location) {
-
-				// debug($people_location); die;
 
 				$this->Authorization->addAlert($people_location->access_request, $people_location->person, $company_id, "ha excedido el tiempo de permanencia", 2);
 
-
-				// $notification = $this->Notifications->find()
-				// 	->matching('Alerts', function ($q) use ($people_location)
-				// 	{
-				// 		return $q->where(['Alerts.access_request_id' => $people_location->access_request_id]);
-				// 	})
-				// 	->first();
-
-				// if (is_null($notification)) {
-				// 	$alert = $this->Notifications->Alerts->newEntity();
-				// 	$alert->access_request_id = $people_location->access_request_id;
-				// 	$alert->type = 2;
-
-				// 	$notification = $this->Notifications->newEntity();
-				// 	$notification->notification = $people_location->person->fullName. " ha excedido el tiempo de permanencia";
-				// 	$notification->company_id = $company_id;
-				// 	$notification->alerts = [$alert];
-
-				// 	$this->Notifications->save($notification);
-				// }
 			}
 
 			return $people_locations;

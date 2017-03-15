@@ -132,10 +132,6 @@ class NotificationsController extends AppController
 			}])
 			->order(['Notifications.created' => 'DESC']);
 
-		// $this->render(false);
-
-		// debug($notifications->toArray()); die;
-
 		$this->set(compact('notifications'));
 		$this->set('_serialize', ['notifications']);
 	}

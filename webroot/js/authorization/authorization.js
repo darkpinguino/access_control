@@ -177,11 +177,11 @@ $(document).ready(function () {
 		showNotification($(this).attr('notification-id'));
 	});
 
-	// insideAlert();
+	insideAlert();
 	// insideAlertCount();
 	getNotificacions();
 
-	// setInterval(insideAlert, 1000*60);
+	setInterval(insideAlert, 1000*60);
 	// setInterval(insideAlertCount, 1000*60);
 	setInterval(getNotificacions, 1000*60);
 });
