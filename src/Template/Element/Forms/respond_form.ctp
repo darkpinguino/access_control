@@ -3,7 +3,7 @@
         <h3 class="box-title">Responder Formulario</h3>
     </div>
   <div class="box-body"  id="div-form">
-      <?= $this->Form->create($answer_set, ['url' => $url]) ?>
+      <?= $this->Form->create($answer_set, ['url' => $url, 'id' => 'form']) ?>
       <fieldset>
         <?php $i = 0; ?>
         <?php foreach ($form->questions as $question): ?>
@@ -42,12 +42,12 @@
           <?php endswitch; ?>
           <?php $i++; ?>
         <?php endforeach; ?>
-        
+        <?= $this->Form->hidden('form_id', ['value' => $form->id])?>
       </fieldset>
   </div>
 
   <div class="box-footer">
-    <?= $this->Form->button(__('Responder')) ?>
+    <?= $this->Form->button(__('Responder'), ['id' => 'submit-form']) ?>
   </div>
   <?= $this->Form->end() ?>
 </div>

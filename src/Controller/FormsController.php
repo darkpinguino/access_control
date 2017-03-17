@@ -190,12 +190,28 @@ class FormsController extends AppController
 
 		$vehicle_access = $this->request->session()->read('vehicle_access');
 
+		if ($this->request->is('post')) {
+
+			$answer_set = $this->Forms->AnswersSets->newEntity();
+			$answer_set = $this->Forms->AnswersSets->patchEntity($answer_set, $this->request->data);
+
+			if ($this->Forms->AnswersSets->save($answer_set)) {
+				$vehicle_access_request = $this->Forms->AnswersSets->VehicleAccessRequest->newEntity();
+				$vehicle_access_request->id = $this->request->session()->read('vehicle_access_request');
+				$vehicle_access_request->answer_set_id = $answer_set->id;
+				$this->Forms->AnswersSets->VehicleAccessRequest->save($vehicle_access_request);
+				$this->Flash->success('Formulario respondido con exito.');
+			} else {
+				$this->Flash->error('El formulario no ha podido ser respondido.');
+				$this->redirect(['action' => 'passangerRedirect', 'controller' => 'authorization']);
+			}
+		}
+
 		$forms = $this->Forms->find('list')
 			->where(['company_id' => $company_id]);
 
 		$this->set(compact('forms'));
 
-		// debug($vehicle_access); die;
 	}
 
 	public function getForm($form_id = null, $controller = null, $action = null)

@@ -517,18 +517,12 @@ use Cake\Datasource\ConnectionManager;
 
 						if (!is_null($this->request->data('vehicle'))) {
 							
-							// debug("entrooo"); die;
-							// return $this->redirect([
-							// 	'controller' => 'Forms',
-							// 	'action' => 'viewAnsweredForm'
-							// ]);
+							// debug($vehicle->company_vehicles[0]->vehicle_profile->id); die;
 
-							return $this->respondForm();
-
-
-
-							$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
+							$vehicle_access_request = $this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
 							$this->saveVehicleLocation($vehicle, $door, $person, $driver);
+
+							
 
 							if ($vehicle->company_vehicles[0]->vehicle_profile->id == 3) {
 								$this->newVehicleAutorization($vehicle, $person);
@@ -539,6 +533,12 @@ use Cake\Datasource\ConnectionManager;
 						$this->Authorization->savePeopleLocation($person, $door, $maxTime, $access_request);
 						if (!$this->request->is('ajax'))
 							$this->Flash->success("Se autoriza el ingreso de la persona con RUT: ".$person->fullRut);  //ingreso con exito
+
+						if (!is_null($this->request->data('vehicle')) && $driver) {
+							if ($vehicle->company_vehicles[0]->vehicle_profile->id != 2) {
+								return $this->respondForm($vehicle_access_request->id);
+							}
+						}
 
 						$this->passangerRedirect();
 
@@ -558,7 +558,7 @@ use Cake\Datasource\ConnectionManager;
 			}
 		}
 
-		private function passangerRedirect()
+		public function passangerRedirect()
 		{
 			if (!empty($this->request->data('passanger-rut'))) {
 				$this->request->data['rut'] = $this->request->data['passanger-rut'][0];
@@ -568,6 +568,9 @@ use Cake\Datasource\ConnectionManager;
 				$this->setAction('Authorization');
 			} else {
 				$this->request->data = [];
+				$this->request->session()->delete('vehicle_access');
+				$this->redirect(['action' => 'authorization']);
+				// $this->setAction('Authorization');
 			}
 		}
 
@@ -779,9 +782,10 @@ use Cake\Datasource\ConnectionManager;
 			return $vehicleAccessRequest;
 		}
 
-		private function respondForm()
+		private function respondForm($vehicle_access_request)
 		{
 			$this->request->session()->write('vehicle_access', $this->request->data());
+			$this->request->session()->write('vehicle_access_request', $vehicle_access_request);
 
 			return $this->redirect([
 				'controller' => 'Forms',

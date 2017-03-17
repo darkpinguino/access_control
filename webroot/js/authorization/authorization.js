@@ -1,5 +1,5 @@
 var passengerCount = 0;
-var  user_id;
+var user_id;
 var valid_rut = false;
 $(document).ready(function () {
 
@@ -16,7 +16,7 @@ $(document).ready(function () {
 
 	$("#authorization-form").submit(function (event) {
 		if (!valid_rut) {
-			valid_rut = validateRut();
+			valid_rut = validateRut('rut');
 			if (valid_rut) {
 				$("#authorization-form").submit();
 			} else {
@@ -24,6 +24,23 @@ $(document).ready(function () {
 			}
 		} else {
 			$("#authorization-form").submit();
+		}
+
+		// event.preventDefault();
+
+	});
+
+	$("#vehicle-authorizarion-form").submit(function (event) {
+		
+		if (!valid_rut) {
+			valid_rut = validateRut('vehicle-rut');
+			if (valid_rut) {
+				$("#vehicle-authorizarion-form").submit();
+			} else {
+				event.preventDefault();
+			}
+		} else {
+			$("#vehicle-authorizarion-form").submit();
 		}
 
 		// event.preventDefault();
@@ -94,17 +111,29 @@ $(document).ready(function () {
 	});
 
 	$("#vehicle-rut").on('change', function () {
+			var rut = $(this).val();
+
+			rut = rut.split("-");
+
+			if (rut.length == 1) {
+				rut = rut[0].slice(0, -1);
+			}else {
+				rut = rut[0];
+			}
+
 			$.ajax({
-				url: "../VehicleAccessRequest/lastVehicle/" + $(this).val(),
+				url: "../VehicleAccessRequest/lastVehicle/" + rut,
 				type: "GET",
 				dataType: "json",
 				success: function (result, success, hrx) {
 					if (result['vehicleAccessRequest'] != null) {
 						$("#number-plate").val(result['vehicleAccessRequest']['vehicle']['number_plate']);
 						$("#vehicle-type").val(result['vehicleAccessRequest']['vehicle']['vehicle_type_id']);
+						$("#vehicle-type").attr('disabled', true);
 					} else {
 						$("#number-plate").val("");
-						$("#vehicle-type").val("");
+						$("#vehicle-type").val(1);
+						$("#vehicle-type").attr('disabled', false);
 					}
 				}
 			})
