@@ -41,9 +41,9 @@ class FormsController extends AppController
 	public function view($id = null)
 	{
 		$form = $this->Forms->get($id, [
-			'contain' => ['Companies']
+			'contain' => ['Companies', 'Questions']
 		]);
-
+		//debug($form); die;
 		$this->set('form', $form);
 		$this->set('_serialize', ['form']);
 	}
@@ -133,12 +133,13 @@ class FormsController extends AppController
 
 		if ($this->request->is('post')) {
 			$answer_set = $this->AnswersSets->patchEntity($answer_set, $this->request->data);
-			//debug($answer_set); die;
+			//debug($this->request->data); die;
 
 			if($this->AnswersSets->save($answer_set)){
 				$this->Flash->success(__('Este formulario ha respondido exitosamente.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
+				//debug($answer_set); die;
 				$this->Flash->error(__('El formulario no ha podido ser respondido.
 				 Por favor intente nuevamente.'));
 			}

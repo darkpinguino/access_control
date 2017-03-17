@@ -57,7 +57,25 @@ class AnswersTable extends Table
 
         $validator
             ->requirePresence('answer_text', 'create')
-            ->notEmpty('answer_text');
+            ->notEmpty('answer_text',['message' => 'Este campo no puede estar vacío']);
+
+        $validator->add('answer_text', 'myRule', [
+            'rule' => function ($data, $provider) {
+            $type = $this->Questions->get($provider['data']['question_id'])->type;
+            if(empty($data) and $data != 0){
+                return 'Debe completar este campo';
+            } else {
+                if ($type == 3) {
+                    if (is_numeric($data)) {
+                        return true;
+                    } else {
+                        return 'El valor debe ser númerico';
+                    }
+                }
+            }
+            return true;
+            }
+            ]       );
 
         return $validator;
     }

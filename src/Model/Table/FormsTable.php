@@ -61,13 +61,12 @@ class FormsTable extends Table
 
         $validator
             ->requirePresence('description', 'create')
-            ->notEmpty('description');
+            ->notEmpty('description'); 
 
         return $validator;
     }
 
     
-
 
 
     /**

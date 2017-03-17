@@ -59,6 +59,7 @@ function fill(question_count){
 				'<option value="2">Párrafo</option>'+
 				'<option value="3">Cantidad</option>'+
 				'<option value="4">Fecha</option>'+
+				'<option value="5">Binaria</option>'+
 			'</select>';
 }
 

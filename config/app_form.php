@@ -7,6 +7,7 @@
 		'select' => '<select class="form-control" name="{{name}}"{{attrs}}>{{content}}</select>',
 		'textarea' => '<textarea class="form-control" name="{{name}}"{{attrs}}>{{value}}</textarea>',
 		'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
+		'radioWrapper' => '<div class="iradio_minimal-blue">{{label}}</div>',
 		'dateContainer' => 
 			'<div class="form-group {{type}} {{name}}"{{required}}>
 					<div class="input-group date">
