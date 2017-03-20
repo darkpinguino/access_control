@@ -29,7 +29,8 @@ class CompanyPeopleSeed extends AbstractSeed
 				'modified' => date('Y-m-d H:i:s'),
 				'contractor_company_id' => -1,
 				'work_area_id' => -1,
-				'pending' => 0
+				'pending' => 0,
+				'recurring_person' => 0
 			]
 		];
 

@@ -21,6 +21,8 @@ class FormsSeed extends AbstractSeed
 		$data = [
 			[
 				'id' => '-1',
+				'name' => '',
+				'description' => '', 
 				'company_id' => '-1',
 				'created' => date('Y-m-d H:i:s'),
 				'modified' => date('Y-m-d H:i:s')
