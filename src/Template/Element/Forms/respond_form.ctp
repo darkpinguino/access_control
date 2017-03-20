@@ -39,6 +39,19 @@
             ]) ?>
             <br>
             <?php break; ?>
+          <?php case 5: ?>
+            <?= $this->Form->label($question->question_text) ?>
+            <?= $this->Form->control('answers.'.$i.'.answer_text', [
+                'options' => [
+                ['value' => 'Sí', 'text' => 'Sí'],
+                ['value' => 'No', 'text' => 'No']
+                ],
+                'type' => 'radio',
+                'label' => false,
+                'class' =>'iradio_minimal-blue'
+            ]) ?>
+            <br>
+            <?php break; ?>
           <?php endswitch; ?>
           <?php $i++; ?>
         <?php endforeach; ?>
