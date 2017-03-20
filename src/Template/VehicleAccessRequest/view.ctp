@@ -48,7 +48,7 @@
 	</div>
 </div>
 
-<?php if (!empty($vehicleAccessRequest->answers_set)): ?>
+<?php if (!empty($vehicleAccessRequest->answers_set) && $vehicleAccessRequest->answers_set->id != -1): ?>
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box">

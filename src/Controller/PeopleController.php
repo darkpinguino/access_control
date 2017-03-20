@@ -326,6 +326,7 @@ class PeopleController extends AppController
 						}
 					} else {
 						$this->Flash->error(__('La persona no puedo ser guardada. Por favor, intente nuevamente.'));
+						// debug([1, $person]); die;
 						return $this->redirect(['action' => 'index']);
 					}
 				} else {
@@ -343,10 +344,12 @@ class PeopleController extends AppController
 						}
 					} else {
 						$this->Flash->error(__('La persona no puedo ser guardada. Por favor, intente nuevamente.'));
+						// debug([2, $person]); die;
 					}
 				}
 			} else {
 					$this->Flash->error(__('La persona no puedo ser guardada. Por favor, intente nuevamente.'));
+					// debug([3, $person]); die;
 					return $this->redirect(['action' => 'index']);
 			}
 		}

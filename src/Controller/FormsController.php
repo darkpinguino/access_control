@@ -188,7 +188,7 @@ class FormsController extends AppController
 	{
 		$company_id = $this->Auth->user('company_id');
 
-		$vehicle_access = $this->request->session()->read('vehicle_access');
+		// $vehicle_access = $this->request->session()->read('vehicle_access');
 
 		if ($this->request->is('post')) {
 
@@ -201,6 +201,7 @@ class FormsController extends AppController
 				$vehicle_access_request->answer_set_id = $answer_set->id;
 				$this->Forms->AnswersSets->VehicleAccessRequest->save($vehicle_access_request);
 				$this->Flash->success('Formulario respondido con exito.');
+				$this->redirect(['action' => 'passangerRedirect', 'controller' => 'authorization']);
 			} else {
 				$this->Flash->error('El formulario no ha podido ser respondido.');
 				$this->redirect(['action' => 'passangerRedirect', 'controller' => 'authorization']);
@@ -209,6 +210,12 @@ class FormsController extends AppController
 
 		$forms = $this->Forms->find('list')
 			->where(['company_id' => $company_id]);
+
+		if (count($forms->toArray()) == 0) {
+			$this->redirect(['action' => 'passangerRedirect', 'controller' => 'authorization']);
+		}
+
+		// debug(count($forms->toArray())); die;
 
 		$this->set(compact('forms'));
 

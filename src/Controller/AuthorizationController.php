@@ -494,6 +494,11 @@ use Cake\Datasource\ConnectionManager;
 					if ($authorizedPerson and $mainDoorAuthorization) {
 						$pending_access_request = $this->AccessRequest->find()->
 						  where(['people_id' => $person->id, 'door_id' => $door->id])->last();
+						$pending_access_request_flag = false;
+
+						if (!is_null($pending_access_request) && $pending_access_request->access_status_id == 2) {
+							$pending_access_request_flag = true;
+						}
 
 						$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 1, 1);
 
@@ -697,8 +702,8 @@ use Cake\Datasource\ConnectionManager;
 
 		private function vehicleAuthorizationRequest($vehicle, $driver, $person, $door)
 		{
-			$accessRequest = $this->Authorization->saveAccessRequest($person->id, $door->id, 2, 1);
-			$this->saveVehicleAccessRequest($vehicle, $accessRequest, $driver, 1);
+			$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 2, 1);
+			$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
 
 			$this->request->session()->write('vehicle_access', $this->request->data());
 
@@ -708,6 +713,7 @@ use Cake\Datasource\ConnectionManager;
 				$person->id,
 				'?' => [
 					'status' => 'pending',
+					'access_request' => $access_request->id,
 					'driver' => 'driver'
 					]
 			]);
@@ -777,6 +783,7 @@ use Cake\Datasource\ConnectionManager;
 			$vehicleAccessRequest->access_request_id = $access_request->id;
 			$vehicleAccessRequest->driver = $driver;
 			$vehicleAccessRequest->action = $action;
+			$vehicleAccessRequest->answer_set_id = -1;
 			$this->VehicleAccessRequest->save($vehicleAccessRequest);
 
 			return $vehicleAccessRequest;
