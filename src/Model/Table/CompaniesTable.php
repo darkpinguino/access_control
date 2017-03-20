@@ -72,6 +72,13 @@ class CompaniesTable extends Table
          $this->hasMany('Forms', [
             'foreignKey' => 'company_id'
         ]);
+
+        $this->belongsToMany('Profiles', [
+        	'foreignKey' => 'company_id',
+        	'targetForeignKey' => 'profile_id',
+        	'joinTable' => 'CompanyProfiles',
+        	'through' => 'CompanyProfiles'
+        ]);
     }
 
     /**
