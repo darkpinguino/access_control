@@ -1,18 +1,20 @@
-function validateRut() {
-	var rut = $("#rut").val();
+function validateRut(input) {
+	var rut = $("#"+input).val();
 
+	console.log(rut);
+	
 	rut = rut.replace(/\s+/g, '');
 
 	var valid_rut = $.validateRut(rut);
 
 	if (valid_rut) {
-		$("#rut").parent('.form-group').removeClass('has-error');
-    $("#rut").nextAll('span').remove();
-    $("#rut").val($.formatRut(rut, false));
+		$("#"+input).parent('.form-group').removeClass('has-error');
+    $("#"+input).nextAll('span').remove();
+    $("#"+input).val($.formatRut(rut, false));
 	} else {
-		$("#rut").parent('.form-group').addClass('has-error');
-    $("#rut").nextAll('span').remove();
-		$("#rut").after('<span class="help-block">Rut invalido</span>');
+		$("#"+input).parent('.form-group').addClass('has-error');
+    $("#"+input).nextAll('span').remove();
+		$("#"+input).after('<span class="help-block">Rut invalido</span>');
 	}
 
 	return valid_rut;

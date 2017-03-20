@@ -12,6 +12,15 @@ class FormsController extends AppController
 {
 
 	public $controllerName = 'el Formulario';
+
+	public function isAuthorized($user)
+	{
+		
+		return true;
+		
+		return parent::isAuthorized($user);
+	}
+
 	/**
 	 * Index method
 	 *
@@ -176,9 +185,53 @@ class FormsController extends AppController
 		$this->set('_serialize', ['answers_sets']);
 	}
 
+	public function vehicleRespondForm()
+	{
+		$company_id = $this->Auth->user('company_id');
 
+		// $vehicle_access = $this->request->session()->read('vehicle_access');
 
+		if ($this->request->is('post')) {
 
+			$answer_set = $this->Forms->AnswersSets->newEntity();
+			$answer_set = $this->Forms->AnswersSets->patchEntity($answer_set, $this->request->data);
 
+			if ($this->Forms->AnswersSets->save($answer_set)) {
+				$vehicle_access_request = $this->Forms->AnswersSets->VehicleAccessRequest->newEntity();
+				$vehicle_access_request->id = $this->request->session()->read('vehicle_access_request');
+				$vehicle_access_request->answer_set_id = $answer_set->id;
+				$this->Forms->AnswersSets->VehicleAccessRequest->save($vehicle_access_request);
+				$this->Flash->success('Formulario respondido con exito.');
+				$this->redirect(['action' => 'passangerRedirect', 'controller' => 'authorization']);
+			} else {
+				$this->Flash->error('El formulario no ha podido ser respondido.');
+				$this->redirect(['action' => 'passangerRedirect', 'controller' => 'authorization']);
+			}
+		}
 
+		$forms = $this->Forms->find('list')
+			->where(['company_id' => $company_id]);
+
+		if (count($forms->toArray()) == 0) {
+			$this->redirect(['action' => 'passangerRedirect', 'controller' => 'authorization']);
+		}
+
+		// debug(count($forms->toArray())); die;
+
+		$this->set(compact('forms'));
+
+	}
+
+	public function getForm($form_id = null, $controller = null, $action = null)
+	{
+		$url = [];
+		$url['controller'] = $controller;
+		$url['action'] = $action;
+		$answer_set = $this->Forms->AnswersSets->newEntity();
+		$form = $this->Forms->get($form_id, [
+			'contain' => 'Questions']);
+
+		$this->set(compact('form', 'answer_set', 'url'));
+		$this->render('../Element/Forms/respond_form');
+	}
 }

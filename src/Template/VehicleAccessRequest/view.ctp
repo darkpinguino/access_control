@@ -47,3 +47,13 @@
 		</div>
 	</div>
 </div>
+
+<?php if (!empty($vehicleAccessRequest->answers_set) && $vehicleAccessRequest->answers_set->id != -1): ?>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+					<?= $this->element('../Forms/view_answered_form', ['answers_sets' => $vehicleAccessRequest->answers_set])?>
+			</div>
+		</div>
+	</div>
+<?php endif ?>	

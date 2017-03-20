@@ -494,6 +494,11 @@ use Cake\Datasource\ConnectionManager;
 					if ($authorizedPerson and $mainDoorAuthorization) {
 						$pending_access_request = $this->AccessRequest->find()->
 						  where(['people_id' => $person->id, 'door_id' => $door->id])->last();
+						$pending_access_request_flag = false;
+
+						if (!is_null($pending_access_request) && $pending_access_request->access_status_id == 2) {
+							$pending_access_request_flag = true;
+						}
 
 						$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 1, 1);
 
@@ -516,8 +521,13 @@ use Cake\Datasource\ConnectionManager;
 						}
 
 						if (!is_null($this->request->data('vehicle'))) {
-							$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
+							
+							// debug($vehicle->company_vehicles[0]->vehicle_profile->id); die;
+
+							$vehicle_access_request = $this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
 							$this->saveVehicleLocation($vehicle, $door, $person, $driver);
+
+							
 
 							if ($vehicle->company_vehicles[0]->vehicle_profile->id == 3) {
 								$this->newVehicleAutorization($vehicle, $person);
@@ -528,6 +538,12 @@ use Cake\Datasource\ConnectionManager;
 						$this->Authorization->savePeopleLocation($person, $door, $maxTime, $access_request);
 						if (!$this->request->is('ajax'))
 							$this->Flash->success("Se autoriza el ingreso de la persona con RUT: ".$person->fullRut);  //ingreso con exito
+
+						if (!is_null($this->request->data('vehicle')) && $driver) {
+							if ($vehicle->company_vehicles[0]->vehicle_profile->id != 2) {
+								return $this->respondForm($vehicle_access_request->id);
+							}
+						}
 
 						$this->passangerRedirect();
 
@@ -547,7 +563,7 @@ use Cake\Datasource\ConnectionManager;
 			}
 		}
 
-		private function passangerRedirect()
+		public function passangerRedirect()
 		{
 			if (!empty($this->request->data('passanger-rut'))) {
 				$this->request->data['rut'] = $this->request->data['passanger-rut'][0];
@@ -557,6 +573,9 @@ use Cake\Datasource\ConnectionManager;
 				$this->setAction('Authorization');
 			} else {
 				$this->request->data = [];
+				$this->request->session()->delete('vehicle_access');
+				$this->redirect(['action' => 'authorization']);
+				// $this->setAction('Authorization');
 			}
 		}
 
@@ -683,8 +702,8 @@ use Cake\Datasource\ConnectionManager;
 
 		private function vehicleAuthorizationRequest($vehicle, $driver, $person, $door)
 		{
-			$accessRequest = $this->Authorization->saveAccessRequest($person->id, $door->id, 2, 1);
-			$this->saveVehicleAccessRequest($vehicle, $accessRequest, $driver, 1);
+			$access_request = $this->Authorization->saveAccessRequest($person->id, $door->id, 2, 1);
+			$this->saveVehicleAccessRequest($vehicle, $access_request, $driver, 1);
 
 			$this->request->session()->write('vehicle_access', $this->request->data());
 
@@ -694,6 +713,7 @@ use Cake\Datasource\ConnectionManager;
 				$person->id,
 				'?' => [
 					'status' => 'pending',
+					'access_request' => $access_request->id,
 					'driver' => 'driver'
 					]
 			]);
@@ -763,9 +783,21 @@ use Cake\Datasource\ConnectionManager;
 			$vehicleAccessRequest->access_request_id = $access_request->id;
 			$vehicleAccessRequest->driver = $driver;
 			$vehicleAccessRequest->action = $action;
+			$vehicleAccessRequest->answer_set_id = -1;
 			$this->VehicleAccessRequest->save($vehicleAccessRequest);
 
 			return $vehicleAccessRequest;
+		}
+
+		private function respondForm($vehicle_access_request)
+		{
+			$this->request->session()->write('vehicle_access', $this->request->data());
+			$this->request->session()->write('vehicle_access_request', $vehicle_access_request);
+
+			return $this->redirect([
+				'controller' => 'Forms',
+				'action' => 'vehicleRespondForm'
+			]);
 		}
 
 		public function registerPeopleLocation($person, $door, $acction)

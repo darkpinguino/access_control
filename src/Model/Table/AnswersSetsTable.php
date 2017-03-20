@@ -14,44 +14,46 @@ use Cake\Validation\Validator;
 class AnswersSetsTable extends Table
 {
 
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
-    public function initialize(array $config)
-    {
-        parent::initialize($config);
+	/**
+	 * Initialize method
+	 *
+	 * @param array $config The configuration for the Table.
+	 * @return void
+	 */
+	public function initialize(array $config)
+	{
+		parent::initialize($config);
 
-        $this->table('answers_sets');
-        $this->displayField('id');
-        $this->primaryKey('id');
+		$this->table('answers_sets');
+		$this->displayField('id');
+		$this->primaryKey('id');
 
-        $this->addBehavior('Timestamp');
+		$this->addBehavior('Timestamp');
 
-        $this->belongsTo('Forms', [
-            'foreignKey' => 'form_id',
-            'joinType' => 'INNER'
-        ]);
+		$this->belongsTo('Forms', [
+			'foreignKey' => 'form_id',
+			'joinType' => 'INNER'
+		]);
+		$this->hasMany('Answers', [
+			'foreignKey' => 'answer_set_id',
+		]);
+		$this->hasMany('VehicleAccessRequest', [
+			'foreignKey' => 'answer_set_id',
+		]);
+	}
 
-        $this->hasMany('Answers', [
-            'foreignKey' => 'answer_set_id',
-        ]);
-    }
+	/**
+	 * Default validation rules.
+	 *
+	 * @param \Cake\Validation\Validator $validator Validator instance.
+	 * @return \Cake\Validation\Validator
+	 */
+	public function validationDefault(Validator $validator)
+	{
+		$validator
+			->integer('id')
+			->allowEmpty('id', 'create');
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator)
-    {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
-
-        return $validator;
-    }
+		return $validator;
+	}
 }
