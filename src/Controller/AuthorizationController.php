@@ -587,6 +587,9 @@ use Cake\Datasource\ConnectionManager;
 			if (is_null($person)) {
 				$person = $this->People->newEntity();
 				$person->rut = $rut;
+				$person->name = '';
+				$person->lastname = '';
+				$person->profile_id = -1;
 				$person->company_id = $company_id; 
 				$this->People->save($person);
 			}
@@ -598,6 +601,9 @@ use Cake\Datasource\ConnectionManager;
 			$company->_joinData->profile_id = -1;
 			$company->_joinData->contractor_company_id = -1;
 			$company->_joinData->work_area_id = -1;
+			$company->_joinData->is_visited = 0;
+			$company->_joinData->pending = 0;
+			$company->_joinData->recurring_person = 0;
 			// $$company->_joinData->company_id = $this->Auth->user()['company_id'];
 
 			$this->People->Companies->link($person, [$company]);

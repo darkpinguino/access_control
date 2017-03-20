@@ -95,6 +95,8 @@ class AccessRolesController extends AppController
 				$accessRole['company_id'] = $this->Auth->user('company_id');
 			}
 
+			$accessRole->user_id = 1;
+
 			if ($this->AccessRoles->save($accessRole)) {
 				$this->Flash->success(__('El rol de acceso ha sido guardado.'));
 				return $this->redirect(['action' => 'index']);

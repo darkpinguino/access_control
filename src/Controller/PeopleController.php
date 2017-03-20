@@ -184,19 +184,30 @@ class PeopleController extends AppController
 
 					if (isset($contractor_company)) {
 						$company_people->contractor_company_id = $contractor_company->id;
+					} else {
+						$company_people->contractor_company_id = -1;
 					}
 
 					if (isset($work_area)) {
 						$company_people->work_area_id = $work_area->id;
+					} else {
+						$company_people->work_area_id = -1;
 					}
 
 					if ($company_people->profile_id != 3) {
 						$company_people->contractor_company_id = -1;
 					}
+					if ($company_people->profile_id != 2) {
+						$company_people->work_area_id = -1;
+					}
 
 					if ($company_people->profile_id == 1) {
 						$company_people->work_area_id = -1;
+						$company_people->contractor_company_id = -1;
 					}
+
+					$company_people->pending = 0;
+					$company_people->recurring_person = 0;
 
 					if ($this->CompanyPeople->save($company_people)) {
 						$this->Flash->success(__('La persona se ha guardado.'));
@@ -211,6 +222,23 @@ class PeopleController extends AppController
 				$person = $person->first();
 				$company_people->person_id = $person->id;
 				$company_people->company_id = $company_id;
+				$company_people->pending = 0;
+				$company_people->recurring_person = 0;
+
+				if (isset($contractor_company)) {
+					$company_people->contractor_company_id = $contractor_company->id;
+				} else {
+					$company_people->contractor_company_id = -1;
+				}
+
+				if (isset($work_area)) {
+					$company_people->work_area_id = $work_area->id;
+				} else {
+					$company_people->work_area_id = -1;
+				}
+
+				//debug($company_people); die;
+
 				if ($this->CompanyPeople->save($company_people)) {
 					$this->Flash->success(__('La persona se ha guardada.'));
 					return $this->redirect(['action' => 'index']);
@@ -284,6 +312,7 @@ class PeopleController extends AppController
 				}
 			}
 			
+			//debug($person); die;
 			if ($this->People->save($person)) {
 				$company_people = $this->CompanyPeople->patchEntity($company_people, $this->request->data);
 				$company_people->person_id = $person->id;
