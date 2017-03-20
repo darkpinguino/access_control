@@ -15,8 +15,18 @@ class FormsController extends AppController
 
 	public function isAuthorized($user)
 	{
+		$userRole_id = $user['userRole_id'];
+
+		$action = $this->request->action;
+
+		if ($action === 'vehicleRespondForm' || $action === 'viewAnsweredForm' || 
+			$action === 'ajaxMeasures' || $action === 'getForm') {
+			return true;
+		} 
 		
-		return true;
+		if ($userRole_id == 2) {
+			return true;
+		}
 		
 		return parent::isAuthorized($user);
 	}
@@ -138,6 +148,9 @@ class FormsController extends AppController
 			->first();
 		//Hasta acá es para cargar las preguntas del formulario.
 		$answer_set->form_id = $form->id;
+		$url = [];
+		$url['controller'] = 'Forms';
+		$url['action'] = 'respondForm';
 		//debug($form); die;
 
 		if ($this->request->is('post')) {
@@ -155,7 +168,7 @@ class FormsController extends AppController
 
 		}
 
-		$this->set(compact('form','answer_set'));
+		$this->set(compact('form','answer_set', 'url'));
 	}
 
 	function ajaxMeasures($question_count) {
@@ -215,8 +228,6 @@ class FormsController extends AppController
 		if (count($forms->toArray()) == 0) {
 			$this->redirect(['action' => 'passangerRedirect', 'controller' => 'authorization']);
 		}
-
-		// debug(count($forms->toArray())); die;
 
 		$this->set(compact('forms'));
 

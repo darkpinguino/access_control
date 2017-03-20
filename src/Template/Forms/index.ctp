@@ -41,10 +41,7 @@
                          'escape' => false], 
                   false);
                   ?>
-                  <?= $this->Html->link(__('Responder'), 
-                    ['action' => 'respondForm', $form->id], 
-                    ['class' => 'btn btn-success btn-xs']) 
-                  ?>
+                  
               </td>
           </tr>
         <?php endforeach; ?>

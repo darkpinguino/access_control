@@ -152,7 +152,7 @@
       </li>  
     <?php endif ?>
 
-    <?php if ($userRole_id == 1): ?>
+    <?php if ($userRole_id == 1 || $userRole_id == 2): ?>
       <?= '<li class="treeview'. (strcmp($controller, 'Forms') ? '' : ' active').'">' ?>
         <a href="#">
           <i class="fa fa-file-text"></i> <span>Formularios</span> <i class="fa fa-angle-left pull-right"></i>
@@ -179,6 +179,10 @@
         </li>
       </ul>
     </li>   
+    <?php endif ?>
+
+    <?php if ($userRole_id == 1): ?>
+      
     <?= '<li class="treeview'. (strcmp($controller, 'Sensors') ? '' : ' active').'">' ?>
       <a href="#">
         <i class="fa fa-dashboard"></i> <span>Sensores</span> <i class="fa fa-angle-left pull-right"></i>
