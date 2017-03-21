@@ -591,6 +591,7 @@ use Cake\Datasource\ConnectionManager;
 				$person->lastname = '';
 				$person->profile_id = -1;
 				$person->company_id = $company_id; 
+				$peson->is_visited = 0;
 				$this->People->save($person);
 			}
 
