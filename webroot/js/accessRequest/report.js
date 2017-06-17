@@ -1,8 +1,11 @@
 $(document).ready(function function_name() {
+	
 	moment.locale("es");
 	$("#range-report").daterangepicker({
-		"autoApply": true,
+		"autoApply": true
 	});
+
+	$("#range-report").attr("name", "range-report");
 
 	$("#fullrange").change(function () {
 		if ($(this).is(":checked")) {

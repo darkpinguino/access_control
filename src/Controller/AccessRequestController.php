@@ -290,7 +290,7 @@ class AccessRequestController extends AppController
 
 		$accessRequest = $this->getAccessRequest($data, $company_id);
 
-		$this->set('accessRequest', $this->paginate($accessRequest));
+		$this->set('accessRequest', $accessRequest);
 	}
 
 	public function exportReport()

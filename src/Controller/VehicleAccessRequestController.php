@@ -235,9 +235,7 @@ class VehicleAccessRequestController extends AppController
 
 		$vehicles_access_request = $this->getVehicleAccessRequest($data, $company_id);
 
-		// debug($vehicles_access_request->toArray()); die;
-
-		$this->set('vehicles_access_request', $this->paginate($vehicles_access_request));
+		$this->set('vehicles_access_request', $vehicles_access_request);
 	}
 
 	public function exportReport()

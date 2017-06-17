@@ -1,7 +1,23 @@
+<?= $this->Html->css('plugins/datatables/dataTables.bootstrap', ['block' => 'cssView'])?>
+<?= $this->Html->css('plugins/datatables/buttons.bootstrap.min', ['block' => 'cssView'])?>
+
+<?= $this->Html->script('plugins/datatables/jquery.dataTables.min', ['block' => 'scriptView'])?>
+<?= $this->Html->script('plugins/JSZip/jszip.min', ['block' => 'scriptView'])?>
+<?= $this->Html->script('plugins/pdfmake/pdfmake.min', ['block' => 'scriptView'])?>
+<?= $this->Html->script('plugins/pdfmake/vfs_fonts', ['block' => 'scriptView'])?>
+<?= $this->Html->script('plugins/datatables/dataTables.bootstrap.min', ['block' => 'scriptView'])?>
+<?= $this->Html->script('plugins/datatables/dataTables.buttons.min', ['block' => 'scriptView'])?>
+<?= $this->Html->script('plugins/datatables/buttons.bootstrap.min', ['block' => 'scriptView'])?>
+<?= $this->Html->script('plugins/datatables/buttons.html5.min', ['block' => 'scriptView'])?>
+
+<?= $this->Html->script('vehicleAccessRequest/view_report', ['block' => 'scriptView']) ?>
+
 <div class="box">
-	<?= $this->element('tableHeader', ['title' => 'Peticiones de accesos Vehiculos'])?>
+	<div class="box-header">
+		<h3 class="box-title">Registro de accesos vehiculos</h3>
+	</div>
 	<div class="box-body">
-		<table class="table">
+		<table id="report" class="table">
 			<thead>
 				<tr>
 					<th class="text-nowrap">Patente</th>
@@ -31,11 +47,5 @@
 				<?php endforeach; ?>
 			</tbody>
 		</table>
-	</div>
-	<div class="box-footer">
-		<?= $this->element('paginator') ?>
-	</div>
-	<div class="box-footer">
-		<?= $this->Html->link('Exportar Reporte', ['action' => 'exportReport', '_ext' => 'pdf'], ['class' => 'btn btn-primary']) ?>
 	</div>
 </div>
